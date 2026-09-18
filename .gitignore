@@ -1,0 +1,36 @@
+# Ambientes virtuais e cache Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.env
+.venv/
+venv/
+ENV/
+
+# Arquivos temporários, backups e rascunhos de scratch
+*.bak
+*.tmp
+*.temp
+scratch/
+
+# Dumps e rascunhos intermediários de extração
+original_*.txt
+original_*.html
+cleaned_original_index.html
+
+# Documentos pessoais e certificados acadêmicos individuais
+*Declaração*.pdf
+*certificado*.pdf
+*.ogg
+*.opus
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs e Ferramentas de IA
+.gemini/
+.system_generated/
+.idea/
+.vscode/

@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BeautyPass — O Benefício Corporativo e Pessoal de Saúde Estética & Bem-Estar</title>
+  <meta name="description" content="Transforme autoestima, bem-estar e produtividade em rotina com o melhor clube de benefícios em saúde estética, spas e massoterapia do Brasil.">
+
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Top Context Switcher Bar -->
+  <aside class="top-context-bar" aria-label="Seleção de Perfil">
+    <div class="container context-bar-inner">
+      <nav class="context-tabs" id="contextTabs" role="tablist">
+        <button class="context-tab active" data-context="b2c" role="tab" aria-selected="true" id="tab-b2c">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Para Você
+        </button>
+        <button class="context-tab" data-context="b2b" role="tab" aria-selected="false" id="tab-b2b">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          Para Empresas (RH)
+        </button>
+        <button class="context-tab" data-context="partner" role="tab" aria-selected="false" id="tab-partner">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Para Estabelecimentos
+        </button>
+      </nav>
+      <div class="top-right-meta">
+        <span class="support-badge"><span class="pulse-dot"></span> Ecossistema Completo de Beleza & Bem-Estar</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Global Header -->
+  <header class="site-header" id="siteHeader">
+    <div class="container header-inner">
+      <!-- Brand Logo -->
+      <a href="#" class="brand-logo" onclick="switchContext('b2c'); return false;">
+        <div class="logo-mark">
+          <img src="Logo BeautyPass.jfif" alt="BeautyPass Logo" class="brand-logo-img">
+        </div>
+        <div class="logo-text">
+          <span class="logo-name">Beauty<span class="highlight">Pass</span></span>
+          <span class="logo-tagline">Beauty & Wellness Platform</span>
+        </div>
+      </a>
+
+      <!-- Category Navigation (Visible in B2C) -->
+      <nav class="category-nav" id="categoryNav" aria-label="Categorias de Serviços">
+        <a href="#catalogo" class="cat-link active" data-cat="all">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>
+          Todos
+        </a>
+        <a href="#catalogo" class="cat-link" data-cat="hair">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>
+          Salões & Cabelo
+        </a>
+        <a href="#catalogo" class="cat-link" data-cat="facial">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 10h.01M15 10h.01M9.5 15a3.5 3.5 0 0 0 5 0"/></svg>
+          Clínicas & Rosto
+        </a>
+        <a href="#catalogo" class="cat-link" data-cat="massage">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a5 5 0 0 0-5 5v3a5 5 0 0 0 10 0V7a5 5 0 0 0-5-5z"/><path d="M5 22v-3a7 7 0 0 1 14 0v3"/></svg>
+          Spas & Massagens
+        </a>
+        <a href="#catalogo" class="cat-link" data-cat="cosmetics">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          Cosméticos & Skincare
+        </a>
+        <a href="#catalogo" class="cat-link" data-cat="barber">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Barbearias
+        </a>
+      </nav>
+
+      <!-- Conversion Header Actions -->
+      <div class="header-actions">
+        <button class="btn-wallet" id="btnOpenWallet" title="Abrir Carteira Digital">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          <span class="wallet-text">Meus Vouchers</span>
+          <span class="wallet-badge" id="walletCount">2</span>
+        </button>
+
+        <button class="btn-ghost" id="btnLoginHeader" onclick="openWalletModal()">
+          Consultar Voucher
+        </button>
+
+        <button class="btn-primary" id="btnCtaHeader" onclick="handleHeaderCta()">
+          <span id="btnCtaHeaderText">Conheça os Planos</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN APP CONTAINER -->
+  <main id="appMain">
+
+    <!-- =================================================================== -->
+    <!-- CONTEXT 1: PARA VOCÊ (B2C DISCOVERY & PLANS)                        -->
+    <!-- =================================================================== -->
+    <section class="context-view active" id="view-b2c">
+      
+      <!-- HERO SECTION — PREMIUM IMMERSIVE -->
+      <section class="hero-b2c">
+        <canvas id="heroMeshCanvas" aria-hidden="true"></canvas>
+        <div class="hero-mesh-glow" aria-hidden="true"></div>
+        <div class="container hero-content">
+          
+          <!-- TEXT COLUMN -->
+          <div class="hero-text-col">
+            <div class="trust-badge-pill reveal-up">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2"/></svg>
+              <span>O Clube Completo de Beleza, Estética & Bem-Estar</span>
+              <span class="badge-sep">•</span>
+              <span class="badge-accent">Economia Real de até 70%</span>
+            </div>
+
+            <h1 class="hero-title reveal-up">
+              <span class="title-line"><span class="title-line-inner">O passe definitivo para</span></span>
+              <span class="title-line"><span class="title-line-inner"><span class="gradient-text">estética, salões, spas</span></span></span>
+              <span class="title-line"><span class="title-line-inner">e descontos em cosméticos.</span></span>
+            </h1>
+
+            <p class="hero-description reveal-up">
+              Acesse uma curadoria de clínicas dermatológicas, salões de beleza renomados, spas relaxantes e vantagens exclusivas em produtos cosméticos e skincare. Qualidade auditada e economia em cada experiência.
+            </p>
+
+            <!-- SMART SEARCH BAR -->
+            <div class="smart-search-card reveal-up" id="smartSearchBar">
+              <div class="search-field search-procedure">
+                <label for="inputProcedure">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <span>Serviço, Salão, Clínica ou Cosmético</span>
+                </label>
+                <input type="text" id="inputProcedure" placeholder="Ex: Salão de beleza, massagem, skincare, peeling..." autocomplete="off">
+                <!-- Autocomplete Dropdown -->
+                <div class="autocomplete-dropdown" id="autocompleteDropdown">
+                  <div class="ac-group-title">Serviços & Produtos em Destaque</div>
+                  <button class="ac-item" data-value="Corte, Escova & Tratamento Capilar"><span class="ac-tag tag-prem">Salão</span> Corte, Escova & Tratamento Capilar</button>
+                  <button class="ac-item" data-value="Massagem Relaxante com Aromaterapia"><span class="ac-tag">Spa</span> Massagem Relaxante com Aromaterapia</button>
+                  <button class="ac-item" data-value="Limpeza de Pele Profunda & Fototerapia"><span class="ac-tag">Clínica</span> Limpeza de Pele Profunda & Fototerapia</button>
+                  <button class="ac-item" data-value="Desconto em Dermocosméticos & Skincare"><span class="ac-tag tag-prem">Cosméticos</span> Desconto em Dermocosméticos & Skincare</button>
+                  <button class="ac-item" data-value="Peeling Químico & Laser Facial"><span class="ac-tag tag-prem">Dermatologia</span> Peeling Químico & Laser Facial</button>
+                  <button class="ac-item" data-value="Barba Terapia & Visagismo"><span class="ac-tag">Barbearia</span> Barba Terapia & Visagismo Masculino</button>
+                </div>
+              </div>
+
+              <div class="search-divider"></div>
+
+              <div class="search-field search-location">
+                <label for="inputLocation">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <span>Localização</span>
+                </label>
+                <div class="input-with-geo">
+                  <input type="text" id="inputLocation" placeholder="São Paulo, SP (Jardins, Pinheiros...)" value="São Paulo, SP">
+                  <button type="button" class="btn-geo" id="btnGeoloc" title="Usar minha localização">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></svg>
+                  </button>
+                </div>
+              </div>
+
+              <div class="search-divider"></div>
+
+              <div class="search-field search-plan">
+                <label for="selectPlanFilter">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 L5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <span>Filtro de Plano</span>
+                </label>
+                <select id="selectPlanFilter">
+                  <option value="all">Todos os Planos</option>
+                  <option value="basico">Plano Básico</option>
+                  <option value="premium">Plano Premium (Black)</option>
+                </select>
+              </div>
+
+              <button type="button" class="btn-search-submit" id="btnSearchSubmit">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <span>Buscar Serviços</span>
+              </button>
+            </div>
+
+            <!-- TRUST BADGES -->
+            <div class="hero-trust-badges reveal-up">
+              <div class="trust-pill">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>Rede Credenciada com Controle de Qualidade</span>
+              </div>
+              <div class="trust-pill">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <span>Descontos em Salões, Spas e Cosméticos</span>
+              </div>
+              <div class="trust-pill">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span>Suporte Humanizado 24h</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- VISUAL COLUMN -->
+          <div class="hero-visual reveal-up">
+            <div class="hero-visual-card">
+              <img src="hero-visual.jpg" alt="Tratamento estético e bem-estar premium em clínica de alto padrão" loading="eager" decoding="async">
+              <div class="hero-visual-badge">
+                <div class="hv-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+                <div class="hv-text">
+                  <strong>+650 Parceiros Credenciados</strong>
+                  <span>Salões, clínicas de estética, spas e marcas de cosméticos</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- EMOTIONAL FILTER CHIPS & CATALOG -->
+      <section class="catalog-section" id="catalogo">
+        <div class="container">
+          
+          <div class="section-header-catalog">
+            <div>
+              <span class="sub-heading-badge">Ecossistema Completo</span>
+              <h2 class="section-title">Salões, Clínicas de Estética, Spas e Cosméticos</h2>
+              <p class="section-desc">Encontre o cuidado perfeito para você: desde tratamentos capilares e massagens até dermatologia avançada e skincare.</p>
+            </div>
+            
+            <div class="catalog-counter-badge" id="catalogCounter">
+              Exibindo <strong>6</strong> estabelecimentos auditados
+            </div>
+          </div>
+
+          <!-- Emotional / Practical Filter Chips (SVG Icons, No Emojis) -->
+          <div class="emotional-chips-carousel" id="emotionalChips">
+            <button class="chip-btn active" data-filter="all">
+              <svg class="chip-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>
+              <span>Todos os Cuidados</span>
+            </button>
+            <button class="chip-btn" data-filter="hair">
+              <svg class="chip-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>
+              <span>Salões de Beleza & Cabelo</span>
+            </button>
+            <button class="chip-btn" data-filter="stress">
+              <svg class="chip-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a5 5 0 0 0-5 5v3a5 5 0 0 0 10 0V7a5 5 0 0 0-5-5z"/><path d="M5 22v-3a7 7 0 0 1 14 0v3"/></svg>
+              <span>Massoterapia & Spas</span>
+            </button>
+            <button class="chip-btn" data-filter="facial">
+              <svg class="chip-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 10h.01M15 10h.01M9.5 15a3.5 3.5 0 0 0 5 0"/></svg>
+              <span>Estética Facial & Dermatologia</span>
+            </button>
+            <button class="chip-btn" data-filter="cosmetics">
+              <svg class="chip-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+              <span>Cosméticos & Skincare</span>
+            </button>
+          </div>
+
+          <!-- CARDS GRID OF CERTIFIED ESTABLISHMENTS -->
+          <div class="clinics-grid" id="clinicsGrid">
+            <!-- Dynamically populated by app.js -->
+          </div>
+
+        </div>
+      </section>
+
+      <!-- PLANS SECTION (BÁSICO VS PREMIUM) -->
+      <section class="plans-section" id="planos">
+        <div class="container">
+          <div class="text-center plans-header">
+            <span class="sub-heading-badge">Assinatura Flexível</span>
+            <h2 class="section-title">Planos Transparentes que se Pagam na Primeira Sessão</h2>
+            <p class="section-desc">Cancele quando quiser, sem fidelidade e com acesso a uma rede nacional de salões, clínicas e spas.</p>
+
+            <!-- Billing Toggle -->
+            <div class="billing-toggle-container">
+              <span class="toggle-label" id="labelMonthly">Mensal</span>
+              <button class="toggle-switch" id="billingToggle" aria-label="Alternar faturamento">
+                <span class="toggle-knob"></span>
+              </button>
+              <span class="toggle-label active" id="labelAnnual">
+                Anual
+                <span class="discount-pill">20% OFF</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- PLANS COMPARISON CARDS -->
+          <div class="plans-grid">
+            
+            <!-- PLANO BÁSICO -->
+            <div class="plan-card plan-basic">
+              <div class="plan-badge-top">Ideal para Manutenção Contínua</div>
+              <div class="plan-header-card">
+                <h3 class="plan-name">Plano Essencial & Bem-Estar</h3>
+                <p class="plan-target">Foco em cuidados semanais de beleza, salões, massoterapia e estética básica.</p>
+                <div class="plan-price-box">
+                  <span class="currency">R$</span>
+                  <span class="price-value" id="priceBasic">89</span>
+                  <span class="period">/mês</span>
+                </div>
+                <div class="price-economy-tag">Economia média de R$ 340/mês</div>
+              </div>
+
+              <div class="plan-divider"></div>
+
+              <ul class="plan-features">
+                <li>
+                  <svg class="check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span><strong>2 vouchers mensais</strong> em salões de beleza, barbearias ou spas</span>
+                </li>
+                <li>
+                  <svg class="check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Corte, escova, hidratação, massoterapia e limpeza de pele</span>
+                </li>
+                <li>
+                  <svg class="check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Até <strong>30% de desconto</strong> em marcas de cosméticos e skincare parceiras</span>
+                </li>
+                <li>
+                  <svg class="check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Até <strong>45% de desconto</strong> em sessões adicionais avulsas</span>
+                </li>
+                <li>
+                  <svg class="check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Agendamento facilitado via app & Suporte 24h</span>
+                </li>
+              </ul>
+
+              <button class="btn-plan btn-plan-basic" onclick="selectPlan('Básico')">
+                Assinar Plano Básico
+              </button>
+            </div>
+
+            <!-- PLANO PREMIUM (GOLD/DARK LUXURY) -->
+            <div class="plan-card plan-premium">
+              <div class="plan-badge-top badge-gold">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                Mais Escolhido — Alta Performance
+              </div>
+              <div class="plan-header-card">
+                <div class="premium-sparkle-title">
+                  <h3 class="plan-name text-white">Plano Black & Spas Avançados</h3>
+                  <span class="gold-pill-tag">VIP</span>
+                </div>
+                <p class="plan-target text-slate-300">Procedimentos de alta tecnologia, salões premium, dermatologia estética e spas 5 estrelas.</p>
+                <div class="plan-price-box">
+                  <span class="currency gold-text">R$</span>
+                  <span class="price-value gold-text" id="pricePremium">189</span>
+                  <span class="period text-slate-400">/mês</span>
+                </div>
+                <div class="price-economy-tag tag-gold-economy">Economia média de R$ 890/mês</div>
+              </div>
+
+              <div class="plan-divider divider-dark"></div>
+
+              <ul class="plan-features features-dark">
+                <li>
+                  <svg class="check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span><strong>4 vouchers mensais</strong> em toda a rede nacional (Básica + Black VIP)</span>
+                </li>
+                <li>
+                  <svg class="check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Laser Lavieen, Day Spas 5 estrelas, Peelings e Salões de Visagismo</span>
+                </li>
+                <li>
+                  <svg class="check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Até <strong>50% de desconto</strong> em dermocosméticos e produtos de beleza</span>
+                </li>
+                <li>
+                  <svg class="check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Prioridade máxima em reservas e cancelamento flexível</span>
+                </li>
+                <li>
+                  <svg class="check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Concierge pessoal para curadoria de estabelecimentos e produtos</span>
+                </li>
+              </ul>
+
+              <button class="btn-plan btn-plan-premium" onclick="selectPlan('Premium')">
+                Assinar Plano Premium
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- TESTIMONIALS & STATS -->
+      <section class="social-proof-section reveal-up">
+        <div class="container">
+          <div class="stats-row">
+            <div class="stat-card">
+              <div class="stat-num" data-target="45000" data-prefix="+" data-format="int">+45.000</div>
+              <div class="stat-label">Sessões Realizadas</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num" data-target="4.92" data-suffix="/5.0" data-format="decimal">4.92/5.0</div>
+              <div class="stat-label">Nota Média de Satisfação</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num" data-target="650" data-suffix="+" data-format="int">650+</div>
+              <div class="stat-label">Parceiros & Marcas Auditadas</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num" data-target="4.2" data-prefix="R$ " data-suffix="M" data-format="decimal">R$ 4.2M</div>
+              <div class="stat-label">Economizados pelos Usuários</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- CONTEXT 2: PARA EMPRESAS (B2B / RH CORPORATIVO)                     -->
+    <!-- =================================================================== -->
+    <section class="context-view" id="view-b2b">
+      
+      <!-- B2B HERO & VALUE PROP -->
+      <section class="hero-b2b">
+        <div class="container hero-b2b-grid">
+          <div class="b2b-hero-text">
+            <div class="b2b-badge">
+              <span class="badge-dot-cyan"></span>
+              <span>Benefício Corporativo de Alta Adesão para RH & Gestão de Pessoas</span>
+            </div>
+            <h1 class="b2b-title">
+              Reduza o turnover e o absenteísmo invisível com <span class="cyan-gradient">benefícios que o time realmente utiliza.</span>
+            </h1>
+            <p class="b2b-subtitle">
+              Mais de 88% dos colaboradores utilizam o BeautyPass com regularidade. Um benefício flexível que inclui salões de beleza, massoterapia, day spas, estética facial e descontos exclusivos em cosméticos de alta performance.
+            </p>
+            <div class="b2b-cta-actions">
+              <a href="#b2b-calculator" class="btn-primary btn-lg">
+                <span>Simular Investimento para sua Empresa</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+              <a href="#b2b-form" class="btn-secondary-dark btn-lg">
+                Falar com Consultor de RH
+              </a>
+            </div>
+          </div>
+
+          <!-- B2B Quick Metric Card -->
+          <div class="b2b-hero-metric-card">
+            <div class="b2b-metric-header">
+              <span class="metric-title">Impacto no Clima Organizacional</span>
+              <span class="live-pill">Estudo com Empresas Parceiras</span>
+            </div>
+            <div class="b2b-metric-numbers">
+              <div class="metric-block">
+                <span class="num text-cyan" data-target="42" data-prefix="-" data-suffix="%" data-format="int">-42%</span>
+                <span class="desc">Sintomas de Burnout e Estresse</span>
+              </div>
+              <div class="metric-block">
+                <span class="num text-emerald" data-target="38" data-prefix="+" data-suffix="%" data-format="int">+38%</span>
+                <span class="desc">Retenção de Talentos Chave</span>
+              </div>
+              <div class="metric-block">
+                <span class="num text-amber" data-target="45" data-prefix="+" data-suffix="pts" data-format="int">+45pts</span>
+                <span class="desc">Aumento no eNPS da Empresa</span>
+              </div>
+            </div>
+            <div class="b2b-metric-footer">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <span>Relatórios mensais consolidados de utilização anônima para a liderança</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- B2B STRATEGIC PILLARS FOR HR -->
+      <section class="b2b-pillars-section">
+        <div class="container">
+          <div class="text-center">
+            <span class="sub-badge-cyan">Por que o RH Escolhe o BeautyPass</span>
+            <h2 class="b2b-heading-light">Vantagens Estratégicas para Gestão de Pessoas & Cultura</h2>
+            <p class="b2b-desc-light">Facilidade de implementação, valor percebido imediato pelos funcionários e gestão simplificada sem burocracia.</p>
+          </div>
+
+          <div class="b2b-pillars-grid">
+            <div class="b2b-pillar-card">
+              <div class="pillar-icon-box">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              </div>
+              <h3 class="pillar-title">Zero Burocracia Operacional</h3>
+              <p class="pillar-desc">Painel corporativo para inclusão e exclusão de vidas em 1 clique, integração direta via folha de pagamento ou arquivos de RH.</p>
+            </div>
+
+            <div class="b2b-pillar-card">
+              <div class="pillar-icon-box">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+              <h3 class="pillar-title">Adesão Real Superior (+88%)</h3>
+              <p class="pillar-desc">Ao contrário de academias tradicionais com abandono rápido, serviços de corte, escova, massagem e estética são utilizados todos os meses.</p>
+            </div>
+
+            <div class="b2b-pillar-card">
+              <div class="pillar-icon-box">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2"><path d="M12 2a5 5 0 0 0-5 5v3a5 5 0 0 0 10 0V7a5 5 0 0 0-5-5z"/><path d="M5 22v-3a7 7 0 0 1 14 0v3"/></svg>
+              </div>
+              <h3 class="pillar-title">Saúde Mental & Prevenção</h3>
+              <p class="pillar-desc">Protocolos de descompressão, massagens terapêuticas e autocuidado que atuam no combate direto à ansiedade, cansaço e burnout.</p>
+            </div>
+
+            <div class="b2b-pillar-card">
+              <div class="pillar-icon-box">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </div>
+              <h3 class="pillar-title">Modelos Flexíveis de Subsídio</h3>
+              <p class="pillar-desc">A empresa escolhe o formato ideal: 100% subsidiado, coparticipação com desconto em folha ou benefício flexível sem custo fixo.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- INTERACTIVE INVESTMENT & SIZING CALCULATOR FOR HR -->
+      <section class="b2b-calculator-section" id="b2b-calculator">
+        <div class="container">
+          <div class="calc-card">
+            
+            <div class="calc-sidebar">
+              <span class="sub-badge-cyan">Simulador de Dimensionamento</span>
+              <h2 class="calc-title">Simule o Impacto para sua Equipe</h2>
+              <p class="calc-desc">Arraste a barra para selecionar a quantidade de colaboradores da sua empresa e veja as estimativas de engajamento e economia.</p>
+
+              <!-- Headcount Slider -->
+              <div class="slider-control-group">
+                <div class="slider-header">
+                  <label for="employeeSlider">Número de Colaboradores:</label>
+                  <span class="slider-display-val" id="employeeCountDisplay">150 colaboradores</span>
+                </div>
+                <input type="range" id="employeeSlider" min="10" max="2500" step="10" value="150" class="custom-range">
+                <div class="slider-scale">
+                  <span>10</span>
+                  <span>500</span>
+                  <span>1.000</span>
+                  <span>2.500+</span>
+                </div>
+              </div>
+
+              <!-- Coparticipation Selector -->
+              <div class="copay-group">
+                <label>Modelo de Subsídio Corporativo:</label>
+                <div class="copay-options">
+                  <button type="button" class="btn-copay active" data-copay="100">100% Empresa</button>
+                  <button type="button" class="btn-copay" data-copay="70">70% Empresa / 30% Colaborador</button>
+                  <button type="button" class="btn-copay" data-copay="50">50% Coparticipação</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Calculation Output Dashboard -->
+            <div class="calc-results-panel">
+              <div class="results-title">Projeção Estimada para sua Empresa</div>
+
+              <div class="result-metric-grid">
+                <div class="metric-result-card">
+                  <span class="m-label">Horas Produtivas Recuperadas</span>
+                  <span class="m-val text-cyan" id="metricHours">3.600h / ano</span>
+                  <span class="m-sub">Redução de presenteísmo e fadiga</span>
+                </div>
+                <div class="metric-result-card">
+                  <span class="m-label">Economia em Sinistralidade Médica</span>
+                  <span class="m-val text-emerald" id="metricHealthSavings">R$ 144.000</span>
+                  <span class="m-sub">Prevenção ativa de estresse crônico</span>
+                </div>
+                <div class="metric-result-card">
+                  <span class="m-label">Aumento Projetado no eNPS</span>
+                  <span class="m-val text-amber" id="metricNps">+38 Pontos</span>
+                  <span class="m-sub">Satisfação e clima organizacional</span>
+                </div>
+                <div class="metric-result-card highlight-metric">
+                  <span class="m-label">Fator de Retorno por Colaborador</span>
+                  <span class="m-val text-white" id="metricRoi">3.4x</span>
+                  <span class="m-sub">R$ 3,40 gerados em valor a cada R$ 1 investido</span>
+                </div>
+              </div>
+
+              <div class="calc-footer-action">
+                <button class="btn-primary btn-block" onclick="scrollToB2bForm()">
+                  Solicitar Proposta Customizada para <span id="btnColabCount">150</span> Colaboradores
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- CORPORATE PLAN PACKAGES -->
+      <section class="b2b-plans-section">
+        <div class="container">
+          <div class="text-center">
+            <span class="sub-badge-cyan">Modelos de Contratação</span>
+            <h2 class="b2b-heading-light">Planos Corporativos para Empresas a partir de 10 Vidas</h2>
+            <p class="b2b-desc-light">Soluções adaptáveis ao orçamento e à política de benefícios da sua organização.</p>
+          </div>
+
+          <div class="b2b-plans-grid">
+            <div class="b2b-plan-card">
+              <div class="b2b-plan-tag">Mais Popular</div>
+              <h3 class="b2b-plan-title">Corporate Essencial</h3>
+              <p class="b2b-plan-desc">Cuidados semanais para toda a equipe em salões, barbearias, corte, escova, massoterapia e cosméticos.</p>
+              <ul class="b2b-plan-features">
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 2 vouchers mensais por colaborador</li>
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Acesso a salões de beleza, barbearias e massagens</li>
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Descontos de até 30% em cosméticos</li>
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Painel de gestão do RH com relatórios</li>
+              </ul>
+              <a href="#b2b-form" class="btn-primary btn-block">Solicitar Cotação</a>
+            </div>
+
+            <div class="b2b-plan-card featured-corporate">
+              <div class="b2b-plan-tag gold-tag">Executivo & Liderança</div>
+              <h3 class="b2b-plan-title">Corporate Black VIP</h3>
+              <p class="b2b-plan-desc">Experiência completa com day spas 5 estrelas, dermatologia estética, peelings e concierge dedicado.</p>
+              <ul class="b2b-plan-features">
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 4 vouchers mensais por colaborador</li>
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Toda a rede: Spas 5 estrelas, Dermato & Laser</li>
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Descontos de até 50% em dermocosméticos</li>
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Gerente de contas dedicado & Concierge 24h</li>
+              </ul>
+              <a href="#b2b-form" class="btn-primary btn-block">Solicitar Cotação</a>
+            </div>
+
+            <div class="b2b-plan-card">
+              <div class="b2b-plan-tag">Flexível</div>
+              <h3 class="b2b-plan-title">BeautyPass Flex & Premiação</h3>
+              <p class="b2b-plan-desc">Créditos de bem-estar para datas comemorativas, campanhas de incentivo, metas batidas e reconhecimento de equipes.</p>
+              <ul class="b2b-plan-features">
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Carga pontual de créditos para campanhas</li>
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Ideal para Dia da Mulher, Fim de Ano e Metas</li>
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Sem mensalidade recorrente obrigatória</li>
+                <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Emissão rápida de vouchers digitais presente</li>
+              </ul>
+              <a href="#b2b-form" class="btn-primary btn-block">Solicitar Cotação</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- B2B QUICK CONTACT FORM (ATENDIMENTO CONSULTIVO) -->
+      <section class="b2b-form-section" id="b2b-form">
+        <div class="container form-container-narrow">
+          <div class="text-center">
+            <span class="sub-badge-cyan">Atendimento Consultivo</span>
+            <h2 class="b2b-heading-light">Fale com Nossos Especialistas em Benefícios Corporativos</h2>
+            <p class="b2b-desc-light">Receba uma apresentação executiva personalizada, tabela de planos corporativos e um voucher cortesia para degustação do RH.</p>
+          </div>
+
+          <form class="b2b-lead-form" id="b2bLeadForm" onsubmit="handleB2bSubmit(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="b2bName">Seu Nome Completo *</label>
+                <input type="text" id="b2bName" required placeholder="Ex: Mariana Albuquerque">
+              </div>
+              <div class="form-group">
+                <label for="b2bCompany">Nome da Empresa *</label>
+                <input type="text" id="b2bCompany" required placeholder="Ex: TechCorp Brasil">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="b2bEmail">E-mail Corporativo *</label>
+                <input type="email" id="b2bEmail" required placeholder="mariana@empresa.com.br">
+              </div>
+              <div class="form-group">
+                <label for="b2bPhone">Telefone / WhatsApp *</label>
+                <input type="tel" id="b2bPhone" required placeholder="(11) 98765-4321">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="b2bSize">Quantidade Estimada de Vidas:</label>
+              <select id="b2bSize">
+                <option value="10-50">10 a 50 colaboradores</option>
+                <option value="51-200" selected>51 a 200 colaboradores</option>
+                <option value="201-1000">201 a 1.000 colaboradores</option>
+                <option value="1000+">Mais de 1.000 colaboradores</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn-primary btn-lg btn-block" id="btnSubmitB2b">
+              <span>Solicitar Demonstração Executiva para RH</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+            <p class="form-privacy-note">Seus dados estão protegidos sob sigilo. Retorno em até 2 horas úteis.</p>
+          </form>
+        </div>
+      </section>
+
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- CONTEXT 3: PARA ESTABELECIMENTOS (PARCEIROS & CREDENCIAMENTO)       -->
+    <!-- =================================================================== -->
+    <section class="context-view" id="view-partner">
+      
+      <!-- PARTNER HERO -->
+      <section class="hero-partner">
+        <div class="container hero-partner-inner">
+          <div class="partner-badge">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span>Programa de Parceiros Credenciados</span>
+          </div>
+          <h1 class="partner-title">
+            Encha sua agenda com <span class="gradient-text">clientes corporativos de alto poder aquisitivo.</span>
+          </h1>
+          <p class="partner-subtitle">
+            Faça parte do ecossistema BeautyPass. Receba pagamentos garantidos em D+1, elimine horários ociosos na sua clínica, salão ou spa e conte com tecnologia operacional de ponta.
+          </p>
+          <div class="partner-cta-row">
+            <a href="#simulador-voucher" class="btn-primary btn-lg">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              <span>Testar Simulador da Recepção</span>
+            </a>
+            <a href="#onboarding-steps" class="btn-secondary btn-lg">
+              Como Funciona o Credenciamento
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- PARTNER VALUE PILLARS -->
+      <section class="partner-pillars-section">
+        <div class="container">
+          <div class="text-center">
+            <span class="sub-heading-badge">Vantagens Comerciais</span>
+            <h2 class="section-title">Por que Credenciar seu Estabelecimento</h2>
+            <p class="section-desc">Rentabilidade garantida, novos clientes recorrentes e tecnologia que simplifica a operação da sua recepção.</p>
+          </div>
+
+          <div class="partner-pillars-grid">
+            <div class="partner-pillar-card">
+              <div class="p-icon-box">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <h3 class="p-title">Ocupação de Horários Ociosos</h3>
+              <p class="p-desc">Preencha salas, macas e cadeiras vagas nos horários de menor movimento com clientes corporativos qualificados, aumentando a receita por metro quadrado.</p>
+            </div>
+
+            <div class="partner-pillar-card">
+              <div class="p-icon-box">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </div>
+              <h3 class="p-title">Repasse Garantido em D+1</h3>
+              <p class="p-desc">Após a validação do voucher na recepção, o repasse financeiro é creditado na conta bancária do estabelecimento no dia útil seguinte, sem risco de inadimplência.</p>
+            </div>
+
+            <div class="partner-pillar-card">
+              <div class="p-icon-box">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              </div>
+              <h3 class="p-title">Sem Taxa de Adesão ou Mensalidade</h3>
+              <p class="p-desc">O credenciamento é totalmente gratuito. Você não paga mensalidade para participar e recebe o valor acordado por cada procedimento realizado.</p>
+            </div>
+
+            <div class="partner-pillar-card">
+              <div class="p-icon-box">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </div>
+              <h3 class="p-title">Selo de Qualidade & Prestígio</h3>
+              <p class="p-desc">Sua marca ganha destaque em nossa vitrine nacional auditada, atraindo um público de alto poder aquisitivo que contrata tratamentos complementares no seu espaço.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3-STEP ONBOARDING FLOW -->
+      <section class="onboarding-section" id="onboarding-steps">
+        <div class="container">
+          <div class="text-center">
+            <span class="sub-heading-badge">Fluxo Transparente</span>
+            <h2 class="section-title">Como Funciona a Parceria em 3 Passos Simples</h2>
+            <p class="section-desc">Sem taxas de adesão, sem burocracia e com rentabilidade garantida por procedimento.</p>
+          </div>
+
+          <div class="steps-grid">
+            
+            <div class="step-card">
+              <div class="step-number">01</div>
+              <div class="step-icon-wrap">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              </div>
+              <h3 class="step-title">Cadastro & Auditoria Rápida</h3>
+              <p class="step-desc">Você cadastra seu salão, clínica ou spa e envia fotos do espaço. Nossa equipe realiza a auditoria de qualidade em até 24h úteis.</p>
+            </div>
+
+            <div class="step-card">
+              <div class="step-number">02</div>
+              <div class="step-icon-wrap">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
+              <h3 class="step-title">Receba Agendamentos Qualificados</h3>
+              <p class="step-desc">Seus horários são disponibilizados no app. Colaboradores de grandes empresas e assinantes geram vouchers e agendam com praticidade.</p>
+            </div>
+
+            <div class="step-card">
+              <div class="step-number">03</div>
+              <div class="step-icon-wrap">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </div>
+              <h3 class="step-title">Validação Instantânea & Repasse D+1</h3>
+              <p class="step-desc">A recepção valida o QR Code em 3 segundos. O repasse financeiro é creditado diretamente na conta do estabelecimento no dia útil seguinte.</p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- INTERACTIVE VOUCHER VALIDATOR SIMULATOR (RECEPTION DESK INTERFACE) -->
+      <section class="validator-simulator-section" id="simulador-voucher">
+        <div class="container">
+          
+          <div class="simulator-wrapper">
+            <div class="simulator-info">
+              <span class="sub-badge-cyan">Simulador Operacional</span>
+              <h2 class="simulator-heading">Interface de Recepção do Estabelecimento Parceiro</h2>
+              <p class="simulator-desc">
+                Experimente a agilidade do sistema de recepção. Você pode escanear o QR Code de um cliente ou digitar um código de teste para ver a validação e o repasse em tempo real.
+              </p>
+              
+              <div class="quick-code-hints">
+                <span class="hint-title">Códigos de Teste Prontos para Testar:</span>
+                <div class="hint-chips">
+                  <button type="button" class="btn-hint" onclick="fillValidatorCode('BP-9042-LUX')">BP-9042-LUX (Studio Aurora)</button>
+                  <button type="button" class="btn-hint" onclick="fillValidatorCode('BP-8812-SKN')">BP-8812-SKN (Buddha Spa)</button>
+                  <button type="button" class="btn-hint" onclick="fillValidatorCode('BP-7731-BAR')">BP-7731-BAR (Barber Lounge)</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Terminal / Scanner Device Simulator -->
+            <div class="pos-device-card">
+              <div class="pos-screen-header">
+                <div class="pos-brand">BeautyPass Partner Terminal v2.4</div>
+                <div class="pos-status-badge"><span class="pulse-dot"></span> Online</div>
+              </div>
+
+              <div class="pos-screen-body">
+                
+                <!-- QR Code Scanner Animation Preview -->
+                <div class="pos-scanner-box">
+                  <div class="scanner-laser"></div>
+                  <div class="scanner-frame">
+                    <svg class="qr-mockup-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01"/></svg>
+                    <span class="scanner-prompt">Aponte a câmera para o QR Code do cliente</span>
+                  </div>
+                </div>
+
+                <div class="pos-input-group">
+                  <label for="posVoucherInput">Ou Digite o Código do Voucher:</label>
+                  <div class="pos-input-row">
+                    <input type="text" id="posVoucherInput" placeholder="Ex: BP-9042-LUX" uppercase>
+                    <button type="button" class="btn-pos-validate" id="btnPosValidate" onclick="simulateVoucherValidation()">
+                      Validar
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Validation Result Alert Box -->
+                <div class="pos-result-box" id="posResultBox" style="display: none;">
+                  <!-- Filled dynamically -->
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- PARTNER FAQ SECTION -->
+      <section class="partner-faq-section">
+        <div class="container">
+          <div class="text-center">
+            <span class="sub-heading-badge">Dúvidas Frequentes</span>
+            <h2 class="section-title">Perguntas Comuns sobre o Credenciamento</h2>
+            <p class="section-desc">Tudo o que você precisa saber para começar a receber clientes do BeautyPass no seu espaço.</p>
+          </div>
+
+          <div class="partner-faq-grid">
+            <div class="faq-card">
+              <h3 class="faq-question">Como e quando o estabelecimento recebe os repasses?</h3>
+              <p class="faq-answer">Todos os atendimentos validados via QR Code ou código no app da recepção têm o repasse financeiro creditado automaticamente na sua conta bancária em D+1 (no primeiro dia útil seguinte), com extrato transparente no portal.</p>
+            </div>
+
+            <div class="faq-card">
+              <h3 class="faq-question">Existe taxa de adesão, mensalidade ou fidelidade?</h3>
+              <p class="faq-answer">Não. O credenciamento no BeautyPass é 100% gratuito. Não cobramos mensalidade nem taxa de manutenção. Você só atende os clientes e recebe pelo procedimento realizado.</p>
+            </div>
+
+            <div class="faq-card">
+              <h3 class="faq-question">Como controlo os horários e serviços disponíveis?</h3>
+              <p class="faq-answer">Você tem autonomia total no Portal do Parceiro para definir quais dias, horários e profissionais estarão disponíveis para receber clientes BeautyPass, preservando seus horários nobres para clientes particulares.</p>
+            </div>
+
+            <div class="faq-card">
+              <h3 class="faq-question">O que acontece se o cliente desejar procedimentos adicionais?</h3>
+              <p class="faq-answer">Se o cliente desejar realizar serviços adicionais, produtos de home care ou upgrades no momento da visita, o pagamento desse valor extra é feito diretamente na sua máquina de cartão com 100% de receita para o seu estabelecimento.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </section>
+
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- UNIVERSAL MODALS & DRAWERS                                            -->
+  <!-- ===================================================================== -->
+
+  <!-- 1. DIGITAL VOUCHER MODAL (BOARDING PASS STYLE) -->
+  <div class="modal-overlay" id="voucherModal" aria-hidden="true">
+    <div class="modal-dialog voucher-boarding-pass" role="dialog" aria-modal="true" aria-labelledby="voucherModalTitle">
+      
+      <button class="btn-close-modal" onclick="closeVoucherModal()" aria-label="Fechar modal">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+
+      <!-- Boarding Pass Header -->
+      <div class="boarding-header">
+        <div class="boarding-logo">
+          <img src="Logo BeautyPass.jfif" alt="Logo" class="boarding-logo-img">
+          <span class="logo-name">Beauty<span class="highlight">Pass</span> Voucher</span>
+        </div>
+        <div class="voucher-status-pill" id="vModalStatus">
+          <span class="pulse-dot"></span> Pronto para Uso
+        </div>
+      </div>
+
+      <!-- Boarding Pass Main Body -->
+      <div class="boarding-body">
+        
+        <div class="v-clinic-info">
+          <h3 id="vModalProcedure">Massagem Relaxante com Aromaterapia</h3>
+          <p class="v-clinic-name" id="vModalClinic">Spa & Estética Buddha Garden — Jardins</p>
+        </div>
+
+        <div class="v-details-grid">
+          <div class="v-cell">
+            <span class="v-cell-label">Beneficiário</span>
+            <span class="v-cell-val" id="vModalUser">Mariana Silva</span>
+          </div>
+          <div class="v-cell">
+            <span class="v-cell-label">Plano Vinculado</span>
+            <span class="v-cell-val" id="vModalPlan">Plano Premium</span>
+          </div>
+          <div class="v-cell">
+            <span class="v-cell-label">Economia da Sessão</span>
+            <span class="v-cell-val text-emerald" id="vModalSavings">R$ 180,00</span>
+          </div>
+          <div class="v-cell">
+            <span class="v-cell-label">Expiração do Voucher</span>
+            <span class="v-cell-val text-amber font-mono" id="vModalTimer">14:59 min</span>
+          </div>
+        </div>
+
+        <!-- Punch hole decorative cutouts -->
+        <div class="boarding-cutout-left"></div>
+        <div class="boarding-cutout-right"></div>
+        <div class="boarding-perforation"></div>
+
+        <!-- QR Code & Barcode Section -->
+        <div class="boarding-qr-section">
+          <div class="qr-canvas-wrapper">
+            <div id="vModalQrCanvas"></div>
+          </div>
+          <div class="qr-info-right">
+            <span class="qr-code-label">Código de Liberação:</span>
+            <span class="qr-code-val" id="vModalCode">BP-9042-LUX</span>
+            <button class="btn-copy-code" onclick="copyVoucherCode()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <span>Copiar Código</span>
+            </button>
+            <p class="qr-instruction">Apresente este QR Code na recepção para liberar seu atendimento.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="boarding-footer">
+        <button class="btn-secondary btn-block" onclick="saveVoucherOffline()">
+          Salvar na Carteira do Celular
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 2. USER DIGITAL WALLET DRAWER -->
+  <div class="drawer-overlay" id="walletDrawer" aria-hidden="true" onclick="closeWalletDrawer(event)">
+    <div class="drawer-panel" onclick="event.stopPropagation()">
+      
+      <div class="drawer-header">
+        <div class="drawer-title-row">
+          <div class="avatar-user">MS</div>
+          <div>
+            <h3 class="user-greeting">Olá, Mariana Silva</h3>
+            <span class="user-plan-tag">Plano Premium Black • Empresa: Nubank</span>
+          </div>
+        </div>
+        <button class="btn-close-drawer" onclick="closeWalletModal()" aria-label="Fechar carteira">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="drawer-body">
+        
+        <!-- Monthly Economy Circular Progress Widget -->
+        <div class="wallet-savings-widget">
+          <div class="savings-circle-container">
+            <svg class="savings-svg" width="110" height="110" viewBox="0 0 100 100">
+              <circle class="circle-bg" cx="50" cy="50" r="40" stroke="#e2e8f0" stroke-width="8" fill="none"/>
+              <circle class="circle-progress" cx="50" cy="50" r="40" stroke="#0D9488" stroke-width="8" stroke-dasharray="251.2" stroke-dashoffset="65" stroke-linecap="round" fill="none"/>
+            </svg>
+            <div class="savings-circle-inner">
+              <span class="savings-val">74%</span>
+              <span class="savings-sub">da cota</span>
+            </div>
+          </div>
+          <div class="savings-info-text">
+            <span class="s-label">Você economizou este mês:</span>
+            <span class="s-amount">R$ 680,00</span>
+            <span class="s-desc">3 de 4 vouchers utilizados no ciclo atual</span>
+          </div>
+        </div>
+
+        <!-- Active Vouchers List -->
+        <div class="wallet-section-title">Voucher Ativo (Pronto para Uso)</div>
+        <div class="wallet-voucher-card" onclick="openActiveVoucherModal()">
+          <div class="w-voucher-header">
+            <span class="w-v-code">BP-9042-LUX</span>
+            <span class="badge-active-v">Expira em 14min</span>
+          </div>
+          <h4 class="w-v-title">Massagem Relaxante com Aromaterapia</h4>
+          <p class="w-v-clinic">Spa & Estética Buddha Garden (Jardins)</p>
+          <div class="w-v-footer">
+            <span class="w-v-view">Clique para Ver QR Code →</span>
+          </div>
+        </div>
+
+        <!-- Past Vouchers History -->
+        <div class="wallet-section-title">Histórico de Atendimentos</div>
+        <div class="history-item">
+          <div class="h-icon">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="h-info">
+            <div class="h-name">Limpeza de Pele Profunda + LED</div>
+            <div class="h-meta">Clínica Dermatológica DermaPrime • 14 de Agosto</div>
+          </div>
+          <div class="h-price-tag">Incluso</div>
+        </div>
+
+        <div class="history-item">
+          <div class="h-icon">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="h-info">
+            <div class="h-name">Drenagem Linfática Corporal</div>
+            <div class="h-meta">Clínica Estética Revitalize • 02 de Agosto</div>
+          </div>
+          <div class="h-price-tag">Incluso</div>
+        </div>
+
+      </div>
+
+      <div class="drawer-footer">
+        <button class="btn-primary btn-block" onclick="switchContext('b2c'); closeWalletModal();">
+          Explorar Mais Cuidados
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 3. FLOATING 24H AI CONCIERGE & SUPPORT WIDGET -->
+  <div class="concierge-widget" id="conciergeWidget">
+    
+    <!-- Chat Popup Window -->
+    <div class="concierge-chat-panel" id="conciergePanel">
+      <div class="concierge-header">
+        <div class="concierge-avatar">
+          <span class="bot-status-dot"></span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div class="concierge-header-info">
+          <h4>Concierge BeautyPass 24h</h4>
+          <span>Assistente de Agendamento & Benefícios</span>
+        </div>
+        <button class="btn-close-chat" onclick="toggleConcierge()" aria-label="Fechar chat">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="concierge-messages" id="conciergeMessages">
+        <div class="chat-msg bot-msg">
+          Olá, Mariana! Sou o Concierge do BeautyPass. Como posso ajudar com seus agendamentos, salões, clínicas e vouchers hoje?
+        </div>
+      </div>
+
+      <!-- Quick Prompt Chips -->
+      <div class="chat-quick-chips">
+        <button class="btn-chat-chip" onclick="sendQuickPrompt('Como gero meu voucher de salão ou massagem?')">Gerar Voucher</button>
+        <button class="btn-chat-chip" onclick="sendQuickPrompt('O que está incluso no meu Plano Premium?')">Cobertura do Plano</button>
+        <button class="btn-chat-chip" onclick="sendQuickPrompt('Como indicar minha empresa?')">Indicar Empresa</button>
+      </div>
+
+      <!-- Chat Input Field -->
+      <form class="concierge-input-form" onsubmit="handleChatSubmit(event)">
+        <input type="text" id="chatInput" placeholder="Digite sua dúvida..." autocomplete="off">
+        <button type="submit" class="btn-send-chat" aria-label="Enviar mensagem">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </form>
+    </div>
+
+    <!-- Floating Trigger Button -->
+    <button class="btn-concierge-trigger" id="btnConciergeTrigger" onclick="toggleConcierge()" title="Suporte 24h & Concierge">
+      <div class="trigger-icon-wrap">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <span class="trigger-label">Suporte 24h</span>
+    </button>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-col-brand">
+        <div class="brand-logo footer-logo">
+          <div class="logo-mark">
+            <img src="Logo BeautyPass.jfif" alt="BeautyPass Logo" class="brand-logo-img">
+          </div>
+          <span class="logo-name">Beauty<span class="highlight">Pass</span></span>
+        </div>
+        <p class="footer-desc">A plataforma líder em benefícios de beleza, estética, salões, spas e autocuidado integrado para pessoas e empresas inovadoras.</p>
+        <p class="footer-rights">© 2026 BeautyPass Tecnologia Ltda. Todos os direitos reservados.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Para Usuários</h4>
+        <ul>
+          <li><a href="#catalogo" onclick="switchContext('b2c')">Buscar Salões & Clínicas</a></li>
+          <li><a href="#planos" onclick="switchContext('b2c')">Planos & Preços</a></li>
+          <li><a href="#" onclick="openWalletModal(); return false;">Consultar Voucher</a></li>
+          <li><a href="#" onclick="toggleConcierge(); return false;">Suporte & Concierge</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Para Empresas (RH)</h4>
+        <ul>
+          <li><a href="#b2b-form" onclick="switchContext('b2b')">Solicitar Apresentação</a></li>
+          <li><a href="#b2b-form" onclick="switchContext('b2b')">Falar com Consultor</a></li>
+          <li><a href="#" onclick="switchContext('b2b')">Benefício Corporativo</a></li>
+          <li><a href="#" onclick="switchContext('b2b')">Cases de Sucesso</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Estabelecimentos</h4>
+        <ul>
+          <li><a href="#simulador-voucher" onclick="switchContext('partner')">Validador de Voucher</a></li>
+          <li><a href="#onboarding-steps" onclick="switchContext('partner')">Credenciamento</a></li>
+          <li><a href="#" onclick="switchContext('partner')">Repasse D+1</a></li>
+          <li><a href="#" onclick="switchContext('partner')">Portal do Parceiro</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <!-- GSAP Animation Engine -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+
+  <!-- SCRIPT -->
+  <script src="app.js" defer></script>
+</body>
+</html>

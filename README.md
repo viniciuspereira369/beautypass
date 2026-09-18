@@ -37,12 +37,21 @@ O aplicativo centraliza a jornada completa do cliente:
 
 ---
 
-## 🚀 Como Executar o Aplicativo
+## 🚀 Demonstração Online & Como Executar
+
+### 🌐 Acessar Diretamente pelo Navegador (GitHub Pages)
+O aplicativo já está publicado e pode ser acessado de qualquer celular, tablet ou computador através do GitHub Pages:
+- 📱 **[Abrir Aplicativo BeautyPass (App Mobile Interativo)](https://viniciuspereira369.github.io/beautypass/beautypass_app.html)**
+- 🏢 **[Abrir Portal Institucional / Landing Page](https://viniciuspereira369.github.io/beautypass/)**
+- 📊 **[Abrir Pitch Deck & Proposta de Valor](https://viniciuspereira369.github.io/beautypass/pitch_deck_beautypass.html)**
+
+---
+
+### 💻 Execução Local
 
 Como o projeto é construído em tecnologia web pura (HTML5, CSS3 moderno e Vanilla JavaScript), **não é necessário instalar dependências ou configuradores complexos**.
 
-### Opção 1: Abrir diretamente no navegador
-Basta clonar o repositório e abrir o arquivo principal:
+#### Opção 1: Abrir diretamente no navegador
 1. Clone este repositório:
    ```bash
    git clone https://github.com/viniciuspereira369/beautypass.git

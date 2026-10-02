@@ -1,0 +1,575 @@
+# 📋 Registro de Desenvolvimento — BeautyPass "The Triple Fusion"
+
+> **Data de Registro:** 26 de Setembro de 2026  
+> **Status:** Protótipo de Validação Construído, Testado e Operacional  
+> **Branch Git:** `main`  
+> **URL Local de Execução:** `http://localhost:8089/beautypass_app.html`  
+> **Arquivos Principais:** `beautypass_app.html`, `styles.css`, `app.js`, `DESIGN.md`
+
+---
+
+## 1. Contexto e Objetivos
+
+O objetivo desta sessão foi consolidar as diretrizes da **Documentação Técnica do Protótipo de Validação** (`documenta_o_t_cnica_prot_tipo_de_valida_o.md`) e fundir as mecânicas das **três especificações de UI/UX** fornecidas como inspiração, materializando a solução no Design System **Serene Mint & Teal** (`DESIGN.md`):
+
+1. **Corridas Autônomas (`documenta_o_ui_ux_agendamento_de_corridas_aut_nomas.md`):**
+   - Agendamento temporal de alta precisão com **Seletor Radial Analógico-Digital (Gauge Clock)**.
+   - Régua horizontal de datas.
+   - Cards de garantias pós-reserva (*Cancelamento gratuito* e *Tolerância garantida*).
+   - Itinerário em *Route Stepper*.
+2. **Mobilidade Urbana (`documenta_o_ui_ux_app_de_mobilidade_urbana.md`):**
+   - Hub de entrada com banner de gamificação e retenção ("Ganhe 15% nos primeiros 3 agendamentos").
+   - Proximidade com estimativas a pé e por veículo.
+   - Viewport cartográfico com traçado dinâmico de rota conectando o usuário ao destino.
+   - Bottom Sheet expansível com salões próximos.
+3. **Social Food Delivery (`documenta_o_ui_ux_app_social_food_delivery.md`):**
+   - Mecânicas de prova social em tempo real no feed (*"Amigas estão agendando: #Camila agendou há 14 min"*).
+   - Carrossel de categorias visuais (Cabelo, Unhas, Estética, Massagem, Skincare).
+   - Sistema de marcadores cartográficos concêntricos com halo suave indicando ofertas ativas.
+4. **Documentação Técnica de Validação (`documenta_o_t_cnica_prot_tipo_de_valida_o.md`):**
+   - Marketplace de beleza focado em validar se usuários aderem a **preços dinâmicos em horários de ociosidade** (Hipótese H1) e aceitam pré-autorização de cartão (Hipótese H2).
+   - Regras rígidas de copy: badges **"Horário Econômico"** e **"Última Hora"**, subtextos explicativos, par completo de preço (`~~R$ 120,00~~` → **R$ 84,00**), tooltip explicativo *"Por que o preço varia?"*, retenção de slot por 10 minutos (`PENDING_PAYMENT`), validação de cartão via Algoritmo de Luhn local e pesquisa de motivo de cancelamento (T4).
+
+---
+
+## 2. Decisões Tomadas no Alinhamento (`/grill-me` & `/plan`)
+
+Durante o processo interativo de alinhamento com o usuário, foram estruturadas e aprovadas as seguintes decisões:
+
+| Decisão | Opção Escolhida | Justificativa |
+|---|---|---|
+| **Abordagem de Design** | **Versão C: "The Triple Fusion"** | Une os três universos: Home com Feed Social e Retenção, Aba de Mapa com Geo-Discovery e Rota Dinâmica, e Seletor Radial de Horários com preços dinâmicos. |
+| **Plataforma de Construção** | **Aplicação Web Mobile-First SPA** | HTML5, CSS3 moderno com Design Tokens e JavaScript puro, diretamente testável no navegador, responsivo e compatível com GitHub Pages. |
+| **Modelo Financeiro Visual** | **Apenas Reais (R$)** | Aderência 100% à documentação técnica de validação, exibindo o par de preço base riscado + preço final com desconto percentual e checkout simulado com cartão. |
+| **Arquitetura de Telas** | **Shell Mobile Único Navegável** | Interface fluida contendo visualizador de celular elegante e botão de alternância para tela cheia, integrando as 5 telas sem recarregamento. |
+| **Marcadores do Mapa** | **Pontos Concêntricos Minimalistas** | Eliminação completa de emojis amadores (`✂️`). Cada localidade é indicada por ponto esmeralda sólido (`#00685F`), anel pulsante menta (`#5EEAD4`) e etiqueta limpa com o nome do bairro (*Pinheiros*, *Jardins*, *Itaim Bibi*). |
+| **Interação Cartográfica** | **Traçado Dinâmico de Rota** | Ao tocar em qualquer marcador ou buscar por texto, uma linha em verde-esmeralda é traçada a partir da localização do usuário e o Bottom Sheet destaca o salão. |
+| **Top Bar do Mapa** | **Busca Livre sem Botões Redundantes** | Interface limpa com campo de busca por texto livre, maximizando o espaço visual do mapa. |
+
+---
+
+## 3. Arquitetura e Estrutura dos Arquivos
+
+```text
+Projeto BeautyPass/
+│
+├── beautypass_app.html      # APLICAÇÃO PRINCIPAL: Single Page App (The Triple Fusion)
+│                            # (Controlador de moldura, 5 telas, modais e barra flutuante)
+├── styles.css               # Design System Serene Mint & Teal (variáveis CSS, gauge e mapa)
+├── app.js                   # Lógica de negócio, catálogo seed, mostrador radial, Luhn e analytics
+├── DESIGN.md                # Tokens de cores, tipografia Plus Jakarta Sans e elevações
+├── CONTEXT.md               # Memória técnica corporativa e histórico do projeto
+├── README.md                # Apresentação do projeto no GitHub
+│
+├── treatment_*.jpg          # Fotografias locais de procedimentos estéticos em alta definição:
+│   ├── treatment_hair_salon.jpg       # Cabelo & Escova Modeladora
+│   ├── treatment_eyebrows_beauty.jpg   # Sobrancelhas, Unhas & Spa
+│   ├── treatment_facial_spa.jpg       # Estética Facial & Peeling
+│   ├── treatment_massage_spa.jpg      # Massagem Sueca Relaxante
+│   └── treatment_skincare_cosmetics.jpg # Skincare e cosméticos
+│
+├── Logo BeautyPass.jfif     # Logotipo oficial
+└── assets/                  # Ícones, gráficos e ativos estáticos
+```
+
+---
+
+## 4. Detalhamento das 5 Telas Implementadas
+
+### Tela 1: Home — Social Proof & Discovery Hub
+- Header contextual com saudação personalizada (*"Olá, Camila!"*) e localizador (*"Pinheiros, SP"*).
+- Banner de retenção e gamificação do Clube BeautyPass (progresso de 1 de 3 para 15% OFF).
+- Barra de busca em cápsula com atalho direto ao mapa.
+- Carrossel horizontal de categorias com fotografias locais.
+- Trilha de filtros rápidos (*"Todos"*, *"🏷️ Horário Econômico"*, *"🚶 Mais Próximos"*).
+- Feed Social *"Amigas estão agendando"*: cards ricos com fotos de procedimentos, tags flutuantes translúcidas, avaliações, par de preços dinâmicos e botão de agendamento imediato.
+
+### Tela 2: Geo-Discovery — Mapa Interativo com Rota Dinâmica
+- Viewport de mapa suave (Leaflet com camada CartoDB Positron) cobrindo São Paulo (Pinheiros, Jardins, Itaim Bibi).
+- Marcador da posição atual do usuário com pulso GPS.
+- Marcadores concêntricos minimalistas com halo menta e etiquetas de bairros.
+- Traçado dinâmico de rota conectando o usuário ao destino selecionado via linha pontilhada esmeralda (`#00685F`).
+- Barra de busca livre em tempo real para filtrar bairros e salões.
+- Bottom Sheet deslizante com cards horizontais dos salões no raio de 10 km.
+
+### Tela 3: Detalhe do Salão & Seletor Radial de Horários
+- Perfil do salão com foto hero, endereço completo e serviço selecionado.
+- Carrossel de seleção de profissionais com fotos e ratings individuais (com opção padrão).
+- Régua horizontal de datas (dias da semana e números).
+- **Mostrador Radial Analógico-Digital (Gauge Clock):**
+  - Arco graduado semicircular em SVG que reage ao slider em intervalos de 15 minutos (09:00 às 19:00).
+  - Mostrador digital central com alternador `Manhã / Tarde`.
+  - Detecção automática de faixas com desconto, ativando as badges **"Horário Econômico"** e **"Última Hora"** e recalculando o valor do serviço em tempo real.
+  - Botão de ajuda `?` abrindo modal com a cópia obrigatória da seção 6.2: *"Por que o preço varia?"*.
+
+### Tela 4: Checkout Simulado & Garantias
+- Cronômetro regressivo ativo de reserva temporária por 10 minutos (`10:00` → `00:00`).
+- Card de resumo com snapshot congelado de valores (Base, Desconto, Total).
+- Módulo de garantias (*Cancelamento Gratuito até 24h* e *Tolerância de 10 minutos*).
+- Formulário de Cartão de Crédito simulado com validação em tempo real pelo **Algoritmo de Luhn** (feedback visual imediato).
+- Textos legais obrigatórios de pré-autorização de 30% em caso de no-show e aviso de pagamento simulado.
+- Processamento simulado com feedback de carregamento seguro.
+
+### Tela 5: Agendamento Confirmado & Gestão
+- Emissão de **Voucher Digital** com código único (`BP-XXXXXX`).
+- Card de itinerário em *Route Stepper* ligando o ponto de partida ao salão de destino.
+- Ações para retornar ao início ou gerenciar a reserva.
+- **Fluxo de Cancelamento (T4):** Modal com política de cancelamento transparente e questionário com os motivos da matriz de validação (*Mudei de planos*, *Encontrei opção melhor*, *Emergência*, *Preço ficou alto demais*, *Outro*).
+
+---
+
+## 5. Validação Automatizada e Testes Realizados
+
+1. **Validação Estática:**
+   - Sintaxe JavaScript verificada com `node -c app.js` — **100% livre de erros**.
+2. **Navegação de Ponta a Ponta via Subagente de Browser:**
+   - Teste de fluxo completo: Home → Escolha de Horário no Gauge → Checkout com Luhn → Emissão de Voucher → Consulta no Mapa.
+   - Teste de busca dinâmica no mapa digitando *"Jardins"* e *"Itaim"*, validando a aproximação suave e o traçado da rota.
+   - Teste de alternância entre o modo moldura de celular e tela cheia.
+3. **Catálogo de Eventos Estruturados:**
+   - Eventos registrados no console conforme a Seção 11 da spec: `app_opened`, `merchant_viewed`, `slot_viewed`, `slot_selected`, `checkout_started`, `card_validated`, `checkout_completed`, `locality_selected`.
+
+---
+
+## 6. Como Executar e Apresentar
+
+O servidor local já está ativo no projeto:
+- **URL:** `http://localhost:8089/beautypass_app.html`
+- Para alternar a visualização, utilize o botão **"Tela Cheia" / "Ver Moldura"** no topo da tela.
+- Para resetar o estado da demonstração, clique no botão **"Reiniciar"** no canto superior direito.
+
+---
+
+## 7. Sessão 2 — Conformidade com a Spec Técnica (27 Set 2026)
+
+> **Data:** 27 de Setembro de 2026
+> **Status:** Todos os requisitos pendentes implementados e validados
+> **Validação:** `node --check app.js` — **0 erros de sintaxe**
+
+### 7.1 Contexto da Sessão
+
+A sessão anterior (Sessão 1) havia construído o protótipo visual "Triple Fusion". Nesta sessão, o foco foi auditar a aderência à **Documentação Técnica** e implementar os requisitos ausentes, organizados em dois blocos:
+
+- **Bloco A:** Conformidade de fluxo (LGPD, login, Pix, 6ª aba de Perfil)
+- **Bloco B:** Refinamentos de spec (mapa, avaliações, buffer de slot, cancelamento)
+
+---
+
+### 7.2 Requisitos Implementados (Bloco A)
+
+#### A1 — Tela de Onboarding com Termos LGPD (Seção 13)
+- Nova tela `#screen-onboarding` exibida na primeira abertura do app.
+- Texto obrigatório da Seção 13 renderizado em card com borda lateral verde.
+- Checkbox de consentimento obrigatório. Aceitação gravada em `AppState.user.termsAcceptedAt` e `localStorage`.
+
+#### A2 — Login Simulado com Código `0000` (Seção 14)
+- Campos de Nome, Telefone e Código de Acesso (4 dígitos).
+- Código `0000` libera acesso. Qualquer outro exibe erro. Função `submitOnboarding()`.
+
+#### A3 — Método de Pagamento Pix com QR Code (Seção 11)
+- Seletor segmentado **Cartão | Pix** no Checkout com micro-animação.
+- Container Pix com QR Code SVG, chave monospace e botão "Copiar" com toast de confirmação.
+- Evento `payment_method_selected` registrado.
+
+#### A4 — 6ª Aba de Perfil & Ajustes (Seção 13)
+- Navegação expandida de 5 para 6 abas com ícones SVG.
+- Tela `#screen-profile` com card hero, dados do participante, botão de exportação JSON e botão de apagar conta com dupla confirmação.
+
+---
+
+### 7.3 Refinamentos de Spec (Bloco B)
+
+#### B1 — Correção Crítica do Mapa
+- **Problema:** CartoDB Positron passou a exigir API key.
+- **Solução:** Substituído por **OpenStreetMap** (gratuito, sem API key).
+
+#### B2 — Geolocalização Real com Fallback (Seção 6.4)
+- `navigator.geolocation.getCurrentPosition()` na inicialização do mapa.
+- Se negada: banner amarelo obrigatório: *"Mostrando salões em São Paulo (centro) — ative a localização para ver perto de você"*.
+- Eventos `location_permission: { granted: true/false }` registrados.
+
+#### B3 — Expansão do Seed para 8 Salões (Seção 12)
+
+| ID | Nome | Bairro | Categoria | Rating |
+|---|---|---|---|---|
+| s1 | Ateliê Belle Époque | Pinheiros | Cabelo | 4.9 |
+| s2 | Lumina Studio & Nail Bar | Pinheiros | Unhas | 4.8 |
+| s3 | Serena Spa & Terapias | Jardins | Massagem | 4.9 |
+| s4 | Dermacare Estética Facial | Itaim Bibi | Facial | 4.85 |
+| s5 | Barbearia Maestro | Vila Madalena | Barbearia | 4.7 |
+| s6 | Arte Nail Studio | Consolação | Unhas | 4.6 |
+| s7 | Glow Skin & Beauty | Pinheiros | Facial | 4.8 |
+| s8 | Studio Mix Beleza & Bem-Estar | Perdizes | Misto | 4.75 |
+
+#### B4 — Avaliações Visíveis na Tela de Detalhe (Seção 12.9)
+- Array `reviews` em cada salão com 2-3 avaliações críveis.
+- Renderização via `renderDetailScreen()` em `#detail-reviews-container`.
+- Estrelas em SVG vetorial via função `renderStars(rating)` — zero emojis.
+
+#### B5 — Buffer de Higienização nos Slots (Seção 7.1)
+- Buffer de 10 minutos pós-serviço implementado no slider do Gauge Clock.
+- Cálculo: `maxSlotIndex = TIME_SLOTS.length - 1 - ceil((duração + 10) / 15)`.
+
+#### B6 — Campo Livre no Cancelamento para "Outro" (Seção 6.2)
+- Ao selecionar "Outro motivo" no modal de cancelamento, um `<textarea>` aparece.
+- Texto capturado como `reason: "Outro: [texto_livre]"` no evento `cancellation_completed`.
+
+---
+
+### 7.4 Estado dos Critérios de Aceite (Seção 14)
+
+| Critério | Status |
+|---|---|
+| Slot com desconto mostra par completo: base riscado + final + badge + subtexto | Atendido |
+| Preço do calendário = preço do checkout (snapshot congelado) | Atendido |
+| Eventos da Seção 11 gravando com props corretas | Atendido |
+| Termo de teste + apagar conta funcionando | Atendido |
+| Login com telefone + código `0000` | Atendido |
+| Fallback de localização negada exibindo aviso correto | Atendido |
+| Buffer de 10 min de higienização nos slots | Atendido |
+| Campo livre para motivo "Outro" no cancelamento | Atendido |
+| Mapa exibindo tiles sem exigir API key | Atendido |
+| 8+ salões seed com avaliações visíveis | Atendido |
+| `node --check app.js` sem erros de sintaxe | Atendido |
+
+---
+
+### 7.5 Arquivos Modificados na Sessão 2
+
+| Arquivo | Mudanças |
+|---|---|
+| `app.js` | MOCK_SALONS expandido (4→8 + reviews); tile OSM; geolocalização com fallback; `renderStars()`; `renderDetailScreen()` com buffer + reviews; `selectCancelReason()` com "Outro"; `executeCancellation()` com texto livre; `showMapLocationFallback()` |
+| `beautypass_app.html` | `#detail-reviews-container`; `#map-location-warning`; `#cancel-outro-field` + textarea |
+| `styles.css` | `.review-card`, `.review-header`, `.review-stars-row`, `.review-comment`, `.review-date`, `.detail-reviews-wrap`, `.map-location-fallback` |
+
+---
+
+### 7.6 URL e Execução
+
+- **Servidor:** Python HTTP Server porta `8089` (background task ativo)
+- **URL:** `http://localhost:8089/beautypass_app.html`
+- **Reiniciar servidor se necessário:**
+  ```powershell
+  cd "c:\Users\Usuario(a) Master\Documents\python\Projeto BeautyPass"
+  python -m http.server 8089
+  ```
+
+---
+
+## 8. Sessão 3 — Implementação do Corte Inteligente sob Demanda com Tarifa Justa & Fechamento dos Gaps Restantes da Spec
+
+> **Data de Implementação:** 27 de Setembro de 2026  
+> **Status:** Todas as Funcionalidades Implementadas, Validadas com Teste E2E e Aprovadas  
+> **Branch Git:** `main`  
+> **Arquivos Modificados:** `beautypass_app.html`, `styles.css`, `app.js`, `HISTORICO_DESENVOLVIMENTO_PROTOTIPO.md`  
+
+---
+
+### 8.1 Motivação e Nova Diretriz de Produto
+
+O usuário solicitou uma mudança substancial na dinâmica de reserva de cortes de cabelo:
+> *"Gostaria de mudar uma coisa. Quero que o usuário ele tenha mais praticidade na hora de cortar o cabelo. Ele se disponibiliza para realizar o procedimento e o algoritmo decide o preço justo do procedimento com base na demanda, oferta, custos envolvidos e etc."*
+
+**Objetivos Estratégicos:**
+1. **Redução Máxima de Fricção (Uber-like):** O usuário não precisa navegar minuciosamente por dezenas de salões e horários se estiver com pressa. Basta indicar sua janela de conveniência (*"Próximas 2 Horas"*, *"Hoje à Tarde"*, *"Hoje à Noite"*, *"Amanhã de Manhã"*) e o raio de busca.
+2. **Equilíbrio Econômico Justo:** O algoritmo protege o salão parceiro estabelecendo um piso inegociável de cobertura de custos fixos, ao mesmo tempo em que recompensa o cliente com descontos agressivos em horários ociosos.
+3. **Apresentação em 3 Matches Estratégicos:** O Radar de Ociosidade localiza e sintetiza as opções em:
+   - **Match Ideal (Recomendado):** Melhor equilíbrio entre reputação, distância e preço justo.
+   - **Mais Próximo:** Menor deslocamento geográfico.
+   - **Mais Econômico:** Menor preço final absoluto.
+4. **Fechamento de Pendências da Spec:** Cumprimento integral das especificações de validação pendentes (24 salões seed, tela "Meus Agendamentos" na barra de navegação, dia sem slots, instrumentação analítica completa).
+
+---
+
+### 8.2 Arquitetura do Algoritmo de Tarifa Justa (`calculateFairPriceEngine`)
+
+O motor de tarifação dinâmica implementado em `app.js` opera sobre cinco dimensões essenciais:
+
+```text
+                                  ┌───────────────────────────┐
+                                  │ Preço Base do Salão (Pb) │
+                                  └─────────────┬─────────────┘
+                                                │
+                 ┌──────────────────────────────┼──────────────────────────────┐
+                 ▼                              ▼                              ▼
+    ┌─────────────────────────┐   ┌─────────────────────────┐   ┌─────────────────────────┐
+    │  Piso de Custos Fixos   │   │ Fator Ociosidade Tempo  │   │     Fator Distância     │
+    │  Cf = 0.55 × Pb         │   │ Fo ∈ [0.15, 0.35]       │   │ Fd = clamp(1 - d/15)    │
+    │ (Produtos/Energia/Salão)│   │ (Janela de Demanda)     │   │ (Incentivo Proximidade) │
+    └────────────┬────────────┘   └─────────────┬───────────┘   └────────────┬────────────┘
+                 │                              │                            │
+                 │                              └──────────────┬─────────────┘
+                 │                                             ▼
+                 │                              ┌─────────────────────────────┐
+                 │                              │  Desconto Bruto Percentual  │
+                 │                              │  Db = clamp(Fo × Fd, 15, 40)│
+                 │                              └──────────────┬──────────────┘
+                 │                                             │
+                 ▼                                             ▼
+                 └───────────────────────┬─────────────────────┘
+                                         ▼
+                         ┌───────────────────────────────┐
+                         │      Preço Final Justo        │
+                         │   Pj = max(Cf, Pb × (1 - Db)) │
+                         └───────────────────────────────┘
+```
+
+#### Formulação Matemática e Parâmetros:
+1. **Preço Base ($P_{base}$):** Preço de tabela do serviço no estabelecimento parceiro.
+2. **Piso de Custo Operacional ($C_{fixo}$):**
+   $$C_{fixo} = 0{,}55 \times P_{base}$$
+   Garante que o salão nunca opere abaixo da margem de contribuição mínima (custos de água, luz, toalha higienizada e remuneração básica do profissional).
+3. **Fator de Ociosidade por Janela ($F_{ociosidade}$):**
+   - `now_2h` (Próximas 2 Horas): Demanda imediata, ocupação intermediária $\to F_o = 0{,}25$.
+   - `today_afternoon` (Hoje à Tarde 13h–17h): Pico de ociosidade em dias úteis $\to F_o = 0{,}35$.
+   - `today_evening` (Hoje à Noite 17h–19h): Horário nobre com menor ociosidade $\to F_o = 0{,}20$.
+   - `tomorrow_morning` (Amanhã de Manhã): Agendamento prévio com desconto moderado $\to F_o = 0{,}28$.
+4. **Fator de Proximidade ($F_{distancia}$):**
+   $$F_{distancia} = \text{clamp}\left(1 - \frac{\text{distanciaKm}}{15},\, 0{,}85,\, 1{,}0\right)$$
+   Favorece estabelecimentos hiperlocais.
+5. **Desconto Justo Consolidado ($Desc_{pct}$):**
+   $$Desc_{pct} = \text{clamp}\left(\text{round}(F_{ociosidade} \times F_{distancia} \times 100),\, 15\%,\, 40\%\right)$$
+6. **Preço Final ao Consumidor ($P_{final}$):**
+   $$P_{final} = \max\left(C_{fixo},\, P_{base} \times \left(1 - \frac{Desc_{pct}}{100}\right)\right)$$
+
+O usuário visualiza o valor final sem termos complicados, com badge amigável (*"Melhor Custo-Benefício"*, *"Mais Próximo"* ou *"Mais Econômico"*) e economia real em reais.
+
+---
+
+### 8.3 Novas Funcionalidades e Interfaces Construídas
+
+#### C1 — Módulo "Corte Inteligente sob Demanda" na Home
+- **Localização:** Inserido no topo da tela inicial (`#smart-haircut-card`).
+- **Controles Intuitivos:**
+  - Chips de seleção de janela: `Próximas 2 Horas`, `Hoje à Tarde (13h-17h)`, `Hoje à Noite (17h-19h)`, `Amanhã de Manhã`.
+  - Dropdown de categoria de corte: `Corte Feminino & Escova`, `Corte Masculino & Barba`, `Escova Modeladora & Spa`.
+  - Dropdown de raio máximo: `Até 3 km`, `Até 5 km`, `Até 10 km`.
+  - Botão CTA com ícone de radar pulsante: *"Calcular Tarifa Justa & Encontrar Salão"*.
+
+#### C2 — Radar de Ociosidade & Modal de Match
+- **Estrutura:** Modal `#instant-match-overlay` com duas fases:
+  1. **Fase de Escaneamento (1.8s):**
+     - Radar circular analógico com braço giratório via animação CSS `@keyframes radarSweep`.
+     - Textos informativos de status: *"Analisando 24 salões na região...", "Calculando custos operacionais e piso mínimo...", "Tarifas justas encontradas!"*.
+  2. **Fase de Apresentação (3 Matches Estratégicos):**
+     - **Match Ideal:** Oportunidade perfeita com o selo dourado *"MELHOR CUSTO-BENEFÍCIO"*, pré-selecionado por padrão.
+     - **Mais Próximo:** Menor distância em km, com estimativa a pé/carro.
+     - **Mais Econômico:** Menor preço em reais com maior percentual de desconto.
+  - **Ação Rápida:** Ao clicar no cartão de qualquer match e tocar em *"Confirmar Reserva com Tarifa Justa"*, o sistema congela o snapshot de preço no `AppState` e redireciona imediatamente para o Checkout.
+
+#### C3 — Tela Completa "Meus Agendamentos"
+- **Navegação:** Novo item na barra inferior (`#app-bottom-nav`) com ícone de calendário e badge indicando a tela ativa.
+- **Aba "Em Aberto":**
+  - Lista cartões dos agendamentos confirmados (`CONFIRMED`).
+  - Botão de acesso ao **Voucher Digital** com QR code e código de validação.
+  - Botão de **Cancelamento de Agendamento**, abrindo a pesquisa de motivo de cancelamento (T4) com campo livre quando selecionado *"Outro motivo"*.
+- **Aba "Histórico":**
+  - Histórico de procedimentos concluídos (`COMPLETED`) com botão *"Agendar Novamente"*.
+  - Histórico de cancelamentos com status discriminados:
+    - `CANCELADO POR VOCÊ` (via desistência do usuário).
+    - `CANCELADO PELO SALÃO` (requisito explícito da Seção 12.10 da especificação técnica).
+
+#### C4 — Catálogo Expandido para 24 Salões Seed (Seção 12.1)
+- O catálogo `MOCK_SALONS` em `app.js` foi expandido de 8 para **24 salões completos** em 6 bairros de São Paulo:
+  - **Pinheiros (6 salões):** Ateliê Belle Époque (s1), Lumina Studio (s2), Glow Skin (s7), Pinheiros Barber Club (s11), Zen Terapia Corporal (s17), Studio Pinheiros Prime (s23).
+  - **Jardins (5 salões):** Serena Spa (s3), Espaço Jardins (s9), Barbearia Oscar Freire (s12), Nails & Co. Express (s16), Clinique Jardins Estética (s20).
+  - **Itaim Bibi (5 salões):** Barbearia Maestro (s4), Studio Itaim Glam (s10), Aura Estética Avançada (s13), Itaim Beauty Lounge (s21), Barber & Co. Itaim (s24).
+  - **Vila Madalena (3 salões):** L'Essence Hair (s5), Velvet Hair Design (s15), Madalena Spa Holístico (s19).
+  - **Consolação / Centro (3 salões):** Arte Nail Studio (s6), Barbearia República (s14), Centro Estético Augusta (s22).
+  - **Perdizes (2 salões):** Studio Mix Beleza (s8), Spa Perdizes Harmonia (s18).
+- Todos os 24 salões contam com: endereço completo, coordenadas de latitude/longitude, fotos locais hiper-realistas, descrição de serviço, equipe de profissionais avaliados, reviews autênticos de clientes e matriz de slots com descontos.
+
+#### C5 — Tratamento de Dia Sem Slots (Seção 6.4)
+- Na tela de detalhes do salão (`renderDetailScreen`), caso o usuário selecione uma data sem slots ativos (ex: domingo, 28/09):
+  - O seletor radial e o botão de checkout são ocultados.
+  - É exibido o banner explicativo `.empty-slots-warning` informando que o estabelecimento está fechado ou sem vagas com desconto na data.
+  - Um botão direto *"Ver Segunda-feira (29/09)"* permite transicionar para o próximo dia útil com apenas um clique.
+
+#### C6 — Instrumentação Analítica Restante (Seção 11)
+- **`slot_viewed`:** Atualizado para calcular e enviar a propriedade numérica obrigatória `hours_until` (horas restantes até o horário do slot selecionado).
+- **`appointment_status_changed`:** Instrumentado com payload detalhado (`appointmentId`, `fromStatus`, `toStatus`, `reason`, `salonId`) em todas as transições de status da plataforma.
+
+---
+
+### 8.4 Tabela de Cumprimento dos Critérios de Aceite (Seção 14 da Spec)
+
+| Requisito da Spec | Descrição da Exigência | Implementação no BeautyPass | Status |
+|---|---|---|---|
+| **C1** | Slot com desconto mostra par completo (base riscado + final) | Exibido no Gauge Clock, no card de resumo e no Checkout (`~~R$ 120,00~~` → `R$ 84,00`). | **100% Conforme** |
+| **C2** | Badges "Horário Econômico" e "Última Hora" com subtexto explicativo | Cores semânticas (verde/laranja), textos regulamentares e explicação da razão do desconto. | **100% Conforme** |
+| **C3** | Preço do calendário = Preço do checkout (snapshot congelado) | Objeto `AppState.currentPricing` é congelado na seleção e preservado no checkout e voucher. | **100% Conforme** |
+| **C4** | Retenção de vaga de 10 min com timer decrescente e liberação | Timer decrescente visual no topo do checkout liberando a vaga ao zerar (`PENDING_PAYMENT`). | **100% Conforme** |
+| **C5** | Algoritmo de Luhn local no checkout com feedback visual | Função `validateLuhn()` valida cartões reais/teste sem enviar dados para a rede. | **100% Conforme** |
+| **C6** | Tela de confirmação com código único (ex: BP-XXXXXX) e QR Code | Emissão de voucher digital com código no formato da spec e renderização de QR Code. | **100% Conforme** |
+| **C7** | Fluxo de cancelamento com pesquisa de motivo obrigatória (T4) | Modal com opções da Seção 6.2 e campo livre ao escolher "Outro motivo". | **100% Conforme** |
+| **C8** | Instrumentação de todos os eventos da Seção 11 com props corretas | Eventos gravados no `localStorage` (`bp_analytics_events`) e logados no console com prefixo. | **100% Conforme** |
+| **C9** | Termo de consentimento LGPD no onboarding e opção de apagar dados | Checkbox obrigatório no onboarding e botão "Apagar meus dados (LGPD)" no perfil. | **100% Conforme** |
+| **C10** | Login por telefone com código fixo de validação `0000` | Campo formatado com máscara e validação de código teste. | **100% Conforme** |
+| **C11** | Fallback de geolocalização negada sem travar o mapa | Banner suave exibido no mapa permitindo explorar os salões normalmente. | **100% Conforme** |
+| **C12** | Buffer de higienização de 10 min respeitado na grade | Limitador do slider radial calcula `slotsUsed = ceil((duracao + 10) / 15)`. | **100% Conforme** |
+| **C13** | Catálogo com salões distribuídos por SP com fotos e reviews | 24 salões cadastrados nos 6 bairros centrais com reviews e profissionais. | **100% Conforme** |
+| **C14** | `node --check app.js` sem nenhum erro de sintaxe | Validado com retorno 0 e execução limpa. | **100% Conforme** |
+
+---
+
+### 8.5 Evidências do Teste Automatizado End-to-End
+
+O teste foi executado através de um subagente de navegador (`browser_subagent`) operando no ambiente local:
+1. **Seleção de Disponibilidade:** O usuário selecionou o chip *"Hoje à Tarde (13h-17h)"* e acionou o radar de ociosidade.
+2. **Varredura do Radar:** O modal abriu exibindo o scanner de radar por 1.8 segundos com varredura visual em verde-esmeralda, consolidando os 3 matches ideais.
+3. **Reserva Inteligente:** O Match Ideal no *Ateliê Belle Époque* (R$ 84,00 com 30% de desconto sobre o valor base de R$ 120,00) foi selecionado e confirmado.
+4. **Checkout e Emissão de Voucher:** Pagamento simulado com cartão de teste validado pelo algoritmo de Luhn, gerando o voucher `BP-108420`.
+5. **Navegação para Meus Agendamentos:** Na nova aba "Agendamentos" da Bottom Nav, o agendamento constava ativo na aba "Em Aberto".
+6. **Cancelamento Auditável:** O usuário acionou o cancelamento, selecionou o motivo *"Surgiu um imprevisto de horário"* e confirmou. O item foi imediatamente transferido para a aba "Histórico" com o badge `CANCELADO POR VOCÊ`.
+7. **Screenshot Gravado:** Evidência salva nos artefatos da sessão (`agendamentos_cancelado_1790559654722.png`).
+
+---
+
+### 8.6 Resumo das Modificações nos Arquivos do Projeto
+
+| Arquivo | Principais Implementações Realizadas |
+|---|---|
+| **`beautypass_app.html`** | Adicionado `#smart-haircut-card` na Home; modal do Radar de Ociosidade `#instant-match-overlay` (Fase 1 Scanner + Fase 2 Lista de Matches); tela dedicada `#screen-appointments` com abas "Em Aberto" e "Histórico"; novo botão na Bottom Nav; container de aviso de dia sem slots `#detail-empty-slots-banner`. |
+| **`styles.css`** | Estilos para o card inteligente (`.smart-match-card`), chips de janela temporal (`.window-chip`), animação de varredura do radar (`.radar-sweep-arm`, `@keyframes radarSweep`), cards de match (`.match-option-card`), tela de agendamentos (`.appointments-screen-wrap`, `.appt-card`), e banner de dia sem slots (`.empty-slots-warning`). |
+| **`app.js`** | Expansão de `MOCK_SALONS` para 24 salões seed; estado global estendido (`smartMatchWindow`, `smartMatchOptions`, `appointmentsList`); implementação do algoritmo de precificação justa `calculateFairPriceEngine()`; rotinas `startInstantMatchRadar()`, `generateAndRenderMatches()`, `confirmMatchAndProceed()`; renderização e controle de abas de agendamentos `renderAppointmentsScreen()`; cancelamento com atualização reativa de status; tratamento de dia sem slots em `renderDetailScreen()`; evento `appointment_status_changed`. |
+| **`HISTORICO_DESENVOLVIMENTO_PROTOTIPO.md`** | Registro integral da Sessão 3 com fundamentação matemática do algoritmo, detalhes da arquitetura de telas e auditoria de conformidade com a especificação técnica. |
+
+---
+
+## 9. Sessão 4 — Implementação Integral dos Blocos A, B, C, D, E e F (Validação das Hipóteses H1 e H2)
+
+> **Data de Registro:** 28 de Setembro de 2026  
+> **Status:** Protótipo Concluído com 100% de Aderência às Especificações e Planos Aprovados
+
+Nesta sessão, foram executadas todas as etapas do plano de implementação detalhado (`planejamento_implementacao_beautypass.md`), cobrindo os 6 blocos de engenharia e UI/UX:
+
+### 9.1 Resumo dos Blocos Concluídos
+
+1. **Bloco A — Catálogo de Serviços & Fundação da Equipe:**
+   - Expansão de todos os 24 salões de `MOCK_SALONS` em [app.js](file:///c:/Users/Usuario(a)%20Master/Documents/python/Projeto%20BeautyPass/app.js) para conter 5 serviços cada (Corte, Escova, Hidratação, Manicure, Barba, Massagem, etc.), totalizando 120 serviços cadastrados.
+   - Adição de `AppState.selectedService` reativo.
+   - Injeção de seletores de serviço na tela de detalhes ([beautypass_app.html](file:///c:/Users/Usuario(a)%20Master/Documents/python/Projeto%20BeautyPass/beautypass_app.html)) com chips de categoria e cards de serviço contendo duração, descrição e preço.
+   - Inclusão do card padrão *"Qualquer Profissional Disponível"* com avatar tracejado em Serene Mint.
+
+2. **Bloco B — Disponibilidade Realista, Regras de Desconto e Estados da Reserva:**
+   - Criação de `getDayOfWeek()`, `getSalonPromoRules()` e `getOccupiedSlots()`.
+   - **Regra Rígida H1:** Sábado de manhã (09:00–13:00) sem descontos; final de tarde com descontos de "Última Hora"; dias de semana com descontos de "Horário Econômico"; domingos fechados.
+   - Inclusão de carrossel de horários rápidos (`#detail-quick-slots-container`) com pills interativas destacando slots vagos e tachando slots ocupados.
+   - Geração dinâmica da régua de datas e bloqueio de checkout em horários esgotados.
+   - Transição de estado formal `PENDING_PAYMENT` na entrada do checkout e `CONFIRMED` na conclusão do pagamento.
+   - Abandono voluntário de checkout registrado caso o usuário saia antes de pagar.
+
+3. **Bloco C — Conformidade Rigorosa de Telemetria e Eventos:**
+   - Padronização estrita de todos os 15 eventos analíticos para propriedades em `snake_case`: `merchant_viewed`, `slot_viewed`, `slot_selected`, `checkout_started`, `checkout_abandoned`, `checkout_completed`, `card_validated`, `locality_selected`, `search_performed`, `appointment_status_changed`, etc.
+   - Validação contínua de integridade via `node -c app.js`.
+
+4. **Bloco D — Refinamentos de UI/UX e Microinterações:**
+   - Busca em tempo real na Home (`onHomeSearch()`) e carrossel de categorias funcionais (`selectHomeCategory()`) conectando Cabelo, Unhas, Barba, Massagem e Estética ao feed.
+   - Traçado de rota curvilíneo no mapa Leaflet via interpolação quadrática de Bézier com ponto de controle perpendicular suave em verde-esmeralda (`#00685F`).
+   - Suporte a arrasto gestual (touch drag) no bottom sheet de salões do mapa.
+
+5. **Bloco E — Acessibilidade e Tokens de Design:**
+   - Alvos de toque (touch targets) mínimos de 44x44px garantidos para chips, pills, botões de navegação e seletores.
+   - Foco visual acessível via seletor `:focus-visible` com anel teal de 2px.
+
+6. **Bloco F — Painel de Validação das Hipóteses (H1 e H2) e Ferramentas:**
+   - Implementação de `calculateH1Report()` e `calculateH2Report()` a partir dos eventos em `localStorage.getItem('bp_analytics_events')`.
+   - Inserção de card visual de validação de hipóteses na tela de Perfil/Ajustes exibindo taxa de adesão a slots com desconto (H1, meta &ge; 60%) e taxa de conclusão de pré-autorização (H2, meta &ge; 40%).
+   - Botão para reset de dados de validação (`resetValidationData()`) permitindo novas rodadas de teste sem apagar a conta do participante.
+   - Validação end-to-end gravada com o agente de navegador (`verify_blocks_d_e_f`).
+
+---
+
+## 10. Sessão 5 — Redesign Visual e Dinâmico do Menu de Tarifa Dinâmica
+
+> **Data de Implementação:** 29 de Setembro de 2026  
+> **Status:** Implementado, Validado com Teste E2E e Aprovado  
+> **Arquivos Modificados:** `beautypass_app.html`, `styles.css`, `app.js`, `HISTORICO_DESENVOLVIMENTO_PROTOTIPO.md`  
+
+### 10.1 Motivação e Alinhamento (`/grill-me` & `/plan`)
+
+O usuário apontou sobrecarga de informações no menu demonstrando a tarifa dinâmica e solicitou uma experiência mais visual e dinâmica. Através do processo interativo de alinhamento com o usuário (`/grill-me`), foram definidas as decisões de arquitetura de produto:
+1. **Foco Principal:** Redesenho do card de "Corte Inteligente sob Demanda" na Home e do modal de matches do radar.
+2. **Direção Visual:** Widget interativo com estimômetro de demanda e ociosidade em tempo real, eliminando formulários e selects tradicionais.
+3. **Apresentação de Matches:** Cards modernos estilo "Uber Ride" com destaque visual no benefício financeiro direto (Economia em R$), tempo/distância e selos semânticos.
+4. **Interatividade em Tempo Real:** O estimômetro recalcula a ociosidade (ex: 72% de cadeiras disponíveis), a demanda regional e o preço médio instantaneamente ao toque nos chips.
+
+### 10.2 Implementações Realizadas
+
+1. **Widget Estimômetro ao Vivo (`beautypass_app.html` e `styles.css`):**
+   - Pílula com ponto pulsante verde: *"Tarifa Dinâmica ao Vivo"*.
+   - Medidor dinâmico de demanda com cores semânticas (Verde = Baixa, Âmbar = Moderada, Coral = Alta/Horário Nobre).
+   - Barra de progresso com animação fluida indicando % de cadeiras disponíveis.
+   - Preço médio e desconto máximo recalculados em tempo real.
+
+2. **Seletores Visuais por Chips (Sem Dropdowns Nativos):**
+   - Janelas de horário com ícones SVG minimalistas (*Próximas 2h*, *Hoje à Tarde*, *Hoje à Noite*, *Amanhã Cedo*).
+   - Procedimentos em cards táteis com ícones vetoriais (*Corte Feminino*, *Corte & Barba*, *Escova & Spa*).
+   - Raio de distância em pílulas compactas (*Até 3 km*, *Até 5 km*, *Até 10 km*).
+
+3. **Cards de Matches Estilo "Uber Ride":**
+   - Selos destacados: `⭐ Melhor Custo-Benefício`, `🚶 Mais Próximo`, `🏷️ Maior Economia`.
+   - Indicador de seleção por círculo com checkmark SVG suave.
+   - Destaque claro da economia líquida em dinheiro (`Economize R$ XX,XX`).
+   - Atualização dinâmica do botão de confirmação com o valor exato selecionado.
+
+4. **Validação Automatizada:**
+   - `node --check app.js` — **0 erros de sintaxe**.
+   - Subagente de navegador validou a reatividade do estimômetro em todas as janelas e procedimentos, a varredura do radar e o encaminhamento preciso ao Checkout com o snapshot de tarifa justa congelado.
+
+---
+
+### 🚀 SPRINT 11 (29/09/2026): FLUXO SOB DEMANDA COM MAPA E ROTA DE CAMINHADA ESTILO UBER (🚶)
+
+Atendendo à solicitação de uma experiência ainda mais visual e dinâmica com foco em mobilidade urbana e encaixes imediatos com tarifa calibrada por cadeiras ociosas:
+
+1. **Botão Central Elevado "Pedir Agora" na Barra Inferior (`#nav-btn-demand`):**
+   - Botão em destaque geométrico com gradiente esmeralda (`#00685F` a `#0D9488`), pulso de radar contínuo e ícone de target/mobilidade.
+   - Acesso imediato de qualquer ponto do aplicativo para agendamentos de encaixe.
+
+2. **Tela de Seleção de Procedimento sob Demanda (`#screen-demand-service`):**
+   - 5 cards táteis com ícones vetoriais modernos e fundos tonais: *Cabelo & Escova*, *Unhas & Manicure*, *Barba & Corte*, *Massagem & Spa*, *Estética Facial*.
+   - Valores base de referência e tags de desconto máximo (`Até 35% OFF`).
+   - Seletor de janela de disponibilidade (*Próximas 2h*, *Hoje à Tarde*, *Hoje à Noite*).
+
+3. **Tela de Mapa Imersivo Estilo Uber (`#screen-uber-demand`):**
+   - **Marcador do Usuário Pedestre:** Ícone de caminhante (`🚶`) em nó circular com pulso GPS ativo.
+   - **Balões Flutuantes nos Salões:** Marcadores estilizados com o preço dinâmico e porcentagem de desconto (`R$ 78 • -35%`).
+   - **Rota de Caminhada Curvilínea:** Traçado Bézier em verde-esmeralda pontilhado com badge flutuante centralizado (`🚶 10 min • 800 m`).
+   - **Gaveta Inferior Deslizante (Bottom Sheet Estilo Uber Ride):** Cards táteis com thumbnail, tempo a pé, distância em metros, preço cortado, tarifa justa em destaque e pílula de economia líquida (`Economize R$ 42 (35% OFF)`).
+   - **Interatividade Total:** Ao tocar em outro salão na gaveta, o mapa executa um vôo animado (`flyToBounds`), recalcula a rota Bézier e atualiza o badge de caminhada.
+
+4. **Checkout e Voucher com Trajeto Integrado:**
+   - O botão *"Confirmar Reserva e Iniciar Caminhada"* direciona diretamente ao Checkout com alocação automática ("Qualquer Profissional Disponível") e tarifa justa congelada.
+   - Após validação de cartão (algoritmo de Luhn) ou Pix, o Voucher Digital exibe o stepper de rota com o resumo do percurso a pé (`🚶 Trajeto a pé: 10 min (800 m)`).
+
+5. **Validação E2E com Browser:**
+   - Todos os passos do fluxo foram testados e validados visualmente no navegador com capturas de tela arquivadas.
+
+---
+
+## 11. Sessão 6 — Refinamento da Home & Desacoplamento do Card Sob Demanda (01 Out 2026)
+
+> **Data de Implementação:** 01 de Outubro de 2026  
+> **Status:** Concluído, Validado com Teste E2E e Aprovado  
+> **Branch Git:** `main`  
+> **Arquivos Modificados:** `beautypass_app.html`, `app.js`, `HISTORICO_DESENVOLVIMENTO_PROTOTIPO.md`, `CONTEXT.md`
+
+### 11.1 Motivação e Alinhamento
+- O usuário solicitou a retirada do card volumoso *"Corte com Preço Justo sob Demanda"* (`#smart-haircut-card`) da tela inicial (`#screen-home`).
+- Durante o alinhamento (`/grill-me`), definiu-se que a experiência sob demanda continuaria existindo de forma elegante e exclusiva através do botão central elevado **"Pedir Agora"** (`#nav-btn-demand`) na barra de navegação inferior.
+- A hierarquia visual do topo da Home foi refinada para: `Header Contextual` → `Banner de Gamificação do Clube BeautyPass (15% OFF)` → `Barra de Busca em Pílula` → `Carrossel de Categorias Populares` → `Filtros Rápidos` → `Feed Social ("Amigas estão agendando")`.
+
+### 11.2 Alterações Executadas
+1. **`beautypass_app.html`:**
+   - Remoção completa do bloco `<section class="smart-match-card" id="smart-haircut-card">` da Home.
+   - Conexão direta entre o banner do Clube e a barra de busca, eliminando poluição visual.
+2. **`app.js`:**
+   - Remoção de invocações desnecessárias de `updateLivePricingEstimator()` no gatilho de navegação para a Home e no evento `DOMContentLoaded`.
+   - Preservação intacta de todo o ecossistema do botão *"Pedir Agora"* e mapa estilo Uber.
+3. **Validação Automatizada:**
+   - `node --check app.js` — **0 erros de sintaxe**.
+   - Subagente de navegador realizou teste de ponta a ponta: confirmou a nova Home mais limpa, acionou o botão "Pedir Agora", selecionou procedimento sob demanda e abriu o mapa de mobilidade com traçado da rota a pé.
+
+
+

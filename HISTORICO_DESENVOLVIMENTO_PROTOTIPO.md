@@ -613,6 +613,97 @@ O usuário solicitou três aprimoramentos cruciais na página inicial:
 - Teste unitário Node (`scratch/test_filters.js`): 100% de sucesso para as 6 categorias e ordenações.
 - Subagente de navegador (`verify_home_filters`): validou o fluxo visual completo, filtros rápidos, adaptação contextual e navegação até a tela de agendamento de precisão.
 
+---
+
+## 13. Sessão 8 — Diversificação de Imagens e Lugares com Autenticidade Máxima (03 Out 2026)
+
+> **Data de Implementação:** 03 de Outubro de 2026  
+> **Status:** Concluído, Auditado Automatizadamente (0 Duplicatas) e Validado com Browser Subagent E2E  
+> **Branch Git:** `main`  
+> **Arquivos Modificados:** `app.js`, `beautypass_app.html`, `HISTORICO_DESENVOLVIMENTO_PROTOTIPO.md`, `CONTEXT.md`
+
+### 13.1 Motivação e Alinhamento (`/grill-me` & `/plan`)
+O usuário observou que a aba inicial apresentava fotos repetidas da mesma pessoa (mais de 15 salões compartilhavam a mesma proprietária "Renata Vasconcelos", a mesma trinca de amigas "Camila, Beatriz e Larissa", e apenas 5 imagens locais de fachadas). 
+
+Através do alinhamento iterativo (`/grill-me`), foram definidas as diretrizes:
+1. **Curadoria Unsplash Direta:** Utilização de links diretos de altíssima qualidade do Unsplash com parâmetros otimizados de crop, formato e resolução (`auto=format&fit=crop&w=...&q=80`) e fallbacks locais com proteção anti-loop (`onerror="this.onerror=null; this.src=..."`).
+2. **24 Estabelecimentos com Ambientes Únicos:** Cada um dos 24 salões de São Paulo possui fotografia exclusiva de interior/fachada refletindo seu nicho e bairro (ateliês em Pinheiros, spas nos Jardins, barbearias clássicas e industriais no Itaim e Consolação).
+3. **24 Fundadores / Responsáveis Técnicos Exclusivos:** Perfis individuais com nomes brasileiros realistas, especialidades diversas (Master Colorist, Visagista, Nail Designer, Médica Dermatologista, Biomédica Esteta, Massoterapeuta) e retratos autênticos com diversidade étnica, de gênero e faixa etária.
+4. **Pool Social Variado de Amigas:** 19 avatares e nomes distintos no ecossistema social de amigas em comum frequentadoras, com recomendações e contagens únicas para cada card.
+5. **Preservação Visual nos Filtros:** Refatoração de `getContextualSalonImage()` para não sobrescrever todos os estabelecimentos com a mesma foto genérica ao selecionar uma categoria.
+
+### 13.2 Resultados da Auditoria Automatizada (`scratch/audit_diversity.js`)
+- **Total de Salões:** 24
+- **Imagens Únicas de Estabelecimentos:** 24 / 24 (100% exclusivas)
+- **Nomes Únicos de Líderes Técnicos:** 24 / 24 (100% exclusivos)
+- **Avatares Únicos de Líderes Técnicos:** 24 / 24 (100% exclusivos)
+- **Avatares Distintos no Pool de Amigas:** 19
+- **Variações de Texto de Prova Social de Amigas:** 24
+- **Duplicatas Críticas:** 0
+
+### 13.3 Evidências da Validação E2E no Navegador
+O subagente de navegador realizou inspeção completa da Home:
+- Miniaturas do carrossel superior exibindo fotos nítidas e distintas para cada categoria.
+- Inspeção sequencial de cards no feed confirmando alternância contínua de fotos de lugares, selos de fundadores e clusters de amigas.
+- Teste com filtro "Unhas" confirmando atualização contextual para serviços de manicure/spa mantendo a identidade visual exclusiva de cada salão.
+- Capturas de tela e vídeo arquivados: `home_top_feed_1791069297396.png`, `salon_card_1_1791069310067.png`, `salon_card_2_1791069328098.png`, `salon_card_3_1791069350902.png`, `salon_card_4_5_1791069378662.png`, `salon_card_5_1791069410093.png`, `salon_card_6_1791069447553.png`, `unhas_filtered_feed_1791069584584.png` e gravação `verify_diversity_1791069284396.webp`.
+
+---
+
+## 14. Sessão 9 — Representação Minimalista de Conexões de Amigos (03 Out 2026)
+
+> **Data de Implementação:** 03 de Outubro de 2026  
+> **Status:** Concluído, Validado Visualmente e Aprovado  
+> **Branch Git:** `main`  
+> **Arquivos Modificados:** `styles.css`, `app.js`, `HISTORICO_DESENVOLVIMENTO_PROTOTIPO.md`, `CONTEXT.md`
+
+### 14.1 Motivação e Alinhamento (`/grill-me` & `/plan`)
+O usuário pontuou que, com a foto do salão e o selo do proprietário, a caixa verde destacada com fotos de amigos estava sobrecarregando o card. Foi solicitada uma abordagem mais minimalista, mantendo as fotos em menor escala e com um ícone simplificado.
+
+Decisões estruturadas e aprovadas:
+1. **Linha Horizontal Fluida e Limpa:** Eliminação do container de fundo verde pastel e borda artificial. A prova social de conexões agora é uma linha sutil e contínua (`.card-mutual-friends` com fundo transparente).
+2. **Micro-Avatares de 16px:** Redução de 22px para 16px, com sobreposição delicada de -5px e borda fina de 1px.
+3. **Micro-Ícone Vetorial de Conexões (12x12px):** Silhuetas de rede em traço fino SVG estilizado antes dos avatares, comunicando conexões da rede de forma imediata.
+4. **Tipografia Leve e Neutra:** Texto reduzido para 10.5px em tom neutro suave com nomes destacados em semi-bold (600), harmonizando perfeitamente com os demais elementos do card.
+
+### 14.2 Validação Automatizada e Visual
+- `node -c app.js`: 0 erros de sintaxe.
+- Teste E2E via browser subagent (`verify_minimalist_friends`): inspecionou os cards no feed, confirmando a leveza estética, o alinhamento perfeito do micro-ícone e a redução da poluição visual.
+- Capturas arquivadas: `first_salon_card_detailed_1791070505593.png`, `second_salon_card_detailed_1791070528118.png` e gravação `verify_minimalist_friends_1791070434508.webp`.
+
+---
+
+## 15. Sessão 10 — Simplificação da Tag Social Flutuante, Foto Desobstruída e Restauração do Bloco de Amigas (03 Out 2026)
+
+> **Data de Implementação:** 03 de Outubro de 2026  
+> **Status:** Concluído, Validado Visualmente (0 Erros de Sintaxe e Teste E2E) e Aprovado  
+> **Branch Git:** `main`  
+> **Arquivos Modificados:** `styles.css`, `app.js`, `beautypass_app.html`, `walkthrough.md`, `CONTEXT.md`, `HISTORICO_DESENVOLVIMENTO_PROTOTIPO.md`
+
+### 15.1 Motivação e Alinhamento (`/grill-me` & `/plan`)
+Após a implementação da Sessão 9, o usuário enviou uma captura de tela apontando que uma foto gigante de pessoa (do indicador flutuante de agendamento em tempo real) estava cobrindo o centro da foto do estabelecimento. Adicionalmente, pontuou: *"Acredito que o que estava antes estava melhor. Quero que você foque especificadamente na foto que está no centro da tela. Sugira algo mais simples ou minimalista"*.
+
+Através do processo de alinhamento com plano estruturado e aprovado (`plan_simplificacao_foto_tag_social.md`), foram estabelecidos os seguintes pilares:
+1. **Identificação da Causa Raiz:** A regra CSS genérica `.card-media-wrap img { width: 100%; height: 100%; }` estava sendo herdada pela tag `<img>` aninhada dentro da pílula flutuante `.social-proof-pill`, fazendo o avatar da pessoa se expandir para 100% da viewport e cobrir a foto do salão.
+2. **Foto do Salão 100% Desobstruída:** Ajuste do seletor para `.card-media-wrap > img` (apenas a imagem principal do salão) e eliminação definitiva de avatares de pessoas sobrepostos à fotografia do estabelecimento. O ambiente físico agora é o protagonista visual absoluto.
+3. **Tag Flutuante Minimalista com Ponto Pulsante Verde:** Redesenho da `.social-proof-pill` como um badge translúcido de vidro escuro (`rgba(15, 23, 42, 0.68)` com `backdrop-filter: blur(8px)`), posicionado discretamente no canto superior esquerdo com um ponto pulsante verde esmeralda (`.live-pulse-dot`) e texto limpo: `Mariana agendou Escova há 12 min` / `Lucas agendou Barboterapia há 22 min`.
+4. **Restauração do Bloco Estilizado de Amigas em Comum:** Atendendo ao feedback *"o que estava antes estava melhor"*, restaurou-se o container `.card-mutual-friends` com fundo menta suave (`rgba(240, 253, 250, 0.85)`), borda delicada, avatares em stack de 22px (-7px de sobreposição e borda branca de 1.5px) e texto de recomendação personalizado, preservando o pool diversificado de 19 amigas da rede.
+
+### 15.2 Validação Automatizada e Visual
+1. **Validação de Sintaxe:** `node -c app.js` — **0 erros**.
+2. **Inspeção E2E via Browser Subagent (`verify_clean_salon_photo`):**
+   - Confirmado que os cards do feed (ex: *Ateliê Belle Époque*, *Barbearia Maestro*, etc.) possuem suas fotografias de ambiente 100% desobstruídas e nítidas.
+   - O badge flutuante translúcido exibe o ponto verde pulsante sem qualquer foto invasiva.
+   - O bloco de amigas em comum aparece perfeitamente formatado dentro do corpo do card, logo abaixo do selo do(a) responsável técnico(a).
+3. **Evidências Arquivadas:**
+   - [first_salon_card_full_1791071035690.png](file:///C:/Users/Usuario%28a%29%20Master/.gemini/antigravity-ide/brain/9fc529f1-b2b7-4889-b5f5-f8a344881c50/first_salon_card_full_1791071035690.png)
+   - [barbearia_maestro_body_1791071134094.png](file:///C:/Users/Usuario%28a%29%20Master/.gemini/antigravity-ide/brain/9fc529f1-b2b7-4889-b5f5-f8a344881c50/barbearia_maestro_body_1791071134094.png)
+   - [barbearia_maestro_full_1791071113866.png](file:///C:/Users/Usuario%28a%29%20Master/.gemini/antigravity-ide/brain/9fc529f1-b2b7-4889-b5f5-f8a344881c50/barbearia_maestro_full_1791071113866.png)
+   - Vídeo: [verify_clean_salon_photo_1791071001025.webp](file:///C:/Users/Usuario%28a%29%20Master/.gemini/antigravity-ide/brain/9fc529f1-b2b7-4889-b5f5-f8a344881c50/verify_clean_salon_photo_1791071001025.webp)
+
+
+
+
 
 
 

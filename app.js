@@ -20,9 +20,9 @@ const MOCK_SALONS = [
     "lat": -23.5628,
     "lng": -46.6854,
     "address": "R. Fradique Coutinho, 980 - Pinheiros, São Paulo",
-    "image": "salon_hair_boutique.jpg",
-    "socialProof": "#Camila agendou Escova há 14 min",
-    "socialAvatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80",
+    "image": "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=800&q=80",
+    "socialProof": "#Mariana agendou Escova há 12 min",
+    "socialAvatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&h=100&q=80",
     "service": {
       "id": "srv_s1_1",
       "name": "Escova Modeladora & Nutrição",
@@ -142,19 +142,19 @@ const MOCK_SALONS = [
       }
     ],
     "leadStaff": {
-      "name": "Juliana Paes",
+      "name": "Juliana Paes Mendonça",
       "role": "Fundadora & Master Stylist",
-      "avatar": "profile_owner_juliana.jpg",
+      "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&h=200&q=80",
       "verified": true
     },
     "mutualNetwork": {
       "friendsCount": 3,
       "avatars": [
-        "friend_camila.jpg",
-        "friend_beatriz.jpg",
-        "friend_larissa.jpg"
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=100&h=100&q=80"
       ],
-      "text": "Camila, Beatriz e +1 amiga sua frequentam este espaço"
+      "text": "Mariana, Camila e Beatriz frequentam este espaço"
     }
   },
   {
@@ -168,9 +168,9 @@ const MOCK_SALONS = [
     "lat": -23.5682,
     "lng": -46.6801,
     "address": "R. dos Pinheiros, 412 - Pinheiros, São Paulo",
-    "image": "salon_nail_lounge.jpg",
-    "socialProof": "#Beatriz marcou Manicure Spa há 28 min",
-    "socialAvatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=80&q=80",
+    "image": "https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?auto=format&fit=crop&w=800&q=80",
+    "socialProof": "#Larissa marcou Manicure Spa há 19 min",
+    "socialAvatar": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=100&h=100&q=80",
     "service": {
       "id": "srv_s2_1",
       "name": "Design de Sobrancelhas & Spa de Mãos",
@@ -280,19 +280,19 @@ const MOCK_SALONS = [
       }
     ],
     "leadStaff": {
-      "name": "Renata Vasconcelos",
-      "role": "Diretora & Master Nail Designer",
-      "avatar": "profile_owner_renata.jpg",
+      "name": "Beatriz Albuquerque",
+      "role": "Nail Designer & Especialista em Gel",
+      "avatar": "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&h=200&q=80",
       "verified": true
     },
     "mutualNetwork": {
       "friendsCount": 3,
       "avatars": [
-        "friend_camila.jpg",
-        "friend_beatriz.jpg",
-        "friend_larissa.jpg"
+        "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=100&h=100&q=80"
       ],
-      "text": "Beatriz e Camila agendaram aqui recentemente"
+      "text": "Larissa, Juliana e Sofia frequentam aqui com frequência"
     }
   },
   {
@@ -306,9 +306,9 @@ const MOCK_SALONS = [
     "lat": -23.5714,
     "lng": -46.6712,
     "address": "Al. Gabriel Monteiro da Silva, 1420 - Jardim Paulistano, SP",
-    "image": "salon_spa_oasis.jpg",
-    "socialProof": "#Mariana reservou Massagem Relaxante há 42 min",
-    "socialAvatar": "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=80&q=80",
+    "image": "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80",
+    "socialProof": "#Carolina reservou Massagem Relaxante há 8 min",
+    "socialAvatar": "https://images.unsplash.com/photo-1548142813-c348350df52b?auto=format&fit=crop&w=100&h=100&q=80",
     "service": {
       "id": "srv_s3_1",
       "name": "Massagem Sueca com Óleos Essenciais",
@@ -406,19 +406,19 @@ const MOCK_SALONS = [
       }
     ],
     "leadStaff": {
-      "name": "Renata Vasconcelos",
-      "role": "Diretora Terapêutica & Spa Lead",
-      "avatar": "profile_owner_renata.jpg",
+      "name": "Monique Soares",
+      "role": "Terapeuta Ayurvédica & Spa Director",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&h=200&q=80",
       "verified": true
     },
     "mutualNetwork": {
       "friendsCount": 3,
       "avatars": [
-        "friend_camila.jpg",
-        "friend_beatriz.jpg",
-        "friend_larissa.jpg"
+        "https://images.unsplash.com/photo-1548142813-c348350df52b?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=100&h=100&q=80"
       ],
-      "text": "Larissa e +2 conexões suas recomendam este local"
+      "text": "Carolina, Rafaela e Bianca recomendaram este spa"
     }
   },
   {
@@ -432,9 +432,9 @@ const MOCK_SALONS = [
     "lat": -23.5789,
     "lng": -46.6765,
     "address": "R. Amauri, 280 - Itaim Bibi, São Paulo",
-    "image": "salon_clinic_aesthetic.jpg",
-    "socialProof": "#Paula agendou Limpeza Facial há 1h",
-    "socialAvatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&q=80",
+    "image": "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=800&q=80",
+    "socialProof": "#Gabriela agendou Limpeza Facial há 15 min",
+    "socialAvatar": "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=100&h=100&q=80",
     "service": {
       "id": "srv_s4_1",
       "name": "Limpeza de Pele Ultrassônica & Peeling",
@@ -526,19 +526,18 @@ const MOCK_SALONS = [
       }
     ],
     "leadStaff": {
-      "name": "Dra. Renata Vasconcelos",
-      "role": "Responsável Técnica & Esteta",
-      "avatar": "profile_owner_renata.jpg",
+      "name": "Dra. Camila Nogueira",
+      "role": "Médica Dermatologista (CRM/SP)",
+      "avatar": "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=200&h=200&q=80",
       "verified": true
     },
     "mutualNetwork": {
-      "friendsCount": 3,
+      "friendsCount": 2,
       "avatars": [
-        "friend_camila.jpg",
-        "friend_beatriz.jpg",
-        "friend_larissa.jpg"
+        "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=100&h=100&q=80"
       ],
-      "text": "Camila e Larissa são clientes habituais daqui"
+      "text": "Gabriela e Paula realizam protocolos estéticos aqui"
     }
   },
   {
@@ -552,9 +551,9 @@ const MOCK_SALONS = [
     "lat": -23.5555,
     "lng": -46.692,
     "address": "R. Aspicuelta, 78 - Vila Madalena, São Paulo",
-    "image": "salon_barber_modern.jpg",
-    "socialProof": "#Pedro fez Corte Clássico há 20 min",
-    "socialAvatar": "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=80&q=80",
+    "image": "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=800&q=80",
+    "socialProof": "#Lucas agendou Barboterapia há 22 min",
+    "socialAvatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&h=100&q=80",
     "service": {
       "id": "srv_s5_1",
       "name": "Corte Masculino & Barba Tradicional",
@@ -664,19 +663,19 @@ const MOCK_SALONS = [
       }
     ],
     "leadStaff": {
-      "name": "Marcos Silva",
-      "role": "Fundador & Barbeiro Chefe",
-      "avatar": "profile_owner_marcos.jpg",
+      "name": "Marcos Vinicius Silva",
+      "role": "Mestre Barbeiro & Visagista",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&h=200&q=80",
       "verified": true
     },
     "mutualNetwork": {
       "friendsCount": 3,
       "avatars": [
-        "friend_camila.jpg",
-        "friend_beatriz.jpg",
-        "friend_larissa.jpg"
+        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=100&h=100&q=80"
       ],
-      "text": "Beatriz e +2 amigas da sua rede já vieram aqui"
+      "text": "3 contatos da sua rede cortam o cabelo neste espaço"
     }
   },
   {
@@ -690,9 +689,9 @@ const MOCK_SALONS = [
     "lat": -23.554,
     "lng": -46.659,
     "address": "R. da Consolação, 2345 - Consolação, São Paulo",
-    "image": "salon_nail_lounge.jpg",
-    "socialProof": "#Gabriela fez Nail Art há 35 min",
-    "socialAvatar": "https://images.unsplash.com/photo-1554151228-14d9def656e4?auto=format&fit=crop&w=80&q=80",
+    "image": "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=800&q=80",
+    "socialProof": "#Sofia fez Alongamento em Gel há 31 min",
+    "socialAvatar": "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=100&h=100&q=80",
     "service": {
       "id": "srv_s6_1",
       "name": "Nail Art Premium & Gel Glitter",
@@ -789,19 +788,18 @@ const MOCK_SALONS = [
       }
     ],
     "leadStaff": {
-      "name": "Renata Vasconcelos",
-      "role": "Diretora & Master Nail Designer",
-      "avatar": "profile_owner_renata.jpg",
+      "name": "Letícia Hashimoto",
+      "role": "Nail Artist & Lash Designer",
+      "avatar": "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&h=200&q=80",
       "verified": true
     },
     "mutualNetwork": {
-      "friendsCount": 3,
+      "friendsCount": 2,
       "avatars": [
-        "friend_camila.jpg",
-        "friend_beatriz.jpg",
-        "friend_larissa.jpg"
+        "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=100&h=100&q=80"
       ],
-      "text": "Camila e mais 2 amigas que você segue frequentam aqui"
+      "text": "Sofia e Beatriz são clientes assíduas deste estúdio"
     }
   },
   {
@@ -815,9 +813,9 @@ const MOCK_SALONS = [
     "lat": -23.561,
     "lng": -46.682,
     "address": "R. Teodoro Sampaio, 1040 - Pinheiros, São Paulo",
-    "image": "salon_clinic_aesthetic.jpg",
-    "socialProof": "#Renata fez Skincare há 55 min",
-    "socialAvatar": "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=80&q=80",
+    "image": "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80",
+    "socialProof": "#Fernanda agendou Peeling de Diamante há 11 min",
+    "socialAvatar": "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=100&h=100&q=80",
     "service": {
       "id": "srv_s7_1",
       "name": "Tratamento Skincare Personalizado",
@@ -927,19 +925,19 @@ const MOCK_SALONS = [
       }
     ],
     "leadStaff": {
-      "name": "Dra. Renata Vasconcelos",
-      "role": "Responsável Técnica & Esteta",
-      "avatar": "profile_owner_renata.jpg",
+      "name": "Dra. Viviane Guimarães",
+      "role": "Biomédica Esteta & Cosmiatra",
+      "avatar": "https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?auto=format&fit=crop&w=200&h=200&q=80",
       "verified": true
     },
     "mutualNetwork": {
       "friendsCount": 3,
       "avatars": [
-        "friend_camila.jpg",
-        "friend_beatriz.jpg",
-        "friend_larissa.jpg"
+        "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1548142813-c348350df52b?auto=format&fit=crop&w=100&h=100&q=80"
       ],
-      "text": "Camila, Beatriz e +1 amiga sua frequentam este espaço"
+      "text": "Fernanda, Camila e Carolina cuidam da pele aqui"
     }
   },
   {
@@ -953,9 +951,9 @@ const MOCK_SALONS = [
     "lat": -23.5335,
     "lng": -46.669,
     "address": "R. Cardoso de Almeida, 542 - Perdizes, São Paulo",
-    "image": "salon_hair_boutique.jpg",
-    "socialProof": "#Isabela agendou Combo há 1h 10 min",
-    "socialAvatar": "https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?auto=format&fit=crop&w=80&q=80",
+    "image": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80",
+    "socialProof": "#Paula agendou Corte & Nutrição há 25 min",
+    "socialAvatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=100&h=100&q=80",
     "service": {
       "id": "srv_s8_1",
       "name": "Combo Cabelo & Maquiagem",
@@ -1059,19 +1057,18 @@ const MOCK_SALONS = [
       }
     ],
     "leadStaff": {
-      "name": "Juliana Paes",
-      "role": "Diretora Criativa & Co-fundadora",
-      "avatar": "profile_owner_juliana.jpg",
+      "name": "Sabrina Sato Oliveira",
+      "role": "Hair Concept & Visagista",
+      "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&h=200&q=80",
       "verified": true
     },
     "mutualNetwork": {
-      "friendsCount": 3,
+      "friendsCount": 2,
       "avatars": [
-        "friend_camila.jpg",
-        "friend_beatriz.jpg",
-        "friend_larissa.jpg"
+        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&h=100&q=80"
       ],
-      "text": "Beatriz e Camila agendaram aqui recentemente"
+      "text": "Paula e Mariana avaliaram este salão com 5 estrelas"
     }
   },
   {
@@ -1085,9 +1082,9 @@ const MOCK_SALONS = [
     "lat": -23.5645,
     "lng": -46.688,
     "address": "R. Mourato Coelho, 612 - Pinheiros, São Paulo",
-    "image": "salon_barber_modern.jpg",
-    "socialProof": "#Lucas fez Barba & Navalha há 18 min",
-    "socialAvatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=80&q=80",
+    "image": "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=800&q=80",
+    "socialProof": "#Gabriel agendou Fade & Barba há 14 min",
+    "socialAvatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&h=100&q=80",
     "service": {
       "id": "srv_s9_1",
       "name": "Corte Executivo & Camuflagem de Barba",
@@ -1179,19 +1176,18 @@ const MOCK_SALONS = [
       }
     ],
     "leadStaff": {
-      "name": "Marcos Silva",
-      "role": "Fundador & Barbeiro Chefe",
-      "avatar": "profile_owner_marcos.jpg",
+      "name": "Ricardo Telles",
+      "role": "Grooming Specialist & Master Barber",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&h=200&q=80",
       "verified": true
     },
     "mutualNetwork": {
-      "friendsCount": 3,
+      "friendsCount": 2,
       "avatars": [
-        "friend_camila.jpg",
-        "friend_beatriz.jpg",
-        "friend_larissa.jpg"
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=100&h=100&q=80"
       ],
-      "text": "Larissa e +2 conexões suas recomendam este local"
+      "text": "Amigos da sua região indicam o Ricardo para corte clássico"
     }
   },
   {
@@ -1205,9 +1201,9 @@ const MOCK_SALONS = [
     "lat": -23.568,
     "lng": -46.666,
     "address": "R. Oscar Freire, 1120 - Cerqueira César, São Paulo",
-    "image": "salon_hair_boutique.jpg",
-    "socialProof": "#Helena fez Corte & Escova há 9 min",
-    "socialAvatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=80&q=80",
+    "image": "https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=800&q=80",
+    "socialProof": "#Rafaela agendou Balayage Glow há 40 min",
+    "socialAvatar": "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&w=100&h=100&q=80",
     "service": {
       "id": "srv_s10_1",
       "name": "Corte Visagista & Escova Glow",
@@ -1299,19 +1295,19 @@ const MOCK_SALONS = [
       }
     ],
     "leadStaff": {
-      "name": "Juliana Paes",
-      "role": "Fundadora & Master Stylist",
-      "avatar": "profile_owner_juliana.jpg",
+      "name": "Patrícia Kallas",
+      "role": "Master Balayage & Morenas Iluminadas",
+      "avatar": "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&w=200&h=200&q=80",
       "verified": true
     },
     "mutualNetwork": {
       "friendsCount": 3,
       "avatars": [
-        "friend_camila.jpg",
-        "friend_beatriz.jpg",
-        "friend_larissa.jpg"
+        "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&h=100&q=80"
       ],
-      "text": "Camila e Larissa são clientes habituais daqui"
+      "text": "Rafaela, Juliana e Camila fazem mechas aqui"
     }
   },
   {
@@ -1325,9 +1321,9 @@ const MOCK_SALONS = [
     "lat": -23.584,
     "lng": -46.678,
     "address": "R. Joaquim Floriano, 871 - Itaim Bibi, São Paulo",
-    "image": "salon_nail_lounge.jpg",
-    "socialProof": "#Renata marcou Manicure Russa há 33 min",
-    "socialAvatar": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=80&q=80",
+    "image": "https://images.unsplash.com/photo-1519014816548-bf5fe059798b?auto=format&fit=crop&w=800&q=80",
+    "socialProof": "#Bianca marcou Esmaltação em Gel há 6 min",
+    "socialAvatar": "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=100&h=100&q=80",
     "service": {
       "id": "srv_s11_1",
       "name": "Manicure Russa Combinada & Esmaltação Gel",
@@ -1414,19 +1410,19 @@ const MOCK_SALONS = [
       }
     ],
     "leadStaff": {
-      "name": "Renata Vasconcelos",
-      "role": "Diretora & Master Nail Designer",
-      "avatar": "profile_owner_renata.jpg",
+      "name": "Vanessa Dumont",
+      "role": "Esmaltação em Gel & Cutilagem Russa",
+      "avatar": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=200&h=200&q=80",
       "verified": true
     },
     "mutualNetwork": {
       "friendsCount": 3,
       "avatars": [
-        "friend_camila.jpg",
-        "friend_beatriz.jpg",
-        "friend_larissa.jpg"
+        "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1548142813-c348350df52b?auto=format&fit=crop&w=100&h=100&q=80"
       ],
-      "text": "Beatriz e +2 amigas da sua rede já vieram aqui"
+      "text": "Bianca, Sofia e Carolina fazem manutenção de unhas aqui"
     }
   },
   {
@@ -1440,9 +1436,9 @@ const MOCK_SALONS = [
     "lat": -23.551,
     "lng": -46.6905,
     "address": "R. Harmonia, 340 - Vila Madalena, São Paulo",
-    "image": "salon_spa_oasis.jpg",
-    "socialProof": "#Fernanda reservou Massagem Relaxante há 15 min",
-    "socialAvatar": "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=80&q=80",
+    "image": "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=800&q=80",
+    "socialProof": "#Mariana fez Massagem com Pedras Quentes há 17 min",
+    "socialAvatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&h=100&q=80",
     "service": {
       "id": "srv_s12_1",
       "name": "Massagem com Pedras Quentes Vulcânicas",
@@ -1529,19 +1525,18 @@ const MOCK_SALONS = [
       }
     ],
     "leadStaff": {
-      "name": "Renata Vasconcelos",
-      "role": "Diretora Terapêutica & Spa Lead",
-      "avatar": "profile_owner_renata.jpg",
+      "name": "Clara Fontana",
+      "role": "Terapeuta Holística & Aromaterapeuta",
+      "avatar": "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=200&h=200&q=80",
       "verified": true
     },
     "mutualNetwork": {
-      "friendsCount": 3,
+      "friendsCount": 2,
       "avatars": [
-        "friend_camila.jpg",
-        "friend_beatriz.jpg",
-        "friend_larissa.jpg"
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=100&h=100&q=80"
       ],
-      "text": "Camila e mais 2 amigas que você segue frequentam aqui"
+      "text": "Mariana e Beatriz elogiaram a calma deste espaço"
     }
   },
   {
@@ -1555,9 +1550,9 @@ const MOCK_SALONS = [
     "lat": -23.538,
     "lng": -46.674,
     "address": "R. Monte Alegre, 980 - Perdizes, São Paulo",
-    "image": "salon_clinic_aesthetic.jpg",
-    "socialProof": "#Sabrina fez Peeling há 48 min",
-    "socialAvatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&q=80",
+    "image": "https://images.unsplash.com/photo-1512290900672-1f02a64c483a?auto=format&fit=crop&w=800&q=80",
+    "socialProof": "#Paula agendou Microagulhamento há 23 min",
+    "socialAvatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=100&h=100&q=80",
     "service": {
       "id": "srv_s13_1",
       "name": "Revitalização Facial & Máscara de Ouro",
@@ -1638,19 +1633,18 @@ const MOCK_SALONS = [
       }
     ],
     "leadStaff": {
-      "name": "Dra. Renata Vasconcelos",
-      "role": "Responsável Técnica & Esteta",
-      "avatar": "profile_owner_renata.jpg",
+      "name": "Dra. Danielle Meirelles",
+      "role": "Farmacêutica Esteta Especialista em Peelings",
+      "avatar": "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=200&h=200&q=80",
       "verified": true
     },
     "mutualNetwork": {
-      "friendsCount": 3,
+      "friendsCount": 2,
       "avatars": [
-        "friend_camila.jpg",
-        "friend_beatriz.jpg",
-        "friend_larissa.jpg"
+        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=100&h=100&q=80"
       ],
-      "text": "Camila, Beatriz e +1 amiga sua frequentam este espaço"
+      "text": "Paula e Gabriela são atendidas pela Dra. Danielle"
     }
   },
   {
@@ -1664,9 +1658,9 @@ const MOCK_SALONS = [
     "lat": -23.5505,
     "lng": -46.654,
     "address": "R. Augusta, 1420 - Consolação, São Paulo",
-    "image": "salon_barber_modern.jpg",
-    "socialProof": "#Gustavo cortou o cabelo há 5 min",
-    "socialAvatar": "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=80&q=80",
+    "image": "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=800&q=80",
+    "socialProof": "#Matheus agendou Barba Clássica há 10 min",
+    "socialAvatar": "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=100&h=100&q=80",
     "service": {
       "id": "srv_s14_1",
       "name": "Corte Clássico na Tesoura & Barba",
@@ -1752,19 +1746,19 @@ const MOCK_SALONS = [
       }
     ],
     "leadStaff": {
-      "name": "Marcos Silva",
-      "role": "Fundador & Barbeiro Chefe",
-      "avatar": "profile_owner_marcos.jpg",
+      "name": "Thiago Barone",
+      "role": "Barbeiro Tradicional & Visagista",
+      "avatar": "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=200&h=200&q=80",
       "verified": true
     },
     "mutualNetwork": {
       "friendsCount": 3,
       "avatars": [
-        "friend_camila.jpg",
-        "friend_beatriz.jpg",
-        "friend_larissa.jpg"
+        "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&h=100&q=80"
       ],
-      "text": "Beatriz e Camila agendaram aqui recentemente"
+      "text": "Excelente recomendação para cortes urbanos no centro"
     }
   },
   {
@@ -1778,9 +1772,9 @@ const MOCK_SALONS = [
     "lat": -23.557,
     "lng": -46.695,
     "address": "R. Girassol, 210 - Vila Madalena, São Paulo",
-    "image": "salon_hair_boutique.jpg",
-    "socialProof": "#Camila fez Corte Bob há 24 min",
-    "socialAvatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80",
+    "image": "https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?auto=format&fit=crop&w=800&q=80",
+    "socialProof": "#Larissa agendou Corte Orgânico há 5 min",
+    "socialAvatar": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=100&h=100&q=80",
     "service": {
       "id": "srv_s15_1",
       "name": "Corte Moderno Bob & Nutrição Lipídica",
@@ -1866,19 +1860,19 @@ const MOCK_SALONS = [
       }
     ],
     "leadStaff": {
-      "name": "Juliana Paes",
-      "role": "Fundadora & Master Stylist",
-      "avatar": "profile_owner_juliana.jpg",
+      "name": "Lucas Alencar",
+      "role": "Colorista Criativo & Hair Designer",
+      "avatar": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=200&h=200&q=80",
       "verified": true
     },
     "mutualNetwork": {
       "friendsCount": 3,
       "avatars": [
-        "friend_camila.jpg",
-        "friend_beatriz.jpg",
-        "friend_larissa.jpg"
+        "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&h=100&q=80"
       ],
-      "text": "Larissa e +2 conexões suas recomendam este local"
+      "text": "Larissa, Beatriz e Camila cortam o cabelo na Vila Madalena aqui"
     }
   },
   {
@@ -1892,9 +1886,9 @@ const MOCK_SALONS = [
     "lat": -23.566,
     "lng": -46.6695,
     "address": "Al. Lorena, 1380 - Jardins, São Paulo",
-    "image": "salon_nail_lounge.jpg",
-    "socialProof": "#Julia fez Manicure Express há 40 min",
-    "socialAvatar": "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=80&q=80",
+    "image": "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=800&q=80",
+    "socialProof": "#Camila fez Blindagem de Diamante há 14 min",
+    "socialAvatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&h=100&q=80",
     "service": {
       "id": "srv_s16_1",
       "name": "Manicure Express & Hidratação de Mãos",
@@ -1975,19 +1969,18 @@ const MOCK_SALONS = [
       }
     ],
     "leadStaff": {
-      "name": "Renata Vasconcelos",
-      "role": "Diretora & Master Nail Designer",
-      "avatar": "profile_owner_renata.jpg",
+      "name": "Amanda Prado",
+      "role": "Nail Designer de Alongamento Fibra",
+      "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&h=200&q=80",
       "verified": true
     },
     "mutualNetwork": {
-      "friendsCount": 3,
+      "friendsCount": 2,
       "avatars": [
-        "friend_camila.jpg",
-        "friend_beatriz.jpg",
-        "friend_larissa.jpg"
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&w=100&h=100&q=80"
       ],
-      "text": "Camila e Larissa são clientes habituais daqui"
+      "text": "Camila e Rafaela frequentam este espaço nos Jardins"
     }
   },
   {
@@ -2001,9 +1994,9 @@ const MOCK_SALONS = [
     "lat": -23.5615,
     "lng": -46.689,
     "address": "R. Simão Álvares, 415 - Pinheiros, São Paulo",
-    "image": "salon_spa_oasis.jpg",
-    "socialProof": "#Thiago marcou Shiatsu há 12 min",
-    "socialAvatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=80&q=80",
+    "image": "https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=800&q=80",
+    "socialProof": "#Juliana agendou Shiatsu Integrativo há 28 min",
+    "socialAvatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&h=100&q=80",
     "service": {
       "id": "srv_s17_1",
       "name": "Sessão de Shiatsu & Reflexologia Podal",
@@ -2089,19 +2082,19 @@ const MOCK_SALONS = [
       }
     ],
     "leadStaff": {
-      "name": "Renata Vasconcelos",
-      "role": "Diretora Terapêutica & Spa Lead",
-      "avatar": "profile_owner_renata.jpg",
+      "name": "Rodrigo Zanin",
+      "role": "Fisioterapeuta & Massoterapeuta",
+      "avatar": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&h=200&q=80",
       "verified": true
     },
     "mutualNetwork": {
       "friendsCount": 3,
       "avatars": [
-        "friend_camila.jpg",
-        "friend_beatriz.jpg",
-        "friend_larissa.jpg"
+        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1548142813-c348350df52b?auto=format&fit=crop&w=100&h=100&q=80"
       ],
-      "text": "Beatriz e +2 amigas da sua rede já vieram aqui"
+      "text": "Juliana, Bianca e Carolina fazem liberação miofascial aqui"
     }
   },
   {
@@ -2115,9 +2108,9 @@ const MOCK_SALONS = [
     "lat": -23.582,
     "lng": -46.673,
     "address": "R. Pedroso Alvarenga, 1200 - Itaim Bibi, São Paulo",
-    "image": "salon_clinic_aesthetic.jpg",
-    "socialProof": "#Camila fez Glow Facial há 50 min",
-    "socialAvatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80",
+    "image": "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=800&q=80",
+    "socialProof": "#Beatriz fez Peeling Ultrassônico há 16 min",
+    "socialAvatar": "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=100&h=100&q=80",
     "service": {
       "id": "srv_s18_1",
       "name": "Protocolo Glow Facial & Peeling de Ácido Hialurônico",
@@ -2198,19 +2191,18 @@ const MOCK_SALONS = [
       }
     ],
     "leadStaff": {
-      "name": "Dra. Renata Vasconcelos",
-      "role": "Responsável Técnica & Esteta",
-      "avatar": "profile_owner_renata.jpg",
+      "name": "Dra. Luciana Bicalho",
+      "role": "Médica Dermatologista Estética",
+      "avatar": "https://images.unsplash.com/photo-1598256989800-fe5f95da9787?auto=format&fit=crop&w=200&h=200&q=80",
       "verified": true
     },
     "mutualNetwork": {
-      "friendsCount": 3,
+      "friendsCount": 2,
       "avatars": [
-        "friend_camila.jpg",
-        "friend_beatriz.jpg",
-        "friend_larissa.jpg"
+        "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&h=100&q=80"
       ],
-      "text": "Camila e mais 2 amigas que você segue frequentam aqui"
+      "text": "Beatriz e Mariana recomendam os tratamentos a laser"
     }
   },
   {
@@ -2224,9 +2216,9 @@ const MOCK_SALONS = [
     "lat": -23.535,
     "lng": -46.671,
     "address": "R. Desembargador do Vale, 320 - Perdizes, São Paulo",
-    "image": "salon_barber_modern.jpg",
-    "socialProof": "#Vinicius fez Corte & Barba há 27 min",
-    "socialAvatar": "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=80&q=80",
+    "image": "https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=800&q=80",
+    "socialProof": "#Felipe fez Corte Tesoura há 21 min",
+    "socialAvatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=100&h=100&q=80",
     "service": {
       "id": "srv_s19_1",
       "name": "Navalhete Clássico & Tratamento Capilar",
@@ -2307,19 +2299,19 @@ const MOCK_SALONS = [
       }
     ],
     "leadStaff": {
-      "name": "Marcos Silva",
-      "role": "Fundador & Barbeiro Chefe",
-      "avatar": "profile_owner_marcos.jpg",
+      "name": "Alexandre Fonseca",
+      "role": "Barber Designer & Barboterapeuta",
+      "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=200&h=200&q=80",
       "verified": true
     },
     "mutualNetwork": {
       "friendsCount": 3,
       "avatars": [
-        "friend_camila.jpg",
-        "friend_beatriz.jpg",
-        "friend_larissa.jpg"
+        "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=100&h=100&q=80"
       ],
-      "text": "Camila, Beatriz e +1 amiga sua frequentam este espaço"
+      "text": "Espaço muito bem avaliado por conhecidos em Perdizes"
     }
   },
   {
@@ -2333,9 +2325,9 @@ const MOCK_SALONS = [
     "lat": -23.553,
     "lng": -46.657,
     "address": "R. Bela Cintra, 890 - Consolação, São Paulo",
-    "image": "salon_hair_boutique.jpg",
-    "socialProof": "#Patricia fez Tonalização há 1h",
-    "socialAvatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&q=80",
+    "image": "https://images.unsplash.com/photo-1470259078437-5e97af7720b1?auto=format&fit=crop&w=800&q=80",
+    "socialProof": "#Sofia agendou Iluminação & Brilho há 13 min",
+    "socialAvatar": "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=100&h=100&q=80",
     "service": {
       "id": "srv_s20_1",
       "name": "Tonalização Express & Escova Modeladora",
@@ -2416,19 +2408,19 @@ const MOCK_SALONS = [
       }
     ],
     "leadStaff": {
-      "name": "Juliana Paes",
-      "role": "Fundadora & Master Stylist",
-      "avatar": "profile_owner_juliana.jpg",
+      "name": "Isabela Ferraz",
+      "role": "Blond Specialist & Terapeuta Capilar",
+      "avatar": "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=200&h=200&q=80",
       "verified": true
     },
     "mutualNetwork": {
       "friendsCount": 3,
       "avatars": [
-        "friend_camila.jpg",
-        "friend_beatriz.jpg",
-        "friend_larissa.jpg"
+        "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=100&h=100&q=80"
       ],
-      "text": "Beatriz e Camila agendaram aqui recentemente"
+      "text": "Sofia, Rafaela e Larissa cuidam do loiro aqui"
     }
   },
   {
@@ -2442,9 +2434,9 @@ const MOCK_SALONS = [
     "lat": -23.5585,
     "lng": -46.697,
     "address": "R. Fradique Coutinho, 1380 - Vila Madalena, São Paulo",
-    "image": "salon_nail_lounge.jpg",
-    "socialProof": "#Nathalia marcou Spa de Pés há 38 min",
-    "socialAvatar": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=80&q=80",
+    "image": "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=800&q=80",
+    "socialProof": "#Mariana agendou Spa dos Pés há 35 min",
+    "socialAvatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&h=100&q=80",
     "service": {
       "id": "srv_s21_1",
       "name": "Spa dos Pés com Esfoliação & Parafina Morna",
@@ -2525,19 +2517,18 @@ const MOCK_SALONS = [
       }
     ],
     "leadStaff": {
-      "name": "Renata Vasconcelos",
-      "role": "Diretora & Master Nail Designer",
-      "avatar": "profile_owner_renata.jpg",
+      "name": "Natália Castro",
+      "role": "Nail Artist & Spa Podal",
+      "avatar": "https://images.unsplash.com/photo-1548142813-c348350df52b?auto=format&fit=crop&w=200&h=200&q=80",
       "verified": true
     },
     "mutualNetwork": {
-      "friendsCount": 3,
+      "friendsCount": 2,
       "avatars": [
-        "friend_camila.jpg",
-        "friend_beatriz.jpg",
-        "friend_larissa.jpg"
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&h=100&q=80"
       ],
-      "text": "Larissa e +2 conexões suas recomendam este local"
+      "text": "Mariana e Juliana frequentam este espaço no Itaim"
     }
   },
   {
@@ -2551,9 +2542,9 @@ const MOCK_SALONS = [
     "lat": -23.567,
     "lng": -46.67,
     "address": "R. Haddock Lobo, 950 - Cerqueira César, São Paulo",
-    "image": "salon_spa_oasis.jpg",
-    "socialProof": "#Guilherme agendou Drenagem há 21 min",
-    "socialAvatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=80&q=80",
+    "image": "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80",
+    "socialProof": "#Carolina agendou Drenagem Linfática há 9 min",
+    "socialAvatar": "https://images.unsplash.com/photo-1548142813-c348350df52b?auto=format&fit=crop&w=100&h=100&q=80",
     "service": {
       "id": "srv_s22_1",
       "name": "Drenagem Linfática Corporal Método Renata França",
@@ -2639,19 +2630,19 @@ const MOCK_SALONS = [
       }
     ],
     "leadStaff": {
-      "name": "Renata Vasconcelos",
-      "role": "Diretora Terapêutica & Spa Lead",
-      "avatar": "profile_owner_renata.jpg",
+      "name": "Helena Rangel",
+      "role": "Especialista em Drenagem Integrativa",
+      "avatar": "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=200&h=200&q=80",
       "verified": true
     },
     "mutualNetwork": {
       "friendsCount": 3,
       "avatars": [
-        "friend_camila.jpg",
-        "friend_beatriz.jpg",
-        "friend_larissa.jpg"
+        "https://images.unsplash.com/photo-1548142813-c348350df52b?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&h=100&q=80"
       ],
-      "text": "Camila e Larissa são clientes habituais daqui"
+      "text": "Carolina, Bianca e Camila elogiam o atendimento acolhedor"
     }
   },
   {
@@ -2665,9 +2656,9 @@ const MOCK_SALONS = [
     "lat": -23.5655,
     "lng": -46.6845,
     "address": "R. Artur de Azevedo, 780 - Pinheiros, São Paulo",
-    "image": "salon_clinic_aesthetic.jpg",
-    "socialProof": "#Mariana fez Máscara LED há 44 min",
-    "socialAvatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80",
+    "image": "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=800&q=80",
+    "socialProof": "#Gabriela agendou Hidragloss Lips há 27 min",
+    "socialAvatar": "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=100&h=100&q=80",
     "service": {
       "id": "srv_s23_1",
       "name": "Fototerapia LED & Hidratação de Colágeno",
@@ -2748,19 +2739,18 @@ const MOCK_SALONS = [
       }
     ],
     "leadStaff": {
-      "name": "Dra. Renata Vasconcelos",
-      "role": "Responsável Técnica & Esteta",
-      "avatar": "profile_owner_renata.jpg",
+      "name": "Dra. Gabriela Vasconcelos",
+      "role": "Cirurgiã Dentista & Harmonização Facial",
+      "avatar": "https://images.unsplash.com/photo-1580894732444-8ecded7900cd?auto=format&fit=crop&w=200&h=200&q=80",
       "verified": true
     },
     "mutualNetwork": {
-      "friendsCount": 3,
+      "friendsCount": 2,
       "avatars": [
-        "friend_camila.jpg",
-        "friend_beatriz.jpg",
-        "friend_larissa.jpg"
+        "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=100&h=100&q=80"
       ],
-      "text": "Beatriz e +2 amigas da sua rede já vieram aqui"
+      "text": "Gabriela e Danielle realizam cuidados faciais com a Dra. Gabriela"
     }
   },
   {
@@ -2774,9 +2764,9 @@ const MOCK_SALONS = [
     "lat": -23.5795,
     "lng": -46.675,
     "address": "R. Tabapuã, 620 - Itaim Bibi, São Paulo",
-    "image": "salon_hair_boutique.jpg",
-    "socialProof": "#Thiago fez Combo Corte & Barba há 14 min",
-    "socialAvatar": "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=80&q=80",
+    "image": "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=800&q=80",
+    "socialProof": "#Paula agendou Corte Moderno há 18 min",
+    "socialAvatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=100&h=100&q=80",
     "service": {
       "id": "srv_s24_1",
       "name": "Combo Corte Unissex & Escova Polida",
@@ -2862,19 +2852,19 @@ const MOCK_SALONS = [
       }
     ],
     "leadStaff": {
-      "name": "Juliana Paes",
-      "role": "Diretora Criativa & Co-fundadora",
-      "avatar": "profile_owner_juliana.jpg",
+      "name": "Felipe Morais",
+      "role": "Hair Director & Expert em Texturas",
+      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=200&h=200&q=80",
       "verified": true
     },
     "mutualNetwork": {
       "friendsCount": 3,
       "avatars": [
-        "friend_camila.jpg",
-        "friend_beatriz.jpg",
-        "friend_larissa.jpg"
+        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&h=100&q=80",
+        "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=100&h=100&q=80"
       ],
-      "text": "Camila e mais 2 amigas que você segue frequentam aqui"
+      "text": "Paula, Mariana e Beatriz frequentam este lounge"
     }
   }
 ];
@@ -3352,12 +3342,11 @@ function getContextualService(salon, categoryKey) {
 }
 
 function getContextualSalonImage(salon, categoryKey) {
-  if (categoryKey && categoryKey !== 'all') {
-    if (categoryKey === 'hair') return 'salon_hair_boutique.jpg';
-    if (categoryKey === 'nails') return 'salon_nail_lounge.jpg';
-    if (categoryKey === 'barber') return 'salon_barber_modern.jpg';
-    if (categoryKey === 'massage') return 'salon_spa_oasis.jpg';
-    if (categoryKey === 'esthetic' || categoryKey === 'facial') return 'salon_clinic_aesthetic.jpg';
+  // Preserva a identidade fotográfica autêntica e exclusiva de cada estabelecimento!
+  // Se o serviço contextual tiver uma imagem própria cadastrada, prioriza ela; caso contrário, mantém a foto do salão.
+  const currentService = getContextualService(salon, categoryKey);
+  if (currentService && currentService.image) {
+    return currentService.image;
   }
   return salon.image || 'salon_hair_boutique.jpg';
 }
@@ -3574,14 +3563,17 @@ function renderHomeFeed() {
       text: "Camila, Beatriz e +1 amiga sua frequentam este espaço"
     };
 
+    // Texto limpo de prova social (ex: "Camila agendou há 14 min")
+    const cleanSocialProofText = (salon.socialProof || '').replace(/^#/, '');
+
     const card = document.createElement('div');
     card.className = 'social-salon-card';
     card.innerHTML = `
       <div class="card-media-wrap">
-        <img src="${cardImage}" alt="${salon.name}" onerror="this.src='salon_hair_boutique.jpg'">
+        <img src="${cardImage}" alt="${salon.name}" loading="lazy" onerror="this.onerror=null; this.src='salon_hair_boutique.jpg'">
         <div class="social-proof-pill">
-          <img class="social-proof-avatar" src="${mutualNetwork.avatars[0] || 'friend_camila.jpg'}" alt="avatar">
-          <span>${salon.socialProof}</span>
+          <span class="live-pulse-dot"></span>
+          <span>${cleanSocialProofText}</span>
         </div>
         <div class="card-eta-badge">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
@@ -3605,7 +3597,7 @@ function renderHomeFeed() {
 
         <!-- Selo do Responsável pelo Estabelecimento -->
         <div class="card-owner-seal">
-          <img class="owner-seal-avatar" src="${leadStaff.avatar}" alt="${leadStaff.name}" onerror="this.src='profile_owner_juliana.jpg'">
+          <img class="owner-seal-avatar" src="${leadStaff.avatar}" alt="${leadStaff.name}" loading="lazy" onerror="this.onerror=null; this.src='profile_owner_juliana.jpg'">
           <div class="owner-seal-info">
             <div class="owner-seal-name-row">
               <span class="owner-seal-name">${leadStaff.name}</span>
@@ -3620,7 +3612,7 @@ function renderHomeFeed() {
         <!-- Cluster Social ("Quem me conhece frequenta") -->
         <div class="card-mutual-friends">
           <div class="mutual-avatars-stack">
-            ${mutualNetwork.avatars.map(av => `<img class="mutual-avatar-item" src="${av}" alt="amiga">`).join('')}
+            ${mutualNetwork.avatars.map(av => `<img class="mutual-avatar-item" src="${av}" alt="amiga" loading="lazy" onerror="this.onerror=null; this.src='friend_camila.jpg'">`).join('')}
           </div>
           <span class="mutual-friends-text">${mutualNetwork.text}</span>
         </div>

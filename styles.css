@@ -850,43 +850,58 @@ body.fullscreen-mode .device-shell {
   overflow: hidden;
 }
 
-.card-media-wrap img {
+.card-media-wrap > img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.4s ease;
 }
 
-.social-salon-card:hover .card-media-wrap img {
+.social-salon-card:hover .card-media-wrap > img {
   transform: scale(1.03);
 }
 
-/* Floating Social Proof Tag (Social Food Delivery Inspiration) */
+/* Floating Social Proof Tag (Minimalist Translucent Badge with Live Dot) */
 .social-proof-pill {
   position: absolute;
   top: 12px;
   left: 12px;
-  background: rgba(19, 78, 74, 0.82);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(15, 23, 42, 0.68);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: #FFFFFF;
-  padding: 5px 10px;
+  padding: 4px 10px;
   border-radius: var(--radius-full);
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 10.5px;
+  font-weight: 500;
   display: flex;
   align-items: center;
   gap: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  border: 1px solid rgba(94, 234, 212, 0.4);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  z-index: 2;
+  white-space: nowrap;
 }
 
-.social-proof-avatar {
-  width: 18px;
-  height: 18px;
+.live-pulse-dot {
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  border: 1.5px solid var(--secondary-mint);
-  object-fit: cover;
+  background: #10B981;
+  box-shadow: 0 0 6px #10B981;
+  animation: pulseDot 2s infinite ease-in-out;
+  flex-shrink: 0;
+}
+
+@keyframes pulseDot {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 0.7;
+  }
 }
 
 /* Time Badge (Right side of photo) */

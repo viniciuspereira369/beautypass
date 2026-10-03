@@ -38,6 +38,7 @@ O **BeautyPass** é uma plataforma e clube de assinatura de estética, beleza e 
 | **Fase 10** | *"Fechamento de Gaps da Spec Técnica de Validação"* | Expansão para 24 salões seed em 6 bairros de SP, criação da tela e aba 'Meus Agendamentos' com histórico e cancelamento auditável, tratamento de dias sem vagas e cálculo de `hours_until` nos eventos analíticos. |
 | **Fase 11** | *"Fluxo sob demanda imersivo com rota de caminhada estilo Uber"* | Criação do botão central elevado "Pedir Agora" na barra de navegação inferior, tela de seleção com cards táteis e tela de mapa dinâmico com traçado Bézier e cálculo de percurso a pé. |
 | **Fase 12** | *"Remoção do card 'Corte com Preço Justo sob Demanda' da Home"* | Desacoplamento do card volumoso da tela inicial, mantendo a experiência sob demanda centralizada no botão "Pedir Agora" e tornando o feed inicial mais limpo e direto. |
+| **Fase 13** | *"Ajuste das categorias populares, filtros explícitos de proximidade e economia, fotos autênticas, selo do responsável e conexões da rede social"* | Correção da filtragem por especialidade com adaptação contextual do card (serviço, foto e precificação dinâmica vinculados à categoria selecionada), ordenação real de proximidade e desconto com badges prioritários e barra de feedback, inclusão de fotos hiper-realistas locais, selo do(a) responsável técnico e cluster social de amigas em comum, com adesão estrita à regra de zero emojis (100% ícones vetoriais SVG). |
 
 
 ---

@@ -637,6 +637,187 @@ body.fullscreen-mode .device-shell {
   border-color: var(--primary);
 }
 
+/* Quick Filter Enhancements & Feedback Bar */
+.feed-status-bar {
+  margin: 0 18px 14px;
+  background: rgba(13, 148, 136, 0.08);
+  border: 1px solid rgba(13, 148, 136, 0.22);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  animation: fadeIn 0.25s ease;
+}
+
+.feed-status-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  color: var(--neutral-text);
+}
+
+.feed-status-icon {
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+}
+
+.feed-status-clear {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.feed-status-clear:hover {
+  background: rgba(13, 148, 136, 0.15);
+}
+
+/* Priority Badges on Cards (Distance / Economy) */
+.card-priority-badge {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+  z-index: 2;
+  transition: transform 0.2s ease;
+}
+
+.card-priority-badge svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.card-priority-badge.priority-proximity {
+  background: rgba(13, 148, 136, 0.94);
+  border: 1px solid rgba(94, 234, 212, 0.65);
+  color: #FFFFFF;
+}
+
+.card-priority-badge.priority-economy {
+  background: rgba(217, 119, 6, 0.94);
+  border: 1px solid rgba(251, 191, 36, 0.65);
+  color: #FFFFFF;
+}
+
+/* Owner / Lead Professional Seal */
+.card-owner-seal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface-tint);
+  border: 1px solid rgba(13, 148, 136, 0.16);
+  border-radius: var(--radius-md);
+  padding: 6px 10px;
+  margin-top: 8px;
+  margin-bottom: 10px;
+}
+
+.owner-seal-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid var(--primary);
+  flex-shrink: 0;
+}
+
+.owner-seal-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+  overflow: hidden;
+}
+
+.owner-seal-name-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.owner-seal-name {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--neutral-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.owner-seal-badge {
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+}
+
+.owner-seal-role {
+  font-size: 10.5px;
+  color: var(--neutral-muted);
+}
+
+/* Mutual Friends Network Cluster ("Quem me conhece frequenta") */
+.card-mutual-friends {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  background: rgba(240, 253, 250, 0.85);
+  border: 1px solid rgba(94, 234, 212, 0.45);
+  border-radius: var(--radius-md);
+  margin-bottom: 12px;
+}
+
+.mutual-avatars-stack {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.mutual-avatar-item {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid #FFFFFF;
+  margin-left: -7px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.mutual-avatar-item:first-child {
+  margin-left: 0;
+}
+
+.mutual-friends-text {
+  font-size: 11px;
+  color: var(--neutral-text);
+  line-height: 1.35;
+}
+
+.mutual-friends-text strong {
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+
 /* ===================================================================
    SOCIAL PROOF FEED ("Amigas estão agendando")
    =================================================================== */

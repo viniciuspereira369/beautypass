@@ -173,37 +173,37 @@
           <div class="categories-carousel">
             <button class="category-chip active" onclick="selectHomeCategory('all', this)">
               <div class="category-icon-box">
-                <img src="treatment_hair_salon.jpg" alt="Todos">
+                <img src="salon_hair_boutique.jpg" alt="Todos">
               </div>
               <span class="category-label">Todos</span>
             </button>
             <button class="category-chip" onclick="selectHomeCategory('hair', this)">
               <div class="category-icon-box">
-                <img src="treatment_hair_salon.jpg" alt="Cabelo">
+                <img src="salon_hair_boutique.jpg" alt="Cabelo">
               </div>
               <span class="category-label">Cabelo</span>
             </button>
             <button class="category-chip" onclick="selectHomeCategory('nails', this)">
               <div class="category-icon-box">
-                <img src="treatment_eyebrows_beauty.jpg" alt="Unhas">
+                <img src="salon_nail_lounge.jpg" alt="Unhas">
               </div>
               <span class="category-label">Unhas</span>
             </button>
             <button class="category-chip" onclick="selectHomeCategory('barber', this)">
               <div class="category-icon-box">
-                <img src="treatment_facial_spa.jpg" alt="Barba">
+                <img src="salon_barber_modern.jpg" alt="Barbearia">
               </div>
               <span class="category-label">Barbearia</span>
             </button>
             <button class="category-chip" onclick="selectHomeCategory('massage', this)">
               <div class="category-icon-box">
-                <img src="treatment_massage_spa.jpg" alt="Massagem">
+                <img src="salon_spa_oasis.jpg" alt="Massagem">
               </div>
               <span class="category-label">Massagem</span>
             </button>
             <button class="category-chip" onclick="selectHomeCategory('esthetic', this)">
               <div class="category-icon-box">
-                <img src="treatment_skincare_cosmetics.jpg" alt="Estética">
+                <img src="salon_clinic_aesthetic.jpg" alt="Estética">
               </div>
               <span class="category-label">Estética</span>
             </button>
@@ -218,13 +218,16 @@
           </button>
           <button class="filter-chip" onclick="setQuickFilter('economy', this)">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-            <span>Horário Econômico</span>
+            <span>Maior Economia (Até 35% OFF)</span>
           </button>
           <button class="filter-chip" onclick="setQuickFilter('proximity', this)">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-            <span>Mais Próximos</span>
+            <span>Mais Próximos (&lt; 2 km)</span>
           </button>
         </div>
+
+        <!-- Barra de Feedback Dinâmica do Filtro Ativo -->
+        <div id="feed-status-bar" class="feed-status-bar" style="display: none;"></div>
 
         <!-- Feed Social ("Amigas estão agendando" — Social Food Delivery) -->
         <div class="section-header" style="margin-bottom: 6px;">
@@ -1129,15 +1132,5 @@
 
   <!-- Application Logic -->
   <script src="app.js"></script>
-
-  <!-- Helper Scripts para Filtro Rápido -->
-  <script>
-    function setQuickFilter(type, btn) {
-      document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      AppState.activeFilter = type;
-      renderHomeFeed();
-    }
-  </script>
 </body>
 </html>

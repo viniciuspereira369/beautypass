@@ -571,5 +571,48 @@ Atendendo à solicitação de uma experiência ainda mais visual e dinâmica com
    - `node --check app.js` — **0 erros de sintaxe**.
    - Subagente de navegador realizou teste de ponta a ponta: confirmou a nova Home mais limpa, acionou o botão "Pedir Agora", selecionou procedimento sob demanda e abriu o mapa de mobilidade com traçado da rota a pé.
 
+---
+
+## 12. Sessão 7 — Refinamento das Categorias, Filtros Explícitos e Prova Social Autêntica (02 Out 2026)
+
+> **Data de Implementação:** 02 de Outubro de 2026  
+> **Status:** Concluído, Validado Automatizadamente (Node & Browser Subagent E2E) e Aprovado  
+> **Branch Git:** `main`  
+> **Arquivos Modificados:** `beautypass_app.html`, `styles.css`, `app.js`, `HISTORICO_DESENVOLVIMENTO_PROTOTIPO.md`, `CONTEXT.md`
+
+### 12.1 Motivação e Alinhamento (`/grill-me` & `/plan`)
+O usuário solicitou três aprimoramentos cruciais na página inicial:
+1. **Categorias Populares Inconsistentes:** O filtro de categorias listava salões sem associar adequadamente o serviço correspondente àquela categoria específica.
+2. **Falta de Clareza nos Filtros Rápidos:** Os botões de "Mais Próximos" e "Econômico" não deixavam explícito o que estava sendo filtrado ou ordenado.
+3. **Imagens Genéricas:** Necessidade de fotografias autênticas e hiper-realistas para os salões e introdução de dois novos elementos essenciais de confiança:
+   - **Pessoa Responsável pelo Estabelecimento:** Foto em alta resolução, nome e cargo de Fundador(a) / Master Stylist / Responsável Técnico.
+   - **Conexões da Rede Social ("Quem Me Conhece"):** Stack de avatares com fotos reais indicando que amigas da rede do usuário frequentam aquele espaço.
+   - **Regra Rígida de Design:** Proibição de emojis em textos e badges, adotando exclusivamente ícones vetoriais SVG de alta definição.
+
+### 12.2 Principais Implementações Realizadas
+1. **Novo Acervo de Imagens Locais Hiper-Realistas:**
+   - Interiores e fachadas de alto padrão em São Paulo: `salon_hair_boutique.jpg`, `salon_nail_lounge.jpg`, `salon_barber_modern.jpg`, `salon_spa_oasis.jpg`, `salon_clinic_aesthetic.jpg`.
+   - Retratos autênticos de responsáveis técnicos: `profile_owner_juliana.jpg`, `profile_owner_marcos.jpg`, `profile_owner_renata.jpg`.
+   - Avatares para o cluster social de amigas: `friend_camila.jpg`, `friend_beatriz.jpg`, `friend_larissa.jpg`.
+2. **Adaptação Contextual do Card ao Filtrar Categoria:**
+   - Unificação das categorias `esthetic` e `facial`.
+   - Ao selecionar uma categoria (ex: *Unhas*), apenas os estabelecimentos que oferecem serviços dessa especialidade são listados, e cada card adapta automaticamente o título, descrição, duração, foto e preço para o procedimento de unhas correspondente.
+   - Ao clicar em *"Escolher Horário"*, o agendamento já inicia com o serviço filtrado selecionado.
+3. **Filtros Rápidos Explícitos com Feedback em Tempo Real:**
+   - **"Mais Próximos":** Ordenação estrita crescente por distância com badge prioritário esmeralda (`0.8 km de você`).
+   - **"Maior Economia":** Ordenação decrescente por maior desconto percentual com badge prioritário dourado (`Melhor Desconto (35% OFF)`).
+   - **Barra de Feedback Superior (`#feed-status-bar`):** Exibe contagem de salões e critério ativo, com botão de limpeza rápida (`Limpar`).
+4. **Selo do Responsável e Cluster Social no Card:**
+   - Cada card conta com o `.card-owner-seal` destacando o(a) responsável com foto, nome, cargo e ícone SVG de verificação.
+   - O `.card-mutual-friends` exibe uma sobreposição dos avatares das amigas em comum com texto personalizado de recomendação social.
+5. **Zero Emojis:**
+   - 100% dos elementos usam ícones vetoriais SVG (pin de mapa, tags de desconto, estrelas, checkmarks e botões de fechar).
+
+### 12.3 Validação Automatizada e Evidências
+- `node --check app.js`: 0 erros de sintaxe.
+- Teste unitário Node (`scratch/test_filters.js`): 100% de sucesso para as 6 categorias e ordenações.
+- Subagente de navegador (`verify_home_filters`): validou o fluxo visual completo, filtros rápidos, adaptação contextual e navegação até a tela de agendamento de precisão.
+
+
 
 

@@ -3905,23 +3905,23 @@ function onMapSearch(query) {
 const DEMAND_CATEGORY_INFO = {
   hair: {
     label: 'Cabelo & Escova',
-    iconSvg: '<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/>'
+    iconSvg: '<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/><path d="M15 7c1.5-1 3.5-1 5 0"/><path d="M14 10.5c1.8-.8 3.8-.8 5.5 0"/>'
   },
   nails: {
     label: 'Unhas & Manicure',
-    iconSvg: '<path d="M12 2a4 4 0 0 0-4 4v7a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4z"/><path d="M6 13a6 6 0 0 0 12 0"/><line x1="12" y1="17" x2="12" y2="22"/>'
+    iconSvg: '<path d="M10 2h4v5h-4z"/><path d="M7 10a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v-9z"/><path d="M10 13h4"/><path d="M10 16.5h2.5"/><path d="M19 4v2m-1-1h2"/>'
   },
   barber: {
     label: 'Barba & Corte',
-    iconSvg: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/>'
+    iconSvg: '<path d="M3 6h11a1.5 1.5 0 0 1 1.5 1.5v1.5a1.5 1.5 0 0 1-1.5 1.5H3V6z"/><line x1="3" y1="9" x2="13.5" y2="9"/><circle cx="16" cy="9" r="1.5" fill="currentColor"/><path d="M16 10.5c1.5 2.5 3 6 4 10a1.5 1.5 0 0 1-2 1.8c-2.5-1.5-5-4.5-6.5-7.5"/>'
   },
   massage: {
     label: 'Massagem & Spa',
-    iconSvg: '<path d="M12 2a5 5 0 0 0-5 5v3a5 5 0 0 0 10 0V7a5 5 0 0 0-5-5z"/><path d="M5 22v-3a7 7 0 0 1 14 0v3"/>'
+    iconSvg: '<path d="M12 4c-1.8 3-3 6.5-3 9.5 0 2.5 1.3 4 3 4s3-1.5 3-4c0-3-1.2-6.5-3-9.5z"/><path d="M9 13.5C6.5 11.5 4 12 3 13.5c-.5 1.8 1 4 4.5 4.5"/><path d="M15 13.5c2.5-2 5-1.5 6 0 .5 1.8-1 4-4.5 4.5"/><path d="M4 21c4-1 12-1 16 0"/>'
   },
   facial: {
     label: 'Estética Facial',
-    iconSvg: '<circle cx="12" cy="12" r="9"/><path d="M9 10h.01M15 10h.01M9.5 15a3.5 3.5 0 0 0 5 0"/>'
+    iconSvg: '<path d="M8 3c3 0 5.5 1.8 6 4.5l.8 3c.3 1 .1 2-.6 2.5l-.2.1c-.5.4-.7 1-.5 1.6l.3 1c.3.9-.2 1.8-1.1 2.1-1.2.4-2.7.7-4.7.7"/><path d="M9 10.5c.8.5 1.7.5 2.5 0"/><path d="M18 3v4m-2-2h4"/><path d="M19 12v2m-1-1h2"/>'
   }
 };
 

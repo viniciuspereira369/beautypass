@@ -701,6 +701,50 @@ Através do processo de alinhamento com plano estruturado e aprovado (`plan_simp
    - [barbearia_maestro_full_1791071113866.png](file:///C:/Users/Usuario%28a%29%20Master/.gemini/antigravity-ide/brain/9fc529f1-b2b7-4889-b5f5-f8a344881c50/barbearia_maestro_full_1791071113866.png)
    - Vídeo: [verify_clean_salon_photo_1791071001025.webp](file:///C:/Users/Usuario%28a%29%20Master/.gemini/antigravity-ide/brain/9fc529f1-b2b7-4889-b5f5-f8a344881c50/verify_clean_salon_photo_1791071001025.webp)
 
+---
+
+## 16. Sessão 11 — Modernização dos Ícones Vetoriais da Guia "Pedir Agora" (03 Out 2026)
+
+> **Data de Implementação:** 03 de Outubro de 2026  
+> **Status:** Concluído, Validado Visualmente (0 Erros de Sintaxe e Teste E2E no Navegador) e Aprovado  
+> **Branch Git:** `main`  
+> **Arquivos Modificados:** `beautypass_app.html`, `app.js`, `styles.css`, `walkthrough.md`, `CONTEXT.md`, `HISTORICO_DESENVOLVIMENTO_PROTOTIPO.md`
+
+### 16.1 Motivação e Alinhamento (`/grill-me` & `/plan`)
+O usuário solicitou: *"Gostaria que você arruma-se os icones dos serviços que estão na guia Pedir Agora. Sugira possíveis formas de melhorar eles, deixando eles condizentes com os serviços oferecidos"*.
+
+Através da análise técnica do código, constatou-se que a tela de seleção de procedimentos sob demanda (`#screen-demand-service`) continha ícones herdados de bibliotecas genéricas sem qualquer relação com beleza:
+- **Unhas & Manicure:** Utilizava um microfone de estúdio (`Lucide mic`).
+- **Barba & Corte:** Utilizava um ícone de documento/folha de papel (`Lucide file-text`).
+- **Massagem & Spa:** Utilizava uma silhueta genérica de usuário (`Lucide user`).
+- **Estética Facial:** Utilizava uma carinha sorridente emoji (`Lucide smile`).
+- **Cabelo & Escova:** Utilizava uma tesoura simples sem elementos de acabamento ou modelagem.
+
+Através do processo iterativo de alinhamento com plano estruturado e aprovado (`plan_icones_pedir_agora.md`), foram definidas as decisões de arquitetura de produto:
+1. **Estilo Vetorial Consistente:** Ícones vetoriais SVG de alta precisão (Line-art minimalista), com traço de 2.2px, cantos e uniões arredondadas (`stroke-linecap="round"` e `stroke-linejoin="round"`), proporção 24x24 viewBox renderizada em 26x26px. Zero emojis.
+2. **Metáforas Aprovadas:**
+   - **Cabelo & Escova (`hair`):** Tesoura de estilista com mechas fluidas modeladoras de cabelo.
+   - **Unhas & Manicure (`nails`):** Frasco de esmalte de alta precisão com tampa aplicadora, linha de nível e estrela de brilho/acabamento.
+   - **Barba & Corte (`barber`):** Navalhete clássico articulado de lâmina aberta com pino pivô e cabo ergonômico.
+   - **Massagem & Spa (`massage`):** Flor de lótus zen com pétalas abertas e base fluida de relaxamento.
+   - **Estética Facial (`facial`):** Perfil facial feminino sereno com estrelas de brilho/glow indicando pele radiante e skincare.
+3. **Harmonização Cromática:** Preservação dos fundos tonais pastel suaves (`.hair-box` em teal, `.nails-box` em rosa, `.barber-box` em âmbar, `.massage-box` em lavanda e `.facial-box` em menta).
+4. **Sincronização:** Atualização simultânea no HTML estático (`beautypass_app.html`) e no dicionário `DEMAND_CATEGORY_INFO` em `app.js`.
+
+### 16.2 Validação Automatizada e Visual
+1. **Validação de Sintaxe:** `node -c app.js` — **0 erros**.
+2. **Inspeção E2E via Browser Subagent (`verify_demand_service_icons`):**
+   - Navegação até `http://localhost:8089/beautypass_app.html`.
+   - Acionamento do botão central elevado "Pedir Agora" (`#nav-btn-demand`).
+   - Inspeção dos 5 cards na tela `#screen-demand-service`, confirmando renderização perfeita, alta nitidez e correspondência absoluta com os serviços.
+   - Teste de alternância interativa clicando em cada um dos cards (*Unhas & Manicure*, *Barba & Corte*, *Massagem & Spa*, *Estética Facial*), validando o recebimento da classe `.active` e o checkmark indicador.
+3. **Evidências Arquivadas:**
+   - [demand_cards_grid_all_5_1791071982702.png](file:///C:/Users/Usuario%28a%29%20Master/.gemini/antigravity-ide/brain/9fc529f1-b2b7-4889-b5f5-f8a344881c50/demand_cards_grid_all_5_1791071982702.png)
+   - [screen_demand_service_1791071956964.png](file:///C:/Users/Usuario%28a%29%20Master/.gemini/antigravity-ide/brain/9fc529f1-b2b7-4889-b5f5-f8a344881c50/screen_demand_service_1791071956964.png)
+   - [final_demand_screen_facial_active_1791072179526.png](file:///C:/Users/Usuario%28a%29%20Master/.gemini/antigravity-ide/brain/9fc529f1-b2b7-4889-b5f5-f8a344881c50/final_demand_screen_facial_active_1791072179526.png)
+   - Vídeo: [verify_demand_service_icons_1791071794707.webp](file:///C:/Users/Usuario%28a%29%20Master/.gemini/antigravity-ide/brain/9fc529f1-b2b7-4889-b5f5-f8a344881c50/verify_demand_service_icons_1791071794707.webp)
+
+
 
 
 

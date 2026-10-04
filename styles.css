@@ -3984,6 +3984,11 @@ a:focus-visible,
   transition: transform 0.2s;
 }
 
+.demand-card-icon-box svg {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .demand-service-card:hover .demand-card-icon-box {
   transform: scale(1.05);
 }

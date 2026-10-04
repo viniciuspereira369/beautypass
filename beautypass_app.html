@@ -725,7 +725,17 @@
             <div id="validation-dashboard-metrics">
               <!-- Renderizado dinamicamente via renderValidationMetrics() -->
             </div>
-            <button class="profile-action-btn" style="margin-top:10px; border-color:var(--outline-variant); color:var(--neutral-dark);" onclick="resetValidationData()">
+            <div style="display:flex; gap:8px; margin-top:10px;">
+              <button class="profile-action-btn" style="flex:1; margin-top:0; border-color:var(--primary); color:var(--primary);" onclick="openSessionFinishModal()">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                <span>Avaliar Sessão (SUS)</span>
+              </button>
+              <button class="profile-action-btn" style="flex:1; margin-top:0; border-color:var(--amber-warm); color:#B45309;" onclick="simulateMerchantCancellation()" title="Injeta agendamento CANCELLED_BY_MERCHANT (Seção 8 e 12.10)">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span>Simular Força Maior</span>
+              </button>
+            </div>
+            <button class="profile-action-btn" style="margin-top:8px; border-color:var(--outline-variant); color:var(--neutral-dark);" onclick="resetValidationData()">
               <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
               <span>Reset de Dados de Validação</span>
             </button>
@@ -785,6 +795,14 @@
           <!-- Container da Lista de Agendamentos -->
           <div id="appointments-list-container" class="appt-list-container">
             <!-- Renderizado dinamicamente via renderAppointmentsScreen() -->
+          </div>
+
+          <!-- Botão para Finalizar Sessão de Teste & Avaliar SUS (Seção 5.2) -->
+          <div style="margin-top:16px; padding:0 2px;">
+            <button class="card-action-btn" style="height:44px; background:var(--surface-tint); border:1.5px solid var(--primary); color:var(--primary); font-size:12px; font-weight:700;" onclick="openSessionFinishModal()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              <span>Finalizar Teste & Avaliar (SUS)</span>
+            </button>
           </div>
         </div>
       </section>
@@ -1163,6 +1181,81 @@
           <button class="card-action-btn" id="btn-confirm-match-checkout" style="margin-top:14px;" onclick="confirmMatchAndProceed()">
             <span>Confirmar Reserva com Tarifa Justa</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================
+         MODAL 5: FINALIZAÇÃO DE SESSÃO & QUESTIONÁRIO SUS (Seção 5.2)
+         ========================================================= -->
+    <div id="session-finish-modal-overlay" class="modal-overlay">
+      <div class="modal-sheet finish-session-sheet">
+        <div class="modal-header-row">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <div class="finish-modal-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            </div>
+            <div>
+              <h3 class="modal-title" style="font-size:15px; margin:0;">Finalização do Teste</h3>
+              <span style="font-size:11px; color:var(--neutral-muted);">Participante: <strong id="finish-participant-code">P01</strong></span>
+            </div>
+          </div>
+          <button class="modal-close-btn" onclick="closeSessionFinishModal()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+
+        <div class="finish-modal-scrollable">
+          <!-- Bloco A: Questionário SUS Padronizado (10 Perguntas) -->
+          <div class="finish-section-box">
+            <h4 class="finish-section-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              Escala de Usabilidade do Sistema (SUS)
+            </h4>
+            <p class="finish-section-sub">1 = Discordo Totalmente &nbsp;|&nbsp; 5 = Concordo Totalmente (Meta GO: &ge; 70 pts):</p>
+
+            <div id="sus-questions-container" class="sus-questions-list">
+              <!-- Renderizado dinamicamente via renderSUSQuestions() -->
+            </div>
+          </div>
+
+          <!-- Bloco B: Perguntas Qualitativas Obrigatórias (Seção 5.2) -->
+          <div class="finish-section-box">
+            <h4 class="finish-section-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Perguntas Qualitativas & Retenção
+            </h4>
+
+            <div class="form-group" style="margin-bottom:10px;">
+              <label class="form-label" style="font-size:11px;">1. O que você mais gostou no aplicativo?</label>
+              <textarea id="finish-feedback-liked" class="form-input" style="height:55px; padding:8px 10px; resize:none; font-family:inherit; font-size:11.5px;" placeholder="Ex.: Agilidade no agendamento, clareza do desconto..."></textarea>
+            </div>
+
+            <div class="form-group" style="margin-bottom:10px;">
+              <label class="form-label" style="font-size:11px;">2. O que mais te incomodou ou causou dúvida?</label>
+              <textarea id="finish-feedback-disliked" class="form-input" style="height:55px; padding:8px 10px; resize:none; font-family:inherit; font-size:11.5px;" placeholder="Ex.: Gostaria de ver mais fotos do espaço..."></textarea>
+            </div>
+
+            <div class="form-group" style="margin-bottom:4px;">
+              <label class="form-label" style="font-size:11px; margin-bottom:6px; display:block;">3. Você usaria este aplicativo de novo no dia a dia? (Meta GO: &ge; 60%)</label>
+              <div class="retention-radio-group">
+                <label class="retention-radio-label" id="label-retention-yes">
+                  <input type="radio" name="finish-retention" value="yes" onchange="updateRetentionRadio(this)">
+                  <span>Sim, com certeza</span>
+                </label>
+                <label class="retention-radio-label" id="label-retention-no">
+                  <input type="radio" name="finish-retention" value="no" onchange="updateRetentionRadio(this)">
+                  <span>Não usaria</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botão Submissão com Trava de Validação -->
+          <button id="btn-submit-sus-evaluation" class="card-action-btn" style="height:48px; margin-top:8px; margin-bottom:6px; opacity:0.5; cursor:not-allowed;" disabled onclick="submitSessionEvaluation()">
+            <span>Salvar Avaliação & Atualizar Métricas</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
           </button>
         </div>
       </div>

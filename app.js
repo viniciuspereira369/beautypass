@@ -35,36 +35,81 @@ const MOCK_SALONS = [
       {
         "id": "st1",
         "name": "Juliana Paes",
-        "role": "Master Stylist",
-        "rating": 4.95,
-        "avatar": "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=120&q=80"
+        "role": "Master Stylist & Fundadora",
+        "rating": 4.98,
+        "avatar": "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=120&q=80",
+        "highlightBadge": "Destaque da Casa"
       },
       {
         "id": "st2",
         "name": "Rodrigo Faro",
-        "role": "Visagista",
+        "role": "Visagista & Colorista",
         "rating": 4.88,
         "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80"
+      },
+      {
+        "id": "st1_3",
+        "name": "Mariana Rios",
+        "role": "Terapeuta Capilar",
+        "rating": 4.82,
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
+      },
+      {
+        "id": "st1_4",
+        "name": "Gabriel Santana",
+        "role": "Stylist Júnior",
+        "rating": 4.75,
+        "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&q=80"
       }
     ],
     "reviews": [
       {
         "author": "Fernanda S.",
         "rating": 5,
-        "comment": "Excelente atendimento, resultado incrível! Juliana é uma artista.",
+        "comment": "Excelente atendimento, resultado incrível! Juliana é uma artista de mão cheia.",
         "date": "Set 2026"
       },
       {
         "author": "Ana R.",
         "rating": 5,
-        "comment": "Já é minha profissional fixa. Super pontual e cuidadosa.",
+        "comment": "Já é minha profissional fixa. Super pontual e cuidadosa com cada detalhe.",
         "date": "Set 2026"
       },
       {
         "author": "Camila T.",
         "rating": 4,
-        "comment": "Ambiente agradável, mas demorou um pouco além do previsto.",
+        "comment": "Ambiente agradável e café delicioso, mas atrasou cerca de 10 min.",
         "date": "Ago 2026"
+      },
+      {
+        "author": "Beatriz V.",
+        "rating": 5,
+        "comment": "Corte visagista impecável com o Rodrigo! Meu rosto ficou muito mais valorizado.",
+        "date": "Ago 2026"
+      },
+      {
+        "author": "Luciana M.",
+        "rating": 5,
+        "comment": "Escova com durabilidade absurda. Recomendo muito o horário econômico.",
+        "date": "Jul 2026"
+      },
+      {
+        "author": "Carla N.",
+        "rating": 5,
+        "comment": "Espaço charmoso em Pinheiros, produtos de primeira linha.",
+        "date": "Jul 2026"
+      },
+      {
+        "author": "Juliana D.",
+        "rating": 4,
+        "comment": "Gostei muito da hidratação Moroccanoil. Fios super macios.",
+        "date": "Jun 2026"
+      },
+      {
+        "author": "Patricia B.",
+        "rating": 5,
+        "comment": "Facilidade incrível para agendar. Juliana como sempre perfeita.",
+        "date": "Jun 2026"
       }
     ],
     "discountSlots": [
@@ -183,36 +228,81 @@ const MOCK_SALONS = [
       {
         "id": "st3",
         "name": "Fernanda Lima",
-        "role": "Nail Designer",
-        "rating": 4.92,
-        "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&q=80"
+        "role": "Master Nail Artist",
+        "rating": 4.96,
+        "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&q=80",
+        "highlightBadge": "Destaque da Casa"
       },
       {
         "id": "st4",
         "name": "Carla Dias",
-        "role": "Lash Designer",
+        "role": "Lash & Brow Designer",
         "rating": 4.85,
         "avatar": "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&w=120&q=80"
+      },
+      {
+        "id": "st2_3",
+        "name": "Vanessa Prado",
+        "role": "Podóloga & Spa de Pés",
+        "rating": 4.79,
+        "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80"
+      },
+      {
+        "id": "st2_4",
+        "name": "Larissa Moura",
+        "role": "Nail Designer Júnior",
+        "rating": 4.72,
+        "avatar": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=120&q=80"
       }
     ],
     "reviews": [
       {
         "author": "Bia M.",
         "rating": 5,
-        "comment": "Melhor nail art que já fiz! Fernanda é incrível.",
+        "comment": "Melhor nail art que já fiz! Fernanda é incrível, traço perfeito.",
         "date": "Set 2026"
       },
       {
         "author": "Lara K.",
         "rating": 4,
-        "comment": "Ótimo atendimento, preços honestos e ambiente charmoso.",
+        "comment": "Ótimo atendimento, preços honestos e ambiente muito charmoso.",
         "date": "Set 2026"
       },
       {
         "author": "Sofia P.",
         "rating": 5,
-        "comment": "Voltarei sempre! Design perfeito e muito durável.",
+        "comment": "Voltarei sempre! Blindagem em gel que durou mais de 25 dias intacta.",
         "date": "Ago 2026"
+      },
+      {
+        "author": "Juliana G.",
+        "rating": 5,
+        "comment": "Design de sobrancelha impecável com a Carla. Super natural!",
+        "date": "Ago 2026"
+      },
+      {
+        "author": "Marcela F.",
+        "rating": 5,
+        "comment": "Spa dos pés revigorante! Massagem maravilhosa com a Vanessa.",
+        "date": "Jul 2026"
+      },
+      {
+        "author": "Renata S.",
+        "rating": 4,
+        "comment": "Ambiente limpo, esterilização visível de instrumentos e ótimo cafezinho.",
+        "date": "Jul 2026"
+      },
+      {
+        "author": "Aline T.",
+        "rating": 5,
+        "comment": "A pontualidade aqui é exemplar. Nunca fico esperando.",
+        "date": "Jun 2026"
+      },
+      {
+        "author": "Camila O.",
+        "rating": 5,
+        "comment": "Agendei no horário ocioso com 30% off, valeu cada centavo.",
+        "date": "Jun 2026"
       }
     ],
     "discountSlots": [
@@ -2902,6 +2992,10 @@ const AppState = {
   selectedPaymentMethod: 'card', // 'card' | 'pix'
   confirmedAppointment: null,
   analyticsEvents: [],
+  // Controle de Rastreabilidade e Debounce de Métricas (Fase 1)
+  _pendingCheckoutApptId: null,
+  viewedSlotsHistory: new Set(), // Formato: `${salonId}_${date}_${time}`
+  sliderDebounceTimer: null,
   // Smart Match Engine State
   smartMatchWindow: 'now_2h',
   smartSelectedServiceType: 'hair_cut_fem',
@@ -2919,6 +3013,7 @@ const AppState = {
   uberMatchesList: [],
   lastWalkTimeMin: null,
   lastWalkDistanceM: null,
+  bookingChannel: 'calendar', // 'calendar' | 'on_demand' (Ticket 11)
   appointmentsTab: 'active',
   // Lista de Agendamentos (com seeds da Seção 12.10)
   appointmentsList: [
@@ -2974,6 +3069,86 @@ function showToast(message, duration = 3000) {
   }, duration);
 }
 
+// ===================================================================
+// CONFIGURAÇÃO DE SINCRONIZAÇÃO REMOTA (GOOGLE SHEETS / APPS SCRIPT)
+// ===================================================================
+const CONFIG = {
+  // Configure aqui a URL da Web App publicada no Google Apps Script (Ticket 06)
+  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbz_beauty_pass_placeholder/exec',
+  ENABLE_REMOTE_SYNC: true
+};
+
+let eventQueue = [];
+let syncTimer = null;
+
+function flushEventsQueue() {
+  if (eventQueue.length === 0 || !CONFIG.ENABLE_REMOTE_SYNC || !CONFIG.APPS_SCRIPT_URL || CONFIG.APPS_SCRIPT_URL.includes('placeholder')) {
+    return;
+  }
+
+  const batch = [...eventQueue];
+  eventQueue = [];
+
+  fetch(CONFIG.APPS_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      action: 'log_events',
+      events: batch
+    }),
+    keepalive: true
+  }).catch(err => {
+    console.warn('Falha no envio remoto de eventos (mantidos localmente):', err);
+  });
+}
+
+function queueEventForSync(eventPayload) {
+  eventQueue.push(eventPayload);
+  clearTimeout(syncTimer);
+  if (eventQueue.length >= 5) {
+    flushEventsQueue();
+  } else {
+    syncTimer = setTimeout(flushEventsQueue, 4000);
+  }
+}
+
+async function checkBookingSlotAvailability(salon, service, time, dateStr, staff) {
+  if (!CONFIG.ENABLE_REMOTE_SYNC || !CONFIG.APPS_SCRIPT_URL || CONFIG.APPS_SCRIPT_URL.includes('placeholder')) {
+    return { available: true };
+  }
+
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3500);
+
+    const response = await fetch(CONFIG.APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({
+        action: 'attempt_booking',
+        booking_id: AppState._pendingCheckoutApptId,
+        salon_id: salon.id,
+        date: dateStr,
+        time: time,
+        staff_id: staff ? staff.id : 'any',
+        participant_code: AppState.userSession?.participantCode || 'P01'
+      }),
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+
+    const resJson = await response.json();
+    if (resJson.status === 'CONFLICT') {
+      return { available: false, message: resJson.message || 'Outro participante acabou de reservar este horário.' };
+    }
+    return { available: true };
+  } catch (err) {
+    console.warn('Checagem remota de conflito ignorada (offline/timeout):', err);
+    return { available: true };
+  }
+}
+
 function trackEvent(eventName, props = {}) {
   const sessionId = AppState.userSession?.sessionId || 'sess_anonymous';
   const participantCode = AppState.userSession?.participantCode || 'P00';
@@ -3003,12 +3178,61 @@ function trackEvent(eventName, props = {}) {
   }
 
   console.log(`%c[ANALYTICS EVENT] ${eventName}`, 'color: #0D9488; font-weight: bold;', enrichedProps);
+
+  // Despacho assíncrono para o Google Apps Script (Ticket 07)
+  queueEventForSync(eventPayload);
 }
 
 // ===================================================================
-// 4. ONBOARDING & CONFORMIDADE LGPD (Seção 13 da Spec)
+// 4. PERSISTÊNCIA LOCAL DE AGENDAMENTOS (Ticket 05) & ONBOARDING LGPD
 // ===================================================================
+function persistAppointments() {
+  try {
+    localStorage.setItem('bp_user_appointments', JSON.stringify(AppState.appointmentsList));
+  } catch (e) {
+    console.warn('Erro ao salvar agendamentos no storage:', e);
+  }
+}
+
+function loadAppointments() {
+  try {
+    const saved = localStorage.getItem('bp_user_appointments');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        AppState.appointmentsList = parsed;
+      }
+    }
+  } catch (e) {
+    console.warn('Erro ao restaurar agendamentos:', e);
+  }
+}
+
 function initSessionState() {
+  // Carrega agendamentos persistidos
+  loadAppointments();
+
+  // Inicializa data padrão com o primeiro dia válido do intervalo dinâmico
+  const initialDates = generateDateRange();
+  if (initialDates.length > 0) {
+    AppState.selectedDate = initialDates[0].dateStr;
+  }
+
+  // Ticket 13: Captura de Código de Participante via URL Query Param (?p=P01 ou ?participant=P01)
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const participantParam = urlParams.get('p') || urlParams.get('participant');
+    if (participantParam) {
+      const inputEl = document.getElementById('onboarding-participant');
+      if (inputEl) {
+        inputEl.value = participantParam.toUpperCase();
+        inputEl.readOnly = true; // Trava para evitar alteração acidental pelo participante
+      }
+    }
+  } catch (err) {
+    console.warn('Erro ao processar query parameters:', err);
+  }
+
   const savedSession = localStorage.getItem('bp_user_session');
   if (savedSession) {
     try {
@@ -3105,6 +3329,48 @@ function updateUserUI() {
 // 5. MOTOR DE PRECIFICAÇÃO DINÂMICA & DISPONIBILIDADE REALISTA (Seção 9 e 7 da Spec)
 // ===================================================================
 
+function generateDateRange() {
+  const dates = [];
+  const baseDate = new Date();
+  const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+  for (let i = 0; i < 5; i++) {
+    const d = new Date(baseDate);
+    d.setDate(baseDate.getDate() + i);
+
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    const dateStr = `${yyyy}-${mm}-${dd}`;
+    const dow = d.getDay();
+
+    dates.push({
+      dateStr,
+      dayAbbr: dayNames[dow],
+      dayNum: dd,
+      dow
+    });
+  }
+  return dates;
+}
+
+function formatAppointmentDisplayDate(dateStr) {
+  if (!dateStr) return 'Data a confirmar';
+  const parts = String(dateStr).split('-');
+  if (parts.length !== 3) return dateStr;
+
+  const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]), 12, 0, 0);
+  
+  const formatter = new Intl.DateTimeFormat('pt-BR', {
+    timeZone: 'America/Sao_Paulo',
+    weekday: 'short',
+    day: '2-digit',
+    month: 'short'
+  });
+  
+  return formatter.format(d);
+}
+
 function getDayOfWeek(dateStr) {
   if (!dateStr) return 5;
   const parts = dateStr.split('-');
@@ -3114,6 +3380,33 @@ function getDayOfWeek(dateStr) {
   }
   return 5;
 }
+
+const PROMO_PRESETS = [
+  [
+    { time: '10:00', discountPct: 25, type: 'economy' },
+    { time: '13:30', discountPct: 35, type: 'economy' },
+    { time: '14:30', discountPct: 30, type: 'economy' },
+    { time: '15:00', discountPct: 20, type: 'economy' }
+  ],
+  [
+    { time: '10:30', discountPct: 20, type: 'economy' },
+    { time: '11:00', discountPct: 25, type: 'economy' },
+    { time: '14:00', discountPct: 30, type: 'economy' },
+    { time: '15:30', discountPct: 25, type: 'economy' }
+  ],
+  [
+    { time: '09:30', discountPct: 30, type: 'economy' },
+    { time: '13:00', discountPct: 35, type: 'economy' },
+    { time: '14:00', discountPct: 25, type: 'economy' },
+    { time: '16:00', discountPct: 20, type: 'economy' }
+  ],
+  [
+    { time: '10:00', discountPct: 20, type: 'economy' },
+    { time: '11:30', discountPct: 25, type: 'economy' },
+    { time: '13:30', discountPct: 30, type: 'economy' },
+    { time: '15:00', discountPct: 25, type: 'economy' }
+  ]
+];
 
 function getSalonPromoRules(salon, dateStr) {
   const dow = getDayOfWeek(dateStr);
@@ -3130,30 +3423,20 @@ function getSalonPromoRules(salon, dateStr) {
     ];
   }
 
-  // Quinta e Sexta (4 e 5): Descontos moderados (15% a 25%) em horários ociosos.
-  // Quinta à noite e Sexta à tarde/noite NÃO têm desconto.
+  // Dias de semana: distribuição determinística baseada no ID do estabelecimento e DOW (Ticket 09)
+  const idNum = parseInt(String(salon.id).replace(/\D/g, ''), 10) || 1;
+  const presetIndex = (idNum + dow) % PROMO_PRESETS.length;
+  const basePreset = PROMO_PRESETS[presetIndex];
+
   if (dow === 4 || dow === 5) {
-    return [
-      { time: '10:30', discountPct: 20, type: 'economy' },
-      { time: '13:30', discountPct: 25, type: 'economy' },
-      { time: '14:00', discountPct: 30, type: 'economy' },
-      { time: '14:30', discountPct: 25, type: 'economy' },
-      { time: '15:00', discountPct: 20, type: 'economy' }
-    ];
+    // Quinta e Sexta: descontos moderados (15% a 25%)
+    return basePreset.map(rule => ({
+      ...rule,
+      discountPct: Math.min(25, rule.discountPct)
+    }));
   }
 
-  // Segunda a Quarta (1, 2, 3): Descontos fortes (25% a 35%) em horários ociosos.
-  return [
-    { time: '10:00', discountPct: 25, type: 'economy' },
-    { time: '10:30', discountPct: 25, type: 'economy' },
-    { time: '11:00', discountPct: 20, type: 'economy' },
-    { time: '13:00', discountPct: 35, type: 'economy' },
-    { time: '13:30', discountPct: 30, type: 'economy' },
-    { time: '14:00', discountPct: 30, type: 'economy' },
-    { time: '14:30', discountPct: 30, type: 'economy' },
-    { time: '15:00', discountPct: 25, type: 'economy' },
-    { time: '15:30', discountPct: 20, type: 'economy' }
-  ];
+  return basePreset;
 }
 
 function getOccupiedSlots(salon, dateStr) {
@@ -3214,7 +3497,8 @@ function calculateSlotPrice(salon, time, service = null, dateStr = null) {
       basePrice: basePrice,
       finalPrice: finalPrice,
       badgeText: promoRule.type === 'urgent' ? 'Última Hora' : 'Horário Econômico',
-      subtext: promoRule.type === 'urgent' ? 'desconto de última hora' : 'menor preço em horário ocioso'
+      // Conformidade literal com a Seção 6.2 da Spec de Validação (Ticket 12)
+      subtext: promoRule.type === 'urgent' ? 'desconto para hoje' : 'preço menor em horário de menor procura'
     };
   }
 
@@ -3254,7 +3538,8 @@ function navigateTo(screenId) {
     trackEvent('checkout_abandoned', { 
       step: 'voluntary_exit', 
       reason: `navigated_to_${screenId}`,
-      has_discount: !!AppState.currentPricing?.hasDiscount
+      has_discount: !!AppState.currentPricing?.hasDiscount,
+      appointment_id: AppState._pendingCheckoutApptId
     });
     if (AppState.timerIntervalId) {
       clearInterval(AppState.timerIntervalId);
@@ -3320,13 +3605,17 @@ function navigateTo(screenId) {
     const finalPrice = AppState.currentPricing ? AppState.currentPricing.finalPrice : 84.00;
     
     // Transição de estado: PENDING_PAYMENT (Seção 8 e Bloco B5)
-    const tempAppointmentId = 'BP-' + Math.floor(100000 + Math.random() * 900000);
-    AppState._pendingCheckoutApptId = tempAppointmentId;
-    emitAppointmentStatusChanged(tempAppointmentId, 'NONE', 'PENDING_PAYMENT');
+    const pendingId = 'BP-' + Math.floor(100000 + Math.random() * 900000);
+    AppState._pendingCheckoutApptId = pendingId;
+    emitAppointmentStatusChanged(pendingId, 'NONE', 'PENDING_PAYMENT');
 
     trackEvent('checkout_started', { 
+      appointment_id: pendingId,
       total: finalPrice,
-      appointment_id: tempAppointmentId
+      has_discount: Boolean(AppState.currentPricing?.hasDiscount),
+      merchant_id: AppState.selectedSalon.id,
+      service_id: (AppState.selectedService || AppState.selectedSalon.service).id,
+      booking_channel: AppState.bookingChannel || 'calendar'
     });
   } else if (screenId === 'confirm') {
     renderConfirmScreen();
@@ -4154,7 +4443,7 @@ function renderUberMatchesSheet(matches) {
         <div>
           <div class="uber-item-name">${m.salon.name}</div>
           <div class="uber-item-walk">
-            <span>🚶</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="5" r="2"/><path d="m9 20 3-6 3 2 2 4"/><path d="m6 16 4-3 1-4 3 3 4-2"/></svg>
             <span><strong>${m.walkTimeMin} min</strong> a pé (${m.walkDistanceM} m)</span>
           </div>
         </div>
@@ -4235,7 +4524,7 @@ function selectDemandMatch(salonId, shouldFly = true) {
     lineJoin: 'round'
   }).addTo(AppState.uberMapInstance);
 
-  // Badge Flutuante no Centro da Rota (🚶 X min • XXX m)
+  // Badge Flutuante no Centro da Rota (SVG walker + X min • XXX m)
   const midIndex = Math.floor(curvedPoints.length / 2);
   const midPoint = curvedPoints[midIndex];
 
@@ -4243,7 +4532,7 @@ function selectDemandMatch(salonId, shouldFly = true) {
     className: 'uber-walking-badge-wrap',
     html: `
       <div class="uber-walking-badge">
-        <span>🚶</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="vertical-align:middle;"><circle cx="12" cy="5" r="2"/><path d="m9 20 3-6 3 2 2 4"/><path d="m6 16 4-3 1-4 3 3 4-2"/></svg>
         <span>${match.walkTimeMin} min</span>
         <span>•</span>
         <span>${match.walkDistanceM} m</span>
@@ -4314,6 +4603,7 @@ function confirmUberDemandBooking() {
     isAny: true
   };
   AppState.selectedTime = '14:00';
+  AppState.bookingChannel = 'on_demand'; // Ticket 11
 
   showToast(`Match confirmado com ${match.salon.name}! Abrindo checkout...`);
   trackEvent('demand_booking_proceed_checkout', {
@@ -4607,13 +4897,10 @@ function renderDateStrip() {
   const container = document.getElementById('detail-date-strip-row');
   if (!container) return;
 
-  const dates = [
-    { dateStr: '2026-09-26', dayAbbr: 'Sex', dayNum: '26', dow: 5 },
-    { dateStr: '2026-09-27', dayAbbr: 'Sáb', dayNum: '27', dow: 6 },
-    { dateStr: '2026-09-28', dayAbbr: 'Dom', dayNum: '28', dow: 0 },
-    { dateStr: '2026-09-29', dayAbbr: 'Seg', dayNum: '29', dow: 1 },
-    { dateStr: '2026-09-30', dayAbbr: 'Ter', dayNum: '30', dow: 2 }
-  ];
+  const dates = generateDateRange();
+  if (!dates.some(d => d.dateStr === AppState.selectedDate)) {
+    AppState.selectedDate = dates[0].dateStr;
+  }
 
   container.innerHTML = '';
   dates.forEach(d => {
@@ -4687,6 +4974,8 @@ function renderHorizontalTimeStrip(salon, dateStr) {
         if (slider) slider.value = idx;
         updateRadialClock();
         renderHorizontalTimeStrip(salon, dateStr);
+        // Dispara evento imediato para clique explícito
+        triggerSlotViewedEvent(salon, AppState.selectedService, t, dateStr, pricing);
       }
     };
 
@@ -4706,7 +4995,10 @@ function selectDetailDate(dateStr, element) {
 }
 
 function selectNextAvailableDate() {
-  selectDetailDate('2026-09-29');
+  const dates = generateDateRange();
+  if (dates.length > 1) {
+    selectDetailDate(dates[1].dateStr);
+  }
 }
 
 function updateRadialClock() {
@@ -4810,7 +5102,19 @@ function updateRadialClock() {
     }
   }
 
-  // Calcula horas até o início do slot (Seção 11 da spec)
+}
+
+function triggerSlotViewedEvent(salon, service, time, dateStr, pricing) {
+  if (!salon || !time) return;
+  const targetDate = dateStr || AppState.selectedDate;
+  const slotKey = `${salon.id}_${targetDate}_${time}`;
+  
+  // Deduplicação: dispara apenas 1 vez por combinação salão + data + horário na sessão
+  if (AppState.viewedSlotsHistory.has(slotKey)) {
+    return;
+  }
+  AppState.viewedSlotsHistory.add(slotKey);
+
   const [slotH, slotM] = time.split(':').map(Number);
   const now = new Date();
   const slotDate = new Date();
@@ -4819,30 +5123,52 @@ function updateRadialClock() {
   if (hoursUntil < 0) hoursUntil += 24;
   hoursUntil = Math.round(hoursUntil * 10) / 10;
 
-  const currentService = AppState.selectedService || (AppState.selectedSalon.services && AppState.selectedSalon.services[0]) || AppState.selectedSalon.service;
+  const activeService = service || AppState.selectedService || (salon.services && salon.services[0]) || salon.service;
+  const activePricing = pricing || calculateSlotPrice(salon, time, activeService, targetDate);
 
   trackEvent('slot_viewed', {
-    merchant_id: AppState.selectedSalon.id,
-    service_id: currentService.id,
+    merchant_id: salon.id,
+    service_id: activeService ? activeService.id : 'srv_default',
     start_time: time,
-    has_discount: pricing.hasDiscount,
-    discount_pct: pricing.discountPct,
+    date: targetDate,
+    has_discount: Boolean(activePricing && activePricing.hasDiscount),
+    discount_pct: activePricing && activePricing.hasDiscount ? activePricing.discountPct : 0,
     hours_until: hoursUntil
   });
 }
 
 function onSliderTimeChange(val) {
   AppState.selectedTimeSlotIndex = parseInt(val, 10);
+  // Atualização visual imediata sem atraso para o usuário
   updateRadialClock();
+
+  // Debounce de 800ms para telemetria analítica (Ticket 02)
+  clearTimeout(AppState.sliderDebounceTimer);
+  AppState.sliderDebounceTimer = setTimeout(() => {
+    const salon = AppState.selectedSalon;
+    const time = TIME_SLOTS[AppState.selectedTimeSlotIndex];
+    const service = AppState.selectedService || (salon.services && salon.services[0]) || salon.service;
+    const pricing = calculateSlotPrice(salon, time, service, AppState.selectedDate);
+    triggerSlotViewedEvent(salon, service, time, AppState.selectedDate, pricing);
+  }, 800);
 }
 
 function proceedToCheckout() {
-  const currentService = AppState.selectedService || (AppState.selectedSalon.services && AppState.selectedSalon.services[0]) || AppState.selectedSalon.service;
+  AppState.bookingChannel = 'calendar'; // Ticket 11
+  const salon = AppState.selectedSalon;
+  const currentService = AppState.selectedService || (salon.services && salon.services[0]) || salon.service;
+  const pricing = AppState.currentPricing;
+
   trackEvent('slot_selected', {
-    merchant_id: AppState.selectedSalon.id,
+    merchant_id: salon.id,
     service_id: currentService.id,
     start_time: AppState.selectedTime,
-    price_final: AppState.currentPricing.finalPrice
+    date: AppState.selectedDate,
+    price_base: pricing.basePrice,
+    price_final: pricing.finalPrice,
+    has_discount: Boolean(pricing.hasDiscount),
+    discount_pct: pricing.hasDiscount ? pricing.discountPct : 0,
+    promo_type: pricing.type
   });
   navigateTo('checkout');
 }
@@ -4856,7 +5182,9 @@ function renderCheckoutScreen() {
   document.getElementById('checkout-salon-name').textContent = salon.name;
   document.getElementById('checkout-service-name').textContent = currentService.name;
   document.getElementById('checkout-staff-name').textContent = AppState.selectedStaff ? AppState.selectedStaff.name : 'Qualquer profissional disponível';
-  document.getElementById('checkout-datetime').textContent = `Hoje, 26 de Setembro às ${AppState.selectedTime}`;
+  
+  const formattedDate = formatAppointmentDisplayDate(AppState.selectedDate);
+  document.getElementById('checkout-datetime').textContent = `${formattedDate} às ${AppState.selectedTime}`;
 
   document.getElementById('checkout-base-price').textContent = `R$ ${pricing.basePrice.toFixed(2)}`;
   document.getElementById('checkout-discount-row').style.display = pricing.hasDiscount ? 'flex' : 'none';
@@ -4908,12 +5236,18 @@ function startReservationTimer() {
     AppState.reservationTimerSeconds--;
     if (AppState.reservationTimerSeconds <= 0) {
       clearInterval(AppState.timerIntervalId);
-      alert('Seu tempo de reserva de 10 minutos expirou. O horário foi liberado.');
+      AppState.timerIntervalId = null;
+
+      // Ticket 14: Transição formal para EXPIRED (Seção 8 da spec)
+      emitAppointmentStatusChanged(AppState._pendingCheckoutApptId, 'PENDING_PAYMENT', 'EXPIRED');
+
       trackEvent('checkout_abandoned', { 
         step: 'expiry', 
         reason: 'timer_expired',
+        appointment_id: AppState._pendingCheckoutApptId,
         has_discount: !!AppState.currentPricing?.hasDiscount
       });
+      alert('Seu tempo de reserva de 10 minutos expirou. O horário foi liberado.');
       navigateTo('detail');
       return;
     }
@@ -4966,7 +5300,7 @@ function copyPixCode() {
   showToast('Chave Pix Copia e Cola copiada para a área de transferência!');
 }
 
-function confirmBooking() {
+async function confirmBooking() {
   if (AppState.selectedPaymentMethod === 'card') {
     const cardInput = document.getElementById('checkout-card-input');
     const cardVal = cardInput ? cardInput.value.replace(/\D/g, '') : '';
@@ -4981,6 +5315,38 @@ function confirmBooking() {
   btn.disabled = true;
   btn.innerHTML = `<span class="spinner-sm"></span> Processando agendamento seguro...`;
 
+  const salon = AppState.selectedSalon;
+  const currentService = AppState.selectedService || (salon.services && salon.services[0]) || salon.service;
+  const currentStaff = AppState.selectedStaff || { id: 'any', name: 'Qualquer Profissional', role: 'Primeiro disponível', isAny: true };
+
+  // Ticket 08: Checagem Concorrente no Apps Script (Google Sheets)
+  const availability = await checkBookingSlotAvailability(salon, currentService, AppState.selectedTime, AppState.selectedDate, currentStaff);
+  
+  if (!availability.available) {
+    btn.disabled = false;
+    const btnCheckoutLabel = document.getElementById('btn-checkout-label');
+    if (btnCheckoutLabel) {
+      btnCheckoutLabel.textContent = AppState.selectedPaymentMethod === 'pix' ? 'Confirmar Pagamento Simulado via Pix' : 'Confirmar Agendamento';
+    }
+
+    trackEvent('checkout_abandoned', {
+      step: 'conflict',
+      reason: 'slot_already_taken',
+      appointment_id: AppState._pendingCheckoutApptId,
+      time: AppState.selectedTime,
+      date: AppState.selectedDate
+    });
+
+    if (AppState.timerIntervalId) {
+      clearInterval(AppState.timerIntervalId);
+      AppState.timerIntervalId = null;
+    }
+
+    alert('Ops! Este horário acabou de ser reservado por outro participante na rede. A disponibilidade foi atualizada. Por favor, escolha outro horário.');
+    navigateTo('detail');
+    return;
+  }
+
   // Simula latência de 1.4s (Mock de Validação)
   setTimeout(() => {
     btn.disabled = false;
@@ -4989,20 +5355,21 @@ function confirmBooking() {
       btnCheckoutLabel.textContent = AppState.selectedPaymentMethod === 'pix' ? 'Confirmar Pagamento Simulado via Pix' : 'Confirmar Agendamento';
     }
 
-    const currentService = AppState.selectedService || (AppState.selectedSalon.services && AppState.selectedSalon.services[0]) || AppState.selectedSalon.service;
-    const currentStaff = AppState.selectedStaff || { id: 'any', name: 'Qualquer Profissional', role: 'Primeiro disponível', isAny: true };
+    const canonicalAppointmentId = AppState._pendingCheckoutApptId || ('BP-' + Math.floor(100000 + Math.random() * 900000));
 
     // Congela Snapshot de Preço e Reserva
     const newAppointment = {
-      id: 'BP-' + Math.floor(100000 + Math.random() * 900000),
+      id: canonicalAppointmentId,
       salon: AppState.selectedSalon,
       service: currentService,
       staff: currentStaff,
       time: AppState.selectedTime,
-      date: 'Hoje, 26 de Set',
+      date: formatAppointmentDisplayDate(AppState.selectedDate),
+      rawDate: AppState.selectedDate,
       pricing: AppState.currentPricing,
       paymentMethod: AppState.selectedPaymentMethod,
       status: 'CONFIRMED',
+      bookingChannel: AppState.bookingChannel || 'calendar', // Ticket 11
       bookedAt: new Date().toISOString(),
       walkingTimeMin: AppState.lastWalkTimeMin || (AppState.selectedSalon.distanceKm ? Math.round(AppState.selectedSalon.distanceKm * 12) : null),
       walkingDistanceM: AppState.lastWalkDistanceM || (AppState.selectedSalon.distanceKm ? Math.round(AppState.selectedSalon.distanceKm * 1000) : null)
@@ -5011,6 +5378,7 @@ function confirmBooking() {
     AppState.confirmedAppointment = newAppointment;
     // Adiciona na frente da lista de agendamentos para a tela Meus Agendamentos
     AppState.appointmentsList.unshift(newAppointment);
+    persistAppointments();
 
     emitAppointmentStatusChanged(newAppointment.id, 'PENDING_PAYMENT', 'CONFIRMED');
 
@@ -5018,7 +5386,8 @@ function confirmBooking() {
       appointment_id: AppState.confirmedAppointment.id,
       total: AppState.currentPricing.finalPrice,
       payment_method: AppState.selectedPaymentMethod,
-      discount_applied: AppState.currentPricing.hasDiscount ? AppState.currentPricing.discountPct : 0
+      discount_applied: AppState.currentPricing.hasDiscount ? AppState.currentPricing.discountPct : 0,
+      booking_channel: AppState.bookingChannel || 'calendar'
     });
 
     if (AppState.timerIntervalId) clearInterval(AppState.timerIntervalId);
@@ -5038,7 +5407,7 @@ function renderConfirmScreen() {
   const addressEl = document.getElementById('confirm-address');
   if (addressEl) {
     if (appt.walkingTimeMin) {
-      addressEl.innerHTML = `${appt.salon.address}<br><span style="display:inline-flex; align-items:center; gap:5px; margin-top:5px; color:var(--primary); font-weight:800; font-size:11px;">🚶 Trajeto a pé: ${appt.walkingTimeMin} min (${appt.walkingDistanceM} m)</span>`;
+      addressEl.innerHTML = `${appt.salon.address}<br><span style="display:inline-flex; align-items:center; gap:5px; margin-top:5px; color:var(--primary); font-weight:800; font-size:11px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="5" r="2"/><path d="m9 20 3-6 3 2 2 4"/><path d="m6 16 4-3 1-4 3 3 4-2"/></svg> Trajeto a pé: ${appt.walkingTimeMin} min (${appt.walkingDistanceM} m)</span>`;
     } else {
       addressEl.textContent = appt.salon.address;
     }
@@ -5046,7 +5415,8 @@ function renderConfirmScreen() {
 
   document.getElementById('confirm-service-name').textContent = appt.service.name;
   document.getElementById('confirm-staff').textContent = appt.staff ? appt.staff.name : 'Qualquer Profissional Disponível';
-  document.getElementById('confirm-time').textContent = `Hoje às ${appt.time}`;
+  const displayDate = appt.date || formatAppointmentDisplayDate(appt.rawDate || AppState.selectedDate);
+  document.getElementById('confirm-time').textContent = `${displayDate} às ${appt.time}`;
   document.getElementById('confirm-total-paid').textContent = `R$ ${appt.pricing.finalPrice.toFixed(2)}`;
 }
 
@@ -5097,6 +5467,7 @@ function executeCancellation() {
       appointment_id: targetAppt.id,
       reason: finalReason
     });
+    persistAppointments();
   }
 
   closeCancelModal();
@@ -5106,6 +5477,11 @@ function executeCancellation() {
   } else {
     navigateTo('appointments');
   }
+
+  // T4 concluída com sucesso (Seção 5.2): Dispara automaticamente o modal de avaliação SUS
+  setTimeout(() => {
+    openSessionFinishModal();
+  }, 1100);
 }
 
 // Tooltip "Por que o preço varia?"
@@ -5153,8 +5529,11 @@ function executeDeleteAccount() {
   closeDeleteAccountModal();
   localStorage.removeItem('bp_user_session');
   localStorage.removeItem('bp_analytics_events');
+  localStorage.removeItem('bp_sus_evaluations');
+  localStorage.removeItem('bp_user_appointments');
   AppState.userSession = null;
   AppState.analyticsEvents = [];
+  AppState.appointmentsList = [];
   AppState.confirmedAppointment = null;
   showToast('Conta e dados excluídos com sucesso (LGPD).');
   navigateTo('onboarding');
@@ -5398,7 +5777,7 @@ function generateAndRenderMatches(windowKey, serviceType, maxRadiusKm) {
     {
       type: 'ideal',
       tagClass: 'tag-ideal',
-      tagText: '⭐ Melhor Custo-Benefício',
+      tagText: 'Melhor Custo-Benefício',
       salon: idealSalon,
       service: idealService,
       pricing: idealPricing,
@@ -5408,7 +5787,7 @@ function generateAndRenderMatches(windowKey, serviceType, maxRadiusKm) {
     {
       type: 'nearest',
       tagClass: 'tag-nearest',
-      tagText: `🚶 Mais Próximo (${nearestSalon.distanceKm} km)`,
+      tagText: `Mais Próximo (${nearestSalon.distanceKm} km)`,
       salon: nearestSalon,
       service: nearestService,
       pricing: nearestPricing,
@@ -5418,7 +5797,7 @@ function generateAndRenderMatches(windowKey, serviceType, maxRadiusKm) {
     {
       type: 'cheapest',
       tagClass: 'tag-cheapest',
-      tagText: `🏷️ Maior Economia (-${cheapestPricing.discountPct}% OFF)`,
+      tagText: `Maior Economia (-${cheapestPricing.discountPct}% OFF)`,
       salon: cheapestSalon,
       service: cheapestService,
       pricing: cheapestPricing,
@@ -5476,7 +5855,7 @@ function renderMatchOptionsList() {
           <div>
             <div class="match-name">${opt.salon.name}</div>
             <div class="match-meta-line">
-              <span>★ ${opt.salon.rating}</span> • <span>${opt.salon.neighborhood}</span> • <strong>${opt.time}</strong>
+              <span><svg width="10" height="10" viewBox="0 0 24 24" fill="var(--star-gold)" stroke="var(--star-gold)" style="vertical-align:-1px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> ${opt.salon.rating}</span> • <span>${opt.salon.neighborhood}</span> • <strong>${opt.time}</strong>
             </div>
             <div style="font-size:10px; color:var(--neutral-muted); margin-top:1px;">
               ${opt.service ? opt.service.name : 'Corte de Cabelo'} • ${opt.etaWalk}
@@ -5600,7 +5979,7 @@ function renderAppointmentsScreen() {
           <h4 class="appt-info-name">${appt.salon.name}</h4>
           <div class="appt-info-service">${appt.service.name}</div>
           <div class="appt-info-datetime">
-            <span>📅 ${appt.date || 'Hoje'} às ${appt.time}</span> • <span>${appt.staff ? appt.staff.name : 'Equipe'}</span>
+            <span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px; margin-right:2px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${appt.date || 'Hoje'} às ${appt.time}</span> • <span>${appt.staff ? appt.staff.name : 'Equipe'}</span>
           </div>
           <div style="font-size:12px; font-weight:800; color:var(--primary); margin-top:4px;">
             R$ ${(appt.pricing?.finalPrice || appt.service.basePrice).toFixed(2)}
@@ -5735,15 +6114,80 @@ function calculateH2Report() {
   };
 }
 
+// ===================================================================
+// CÁLCULO DA ESCALA SUS (System Usability Scale) & TAREFAS (Seção 2 e 5.2)
+// ===================================================================
+function calculateSUSScore(answers) {
+  if (!answers || answers.length !== 10) return 0;
+  let sum = 0;
+  for (let i = 0; i < 10; i++) {
+    const val = Number(answers[i]) || 3;
+    if (i % 2 === 0) { // Itens ímpares (1, 3, 5, 7, 9)
+      sum += (val - 1);
+    } else { // Itens pares (2, 4, 6, 8, 10)
+      sum += (5 - val);
+    }
+  }
+  return Math.round(sum * 2.5);
+}
+
+function calculateSUSReport() {
+  const evaluations = JSON.parse(localStorage.getItem('bp_sus_evaluations') || '[]');
+  if (evaluations.length === 0) {
+    return {
+      evaluationsCount: 0,
+      avgScore: 0,
+      taskSuccessRate: 0,
+      retentionRate: 0,
+      isSUSValidated: false,
+      isTaskSuccessValidated: false,
+      isRetentionValidated: false
+    };
+  }
+
+  const totalScore = evaluations.reduce((acc, ev) => acc + (ev.susScore || 0), 0);
+  const avgScore = (totalScore / evaluations.length).toFixed(1);
+
+  // Taxa de sucesso das tarefas (T1, T2, T3, T4)
+  let totalTasks = 0;
+  let successfulTasks = 0;
+  evaluations.forEach(ev => {
+    if (ev.tasks) {
+      ['t1', 't2', 't3', 't4'].forEach(k => {
+        totalTasks++;
+        if (ev.tasks[k]) successfulTasks++;
+      });
+    }
+  });
+  const taskSuccessRate = totalTasks > 0 ? ((successfulTasks / totalTasks) * 100).toFixed(1) : 0;
+
+  // Intenção de retenção (usaria de novo)
+  const wouldUseCount = evaluations.filter(ev => ev.wouldUseAgain).length;
+  const retentionRate = ((wouldUseCount / evaluations.length) * 100).toFixed(1);
+
+  return {
+    evaluationsCount: evaluations.length,
+    avgScore,
+    taskSuccessRate,
+    retentionRate,
+    // Metas da Seção 2: SUS >= 70, Task Success >= 80%, Usaria de novo >= 60%
+    isSUSValidated: Number(avgScore) >= 70,
+    isTaskSuccessValidated: Number(taskSuccessRate) >= 80,
+    isRetentionValidated: Number(retentionRate) >= 60
+  };
+}
+
 function renderValidationMetrics() {
   const container = document.getElementById('validation-dashboard-metrics');
   if (!container) return;
 
   const h1 = calculateH1Report();
   const h2 = calculateH2Report();
+  const sus = calculateSUSReport();
 
   container.innerHTML = `
     <div class="metrics-grid">
+      <!-- KPI 1: H1 -->
       <div class="metric-card-kpi ${h1.isValidated ? 'validated' : ''}">
         <div class="metric-kpi-header">
           <span class="metric-kpi-title">H1: Tarifa Dinâmica</span>
@@ -5752,13 +6196,14 @@ function renderValidationMetrics() {
           </span>
         </div>
         <div class="metric-kpi-number">${h1.discountBookingRatio}%</div>
-        <div class="metric-kpi-desc">Agendamentos com desconto (Meta GO: &ge; 35%)</div>
+        <div class="metric-kpi-desc">Agendamentos com desconto (Meta: &ge; 35%)</div>
         <div class="metric-kpi-sub">
-          <span>${h1.discountBookingsCount} com desc. / ${h1.totalBookings} total</span>
+          <span>${h1.discountBookingsCount} desc. / ${h1.totalBookings} total</span>
           <span>Conv: ${h1.discountConversion}%</span>
         </div>
       </div>
 
+      <!-- KPI 2: H2 -->
       <div class="metric-card-kpi ${h2.isValidated ? 'validated' : ''}">
         <div class="metric-kpi-header">
           <span class="metric-kpi-title">H2: Pré-Autorização</span>
@@ -5767,21 +6212,269 @@ function renderValidationMetrics() {
           </span>
         </div>
         <div class="metric-kpi-number">${h2.completionRate}%</div>
-        <div class="metric-kpi-desc">Conclusão de Checkout (Meta GO: &ge; 50%)</div>
+        <div class="metric-kpi-desc">Conclusão de Checkout (Meta: &ge; 50%)</div>
         <div class="metric-kpi-sub">
           <span>${h2.checkoutsCompleted} pagos / ${h2.checkoutsStarted} iniciados</span>
           <span>Aband: ${h2.abandonments}</span>
+        </div>
+      </div>
+
+      <!-- KPI 3: SUS SCORE GLOBAL -->
+      <div class="metric-card-kpi ${sus.isSUSValidated ? 'validated' : ''}">
+        <div class="metric-kpi-header">
+          <span class="metric-kpi-title">SUS: Usabilidade</span>
+          <span class="metric-kpi-badge ${sus.isSUSValidated ? 'badge-validated' : 'badge-tracking'}">
+            ${sus.isSUSValidated ? 'Aprovado (GO)' : (sus.evaluationsCount > 0 ? 'Coletando' : 'Sem Dados')}
+          </span>
+        </div>
+        <div class="metric-kpi-number">${sus.avgScore}<span style="font-size:13px; font-weight:600;"> pts</span></div>
+        <div class="metric-kpi-desc">Pontuação Média SUS (Meta GO: &ge; 70 pts)</div>
+        <div class="metric-kpi-sub">
+          <span>${sus.evaluationsCount} participante(s) avaliado(s)</span>
+          <span>Escala padronizada de 10 itens</span>
+        </div>
+      </div>
+
+      <!-- KPI 4: SUCESSO DAS TAREFAS T1-T4 -->
+      <div class="metric-card-kpi ${sus.isTaskSuccessValidated ? 'validated' : ''}">
+        <div class="metric-kpi-header">
+          <span class="metric-kpi-title">Tarefas T1–T4</span>
+          <span class="metric-kpi-badge ${sus.isTaskSuccessValidated ? 'badge-validated' : 'badge-tracking'}">
+            ${sus.isTaskSuccessValidated ? 'Aprovado (GO)' : (sus.evaluationsCount > 0 ? 'Coletando' : 'Sem Dados')}
+          </span>
+        </div>
+        <div class="metric-kpi-number">${sus.taskSuccessRate}%</div>
+        <div class="metric-kpi-desc">Taxa de Sucesso (Meta GO: &ge; 80%)</div>
+        <div class="metric-kpi-sub">
+          <span>Roteiro de 4 tarefas executadas</span>
+          <span>Descoberta, Encaixe, Cancelamento</span>
+        </div>
+      </div>
+
+      <!-- KPI 5: INTENÇÃO DE RETENÇÃO (USARIA DE NOVO) -->
+      <div class="metric-card-kpi full-width ${sus.isRetentionValidated ? 'validated' : ''}">
+        <div class="metric-kpi-header">
+          <span class="metric-kpi-title">Intenção de Uso: "Você usaria este app de novo?"</span>
+          <span class="metric-kpi-badge ${sus.isRetentionValidated ? 'badge-validated' : 'badge-tracking'}">
+            ${sus.isRetentionValidated ? 'Validado (GO)' : (sus.evaluationsCount > 0 ? 'Em Coleta' : 'Sem Dados')}
+          </span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div class="metric-kpi-number">${sus.retentionRate}% <span style="font-size:12px; font-weight:600; color:var(--neutral-muted);">responderam "Sim"</span></div>
+            <div class="metric-kpi-desc" style="margin-bottom:0;">Meta GO Seção 2: &ge; 60% de intenção declarada</div>
+          </div>
+          <button class="profile-action-btn" style="width:auto; height:34px; padding:0 12px; font-size:11px; margin-top:0;" onclick="openSessionFinishModal()">
+            Nova Avaliação
+          </button>
         </div>
       </div>
     </div>
   `;
 }
 
+// Simulação de Cancelamento por Força Maior pelo Salão (Seção 8 e 12.10)
+function simulateMerchantCancellation() {
+  if (AppState.appointmentsList.length === 0) {
+    const mockAppt = {
+      id: 'appt_sim_' + Math.random().toString(36).substring(2, 7),
+      salonId: 1,
+      salonName: 'Ateliê Belle Époque',
+      serviceName: 'Escova Modeladora',
+      staffName: 'Camila Rossi',
+      date: 'Hoje',
+      time: '14:30',
+      price: 84.00,
+      status: 'CONFIRMED'
+    };
+    AppState.appointmentsList.push(mockAppt);
+  }
+
+  const appt = AppState.appointmentsList.find(a => a.status === 'CONFIRMED') || AppState.appointmentsList[0];
+  const prevStatus = appt.status;
+  appt.status = 'CANCELLED_BY_MERCHANT';
+  appt.cancellationReason = 'Força maior: falta de energia elétrica no salão';
+
+  emitAppointmentStatusChanged(appt.id, prevStatus, 'CANCELLED_BY_MERCHANT', {
+    reason: appt.cancellationReason
+  });
+  persistAppointments();
+
+  showToast('Simulação executada: O salão cancelou o agendamento por força maior.');
+  navigateTo('appointments');
+  renderAppointmentsScreen();
+}
+
+// ===================================================================
+// CONTROLADOR DO QUESTIONÁRIO SUS E FINALIZAÇÃO DE SESSÃO (Seção 5.2)
+// ===================================================================
+const SUS_QUESTIONS = [
+  "1. Acho que gostaria de usar este aplicativo com frequência.",
+  "2. Achei o aplicativo desnecessariamente complexo.",
+  "3. Achei o aplicativo fácil e intuitivo de usar.",
+  "4. Acho que precisaria do apoio de uma pessoa técnica para usar o app.",
+  "5. Achei que as várias funções deste sistema estavam bem integradas.",
+  "6. Achei que havia muita inconsistência ou contradições no aplicativo.",
+  "7. Imagino que a maioria das pessoas aprenderia a usar este app muito rapidamente.",
+  "8. Achei o sistema muito complicado e truncado de usar.",
+  "9. Senti-me muito confiante e seguro(a) usando o aplicativo.",
+  "10. Precisei aprender muitas coisas novas antes de poder agendar."
+];
+
+// Respostas atuais selecionadas no formulário (valores de 1 a 5, inicia sem viés pré-selecionado)
+let currentSUSAnswers = new Array(10).fill(null);
+
+function renderSUSQuestions() {
+  const container = document.getElementById('sus-questions-container');
+  if (!container) return;
+
+  container.innerHTML = SUS_QUESTIONS.map((qText, idx) => {
+    const currentVal = currentSUSAnswers[idx];
+    return `
+      <div class="sus-question-item ${currentVal === null ? 'unanswered' : 'answered'}">
+        <div class="sus-question-text">${qText}</div>
+        <div class="sus-likert-scale">
+          ${[1, 2, 3, 4, 5].map(num => `
+            <button type="button" class="sus-likert-btn ${currentVal === num ? 'selected' : ''}" 
+              onclick="selectSUSRating(${idx}, ${num})" 
+              title="Nota ${num} para a pergunta ${idx + 1}">
+              ${num}
+            </button>
+          `).join('')}
+        </div>
+        <div class="sus-extremes-labels">
+          <span>Discordo Totalmente (1)</span>
+          <span>Concordo Totalmente (5)</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  validateSUSFormCompleteness();
+}
+
+function selectSUSRating(questionIdx, val) {
+  currentSUSAnswers[questionIdx] = val;
+  renderSUSQuestions();
+}
+
+function validateSUSFormCompleteness() {
+  const allAnswered = currentSUSAnswers.every(ans => ans !== null && ans >= 1 && ans <= 5);
+  const retentionSelected = document.querySelector('input[name="finish-retention"]:checked') !== null;
+  const submitBtn = document.getElementById('btn-submit-sus-evaluation');
+  
+  if (submitBtn) {
+    const isComplete = allAnswered && retentionSelected;
+    submitBtn.disabled = !isComplete;
+    submitBtn.style.opacity = isComplete ? '1' : '0.5';
+    submitBtn.style.cursor = isComplete ? 'pointer' : 'not-allowed';
+  }
+}
+
+function openSessionFinishModal() {
+  const participantCode = AppState.userSession?.participantCode || 'P01';
+  const codeElem = document.getElementById('finish-participant-code');
+  if (codeElem) codeElem.textContent = participantCode;
+
+  // Reseta respostas para garantir coleta isenta a cada avaliação
+  currentSUSAnswers = new Array(10).fill(null);
+  const radios = document.querySelectorAll('input[name="finish-retention"]');
+  radios.forEach(r => r.checked = false);
+  document.getElementById('label-retention-yes')?.classList.remove('active');
+  document.getElementById('label-retention-no')?.classList.remove('active');
+  
+  const likedInput = document.getElementById('finish-feedback-liked');
+  if (likedInput) likedInput.value = '';
+  const dislikedInput = document.getElementById('finish-feedback-disliked');
+  if (dislikedInput) dislikedInput.value = '';
+
+  renderSUSQuestions();
+
+  const modal = document.getElementById('session-finish-modal-overlay');
+  if (modal) modal.classList.add('active');
+}
+
+function closeSessionFinishModal() {
+  const modal = document.getElementById('session-finish-modal-overlay');
+  if (modal) modal.classList.remove('active');
+}
+
+function updateRetentionRadio(input) {
+  const yesLabel = document.getElementById('label-retention-yes');
+  const noLabel = document.getElementById('label-retention-no');
+  if (yesLabel && noLabel) {
+    yesLabel.classList.toggle('active', input.value === 'yes');
+    noLabel.classList.toggle('active', input.value === 'no');
+  }
+  validateSUSFormCompleteness();
+}
+
+function submitSessionEvaluation() {
+  const score = calculateSUSScore(currentSUSAnswers);
+  const participantCode = AppState.userSession?.participantCode || 'P01';
+  const participantName = AppState.userSession?.name || 'Participante';
+
+  const t1 = document.getElementById('task-t1-check')?.checked ?? true;
+  const t2 = document.getElementById('task-t2-check')?.checked ?? true;
+  const t3 = document.getElementById('task-t3-check')?.checked ?? true;
+  const t4 = document.getElementById('task-t4-check')?.checked ?? true;
+
+  const liked = (document.getElementById('finish-feedback-liked')?.value || '').trim();
+  const disliked = (document.getElementById('finish-feedback-disliked')?.value || '').trim();
+  const wouldUse = document.querySelector('input[name="finish-retention"]:checked')?.value === 'yes';
+
+  const evaluation = {
+    id: 'eval_' + Math.random().toString(36).substring(2, 9),
+    sessionId: AppState.userSession?.sessionId || 'sess_anonymous',
+    participantCode,
+    participantName,
+    susScore: score,
+    susAnswers: [...currentSUSAnswers],
+    tasks: { t1, t2, t3, t4 },
+    feedbackLiked: liked,
+    feedbackDisliked: disliked,
+    wouldUseAgain: wouldUse,
+    completedAt: new Date().toISOString()
+  };
+
+  const evaluations = JSON.parse(localStorage.getItem('bp_sus_evaluations') || '[]');
+  evaluations.push(evaluation);
+  localStorage.setItem('bp_sus_evaluations', JSON.stringify(evaluations));
+
+  // Sincronização remota do questionário SUS com Google Sheets (Ticket 06 / 07)
+  if (CONFIG.ENABLE_REMOTE_SYNC && CONFIG.APPS_SCRIPT_URL && !CONFIG.APPS_SCRIPT_URL.includes('placeholder')) {
+    fetch(CONFIG.APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'submit_sus',
+        ...evaluation
+      }),
+      keepalive: true
+    }).catch(err => console.warn('Erro ao sincronizar avaliação SUS com Google Sheets:', err));
+  }
+
+  trackEvent('session_evaluation_completed', {
+    sus_score: score,
+    tasks_success_count: [t1, t2, t3, t4].filter(Boolean).length,
+    would_use_again: wouldUse
+  });
+
+  closeSessionFinishModal();
+  showToast(`Avaliação gravada! Score SUS: ${score} pts.`);
+  navigateTo('profile');
+  renderValidationMetrics();
+}
+
 function resetValidationData() {
-  if (confirm('Deseja realmente limpar todos os eventos de teste e validação acumulados? Esta ação não remove sua conta de participante.')) {
+  if (confirm('Deseja realmente limpar todos os eventos de teste, avaliações SUS e métricas acumuladas?')) {
     localStorage.removeItem('bp_analytics_events');
+    localStorage.removeItem('bp_sus_evaluations');
+    localStorage.removeItem('bp_user_appointments');
     AppState.analyticsEvents = [];
-    showToast('Eventos de validação reiniciados com sucesso!');
+    AppState.appointmentsList = [];
+    showToast('Métricas e avaliações reiniciadas com sucesso!');
     renderValidationMetrics();
   }
 }

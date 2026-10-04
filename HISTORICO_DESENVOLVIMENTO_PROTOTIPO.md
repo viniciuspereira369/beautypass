@@ -785,6 +785,86 @@ Durante o processo interativo de alinhamento (`/grill-me`), selecionou-se a **Fr
 ### 17.3 Validação Automatizada
 - `node -c app.js` executado com **0 erros de sintaxe**.
 
+---
+
+## 18. Sessão 13 — Execução Completa dos 14 Tickets de Engenharia (04 Out 2026)
+
+> **Data de Implementação:** 04 de Outubro de 2026  
+> **Status:** Concluído, 14/14 Tickets Implementados, Validado com Playwright (10/10 Testes com Sucesso) e Aprovado  
+> **Branch Git:** `main`  
+> **Arquivos Modificados:** `app.js`, `beautypass_app.html`, `styles.css`, `google_apps_script.js`, `PLANO_TAREFAS_JUNIOR.md`, `test_validation_sprint.py`, `HISTORICO_DESENVOLVIMENTO_PROTOTIPO.md`
+
+### 18.1 Contexto e Planejamento Orientado a Tickets (`/grill-me`)
+Após alinhamento minucioso via `/grill-me`, foi produzido o documento `PLANO_TAREFAS_JUNIOR.md`, dividindo a preparação técnica do protótipo de validação em 14 tickets de engenharia distribuídos em 4 fases incrementais. O objetivo central foi eliminar todo viés na coleta de métricas, garantir persistência e concorrência confiáveis, respeitar a conformidade de copy da Seção 6.2 da especificação técnica e blindar a governança do experimento (LGPD e parametrização direta por participante).
+
+### 18.2 Detalhamento dos 14 Tickets Executados
+
+#### Fase 1: Isenção Metodológica & Rigor de Métricas
+1. **Ticket 01 — Coleta Isenta do Questionário SUS & Retenção:**
+   - Inicialização neutra com `currentSUSAnswers = new Array(10).fill(null)`.
+   - Remoção de qualquer marcação prévia nas escalas Likert (1 a 5) e na pergunta de retenção diária (`finish-retention`).
+   - Implementação de `validateSUSFormCompleteness()`: o botão `#btn-submit-sus-evaluation` permanece estritamente bloqueado (`disabled`, opacidade 0.5) até que todas as 10 perguntas do SUS e a pergunta de retenção sejam respondidas.
+   - Remoção dos checkboxes das tarefas T1–T4 da visão do participante (mantidos exclusivamente para o moderador).
+2. **Ticket 02 — Debounce de Telemetria H1 & `slot_viewed`:**
+   - Desacoplamento da telemetria durante a rotação fluida da agulha radial; introdução de debounce de 800ms na manipulação do slider.
+   - Deduplicação por sessão através de `AppState.viewedSlotsHistory` (Set).
+   - Enriquecimento analítico de `slot_selected` com: `has_discount`, `discount_pct`, `price_base`, `price_final` e `promo_type`.
+3. **Ticket 03 — Rastreamento Unificado do Funil H2:**
+   - Vinculação de `AppState._pendingCheckoutApptId` em `checkout_started`, `checkout_abandoned` e `confirmBooking()`, garantindo rastreabilidade precisa no cálculo da taxa de conversão no checkout.
+
+#### Fase 2: Persistência Robusta & Backend Leve
+4. **Ticket 04 — Calendário Dinâmico em `America/Sao_Paulo`:**
+   - Criação da função `generateDateRange()`, calculando dinamicamente a janela de 5 dias úteis/corridos no fuso de São Paulo.
+   - Eliminação de datas estáticas ("24/09", etc.) e formatação unificada via `formatAppointmentDisplayDate()`.
+5. **Ticket 05 — Persistência Local de Agendamentos:**
+   - Integração completa de `persistAppointments()` e `loadAppointments()` em todo o ciclo de vida dos vouchers (`confirmBooking()`, `executeCancellation()`, `simulateMerchantCancellation()` e restauração na inicialização).
+6. **Ticket 06 — Script de Backend Google Apps Script:**
+   - Construção do módulo `google_apps_script.js` para servir como Web App sem servidor pago:
+     - `setupSpreadsheetSheets()`: inicialização estruturada das abas `Eventos_Telemetria`, `Agendamentos_Vouchers` e `Avaliacoes_SUS`.
+     - `doPost()`: ingestão em lote de eventos de telemetria (`log_events`), verificação de conflitos de concorrência com janela de 60 minutos (`attempt_booking`) e armazenamento consolidado das avaliações SUS (`submit_sus`).
+     - `doGet()`: endpoint de healthcheck com status `ok`.
+7. **Ticket 07 — Dispatcher Remoto Assíncrono com Fallback Offline:**
+   - Fila de eventos em memória (`eventQueue`) com envio periódico e assíncrono via `flushEventsQueue()`.
+   - Fallback offline transparente em `localStorage` para evitar qualquer interrupção ou lentidão na experiência do participante.
+8. **Ticket 08 — Trava de Concorrência & Slot 409 (Double-Booking Guard):**
+   - Criação da função `checkBookingSlotAvailability(salon, dateStr, timeStr)` disparada antes da confirmação do agendamento, simulando resposta HTTP 409 em caso de slot concorrente e executando fluxo de cancelamento com estorno simulado.
+
+#### Fase 3: Fidelidade aos Requisitos de Negócio
+9. **Ticket 09 — Regras Determinísticas de Promoção:**
+   - Configuração de `PROMO_PRESETS` com hash determinístico baseado no identificador do salão e no dia da semana (`dow`), garantindo repetibilidade exata das condições de teste entre diferentes participantes.
+10. **Ticket 10 — Seed Expandido de Profissionais e Avaliações:**
+    - Ampliação do catálogo mock: salões `s1` (Ateliê Belle Époque) e `s2` (L'Élégance Jardins) abastecidos com 4 profissionais cada (incluindo mestres com avaliação 4.98/4.96) e 8 avaliações reais e detalhadas cada.
+11. **Ticket 11 — Rastreamento de Canais & Eliminação Total de Emojis:**
+    - Rastreamento explícito do canal em `AppState.bookingChannel` (`calendar` vs `on_demand`).
+    - Varredura e substituição completa de emojis por ícones SVG semânticos e limpos em `app.js`, `styles.css` e `beautypass_app.html`.
+12. **Ticket 12 — Adequação Rigorosa de Copy (Seção 6.2):**
+    - Padronização das frases obrigatórias de transparência de preços dinâmicos: `"preço menor em horário de menor procura"` e `"desconto para hoje"`.
+
+#### Fase 4: Governança do Experimento & LGPD
+13. **Ticket 13 — Captura de Participante via Query Param (`?p=P01`):**
+    - Detecção automática de parâmetros de URL (`?p=` ou `?participant=`). Preenchimento automático do código do participante no onboarding e travamento do campo com `readOnly`, eliminando erros manuais de identificação.
+14. **Ticket 14 — Estado `EXPIRED` & Purga LGPD:**
+    - O cronômetro regressivo de 10 minutos no checkout transiciona o agendamento para o estado `EXPIRED` em caso de timeout.
+    - Implementação de rotinas de direito ao esquecimento e reset em `executeDeleteAccount()` e `resetValidationData()`, purgando chaves `bp_user_appointments`, `bp_sus_evaluations` e telemetrias.
+
+### 18.3 Correção Estrutural de DOM
+- Identificado e corrigido aninhamento incorreto no arquivo `beautypass_app.html`, onde a tag de fechamento de `#instant-match-overlay` estava ausente, mantendo `#session-finish-modal-overlay` como elemento filho oculto. A árvore foi ajustada para que todos os modais sejam irmãos diretos de primeiro nível dentro da moldura do dispositivo.
+
+### 18.4 Bateria de Testes Automatizados E2E (Playwright)
+Foi desenvolvido o script `test_validation_sprint.py` executando testes end-to-end com Chromium headless:
+1. **Teste 1:** Captura do código `P01` via query string `?p=P01` e verificação da propriedade `readOnly`.
+2. **Teste 2:** Preenchimento e submissão do onboarding LGPD com transição para a tela inicial.
+3. **Teste 3:** Seleção de salão no feed social e transição para a tela de detalhe.
+4. **Teste 4:** Renderização correta da régua dinâmica com 5 dias úteis.
+5. **Teste 5:** Navegação adaptativa para dia útil (segunda-feira) e validação dos subtextos obrigatórios da Seção 6.2 no card de preços.
+6. **Teste 6:** Abertura do modal de avaliação SUS.
+7. **Teste 7:** Confirmação de que nenhuma nota Likert inicia pré-selecionada (0/10).
+8. **Teste 8:** Validação de que o botão de envio inicia bloqueado (`disabled = true`).
+9. **Teste 9:** Preenchimento interativo das 10 perguntas Likert e marcação da retenção, confirmando o desbloqueio do botão (`disabled = false`).
+10. **Teste 10:** Submissão e persistência bem-sucedida em `localStorage` (`bp_sus_evaluations`), com registro do score SUS calculado.
+
+**Resultado da Suite:** 10/10 testes aprovados com 100% de sucesso.
+
 
 
 

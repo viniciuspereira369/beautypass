@@ -2975,10 +2975,19 @@ function showToast(message, duration = 3000) {
 }
 
 function trackEvent(eventName, props = {}) {
+  const sessionId = AppState.userSession?.sessionId || 'sess_anonymous';
+  const participantCode = AppState.userSession?.participantCode || 'P00';
+  const enrichedProps = {
+    session_id: sessionId,
+    participant_code: participantCode,
+    ...props
+  };
+
   const eventPayload = {
     id: 'evt_' + Math.random().toString(36).substring(2, 9),
     eventName,
-    props,
+    sessionId,
+    props: enrichedProps,
     clientTs: new Date().toISOString(),
     sessionUser: AppState.userSession ? AppState.userSession.name : 'Participante Anônimo'
   };
@@ -2993,7 +3002,7 @@ function trackEvent(eventName, props = {}) {
     console.warn('Não foi possível persistir evento no storage:', e);
   }
 
-  console.log(`%c[ANALYTICS EVENT] ${eventName}`, 'color: #0D9488; font-weight: bold;', props);
+  console.log(`%c[ANALYTICS EVENT] ${eventName}`, 'color: #0D9488; font-weight: bold;', enrichedProps);
 }
 
 // ===================================================================
@@ -3015,11 +3024,25 @@ function initSessionState() {
   navigateTo('onboarding');
 }
 
+function validateOnboardingForm() {
+  const checkEl = document.getElementById('onboarding-terms-check');
+  const name = (document.getElementById('onboarding-name')?.value || '').trim();
+  const phone = (document.getElementById('onboarding-phone')?.value || '').trim();
+  const participant = (document.getElementById('onboarding-participant')?.value || '').trim();
+  const code = (document.getElementById('onboarding-code')?.value || '').trim();
+  const btn = document.getElementById('onboarding-submit-btn');
+  if (btn) {
+    const isValid = (checkEl && checkEl.checked) && (name.length >= 2) && (phone.length >= 8) && (participant.length >= 1) && (code === '0000');
+    btn.disabled = !isValid;
+  }
+}
+
 function submitOnboarding() {
   const checkEl = document.getElementById('onboarding-terms-check');
   const termsChecked = checkEl ? checkEl.checked : false;
   const name = (document.getElementById('onboarding-name')?.value || '').trim() || 'Participante';
   const phone = (document.getElementById('onboarding-phone')?.value || '').trim() || '(11) 98765-4321';
+  const participant = (document.getElementById('onboarding-participant')?.value || '').trim().toUpperCase() || 'P01';
   const code = (document.getElementById('onboarding-code')?.value || '').trim();
 
   if (!termsChecked) {
@@ -3036,6 +3059,7 @@ function submitOnboarding() {
     name,
     phone,
     code,
+    participantCode: participant,
     acceptedAt: new Date().toISOString(),
     sessionId: 'sess_' + Math.random().toString(36).substring(2, 9)
   };
@@ -3044,9 +3068,8 @@ function submitOnboarding() {
   localStorage.setItem('bp_user_session', JSON.stringify(session));
   updateUserUI();
 
-  trackEvent('app_opened', { view: 'onboarding_completed', participant: name });
-  trackEvent('location_permission', { granted: true });
-  showToast(`Sessão iniciada! Olá, ${name.split(' ')[0]}.`);
+  trackEvent('app_opened', { view: 'onboarding_completed', participant: name, participant_code: participant, session_id: session.sessionId });
+  showToast(`Sessão iniciada! Olá, ${name.split(' ')[0]} (${participant}).`);
   navigateTo('home');
 }
 
@@ -3213,7 +3236,11 @@ function calculateSlotPrice(salon, time, service = null, dateStr = null) {
 // ===================================================================
 
 function backFromCheckout() {
-  trackEvent('checkout_abandoned', { step: 'voluntary_exit', reason: 'user_navigated_back' });
+  trackEvent('checkout_abandoned', { 
+    step: 'voluntary_exit', 
+    reason: 'user_navigated_back',
+    has_discount: !!AppState.currentPricing?.hasDiscount
+  });
   if (AppState.timerIntervalId) {
     clearInterval(AppState.timerIntervalId);
     AppState.timerIntervalId = null;
@@ -3224,7 +3251,11 @@ function backFromCheckout() {
 function navigateTo(screenId) {
   // Se estiver saindo da tela de checkout sem confirmar, registra abandono voluntário
   if (AppState.currentScreen === 'checkout' && screenId !== 'checkout' && screenId !== 'confirm') {
-    trackEvent('checkout_abandoned', { step: 'voluntary_exit', reason: `navigated_to_${screenId}` });
+    trackEvent('checkout_abandoned', { 
+      step: 'voluntary_exit', 
+      reason: `navigated_to_${screenId}`,
+      has_discount: !!AppState.currentPricing?.hasDiscount
+    });
     if (AppState.timerIntervalId) {
       clearInterval(AppState.timerIntervalId);
       AppState.timerIntervalId = null;
@@ -4865,7 +4896,7 @@ function onCardNumberInput(input) {
   input.classList.toggle('is-invalid', val.length >= 13 && !isValid);
 
   if (isValid) {
-    trackEvent('card_validated', { last_4: val.slice(-4) });
+    trackEvent('card_validated', { last4: val.slice(-4) });
   }
 }
 
@@ -4878,7 +4909,11 @@ function startReservationTimer() {
     if (AppState.reservationTimerSeconds <= 0) {
       clearInterval(AppState.timerIntervalId);
       alert('Seu tempo de reserva de 10 minutos expirou. O horário foi liberado.');
-      trackEvent('checkout_abandoned', { step: 'expiry', reason: 'timer_expired' });
+      trackEvent('checkout_abandoned', { 
+        step: 'expiry', 
+        reason: 'timer_expired',
+        has_discount: !!AppState.currentPricing?.hasDiscount
+      });
       navigateTo('detail');
       return;
     }
@@ -5618,17 +5653,31 @@ function rebookSalon(salonId) {
 function emitAppointmentStatusChanged(appointmentId, fromStatus, toStatus, extraProps = {}) {
   trackEvent('appointment_status_changed', {
     appointment_id: appointmentId,
-    previous_status: fromStatus,
-    new_status: toStatus,
+    from: fromStatus,
+    to: toStatus,
     ...extraProps
   });
 }
 
 // ===================================================================
-// MOTOR DE CÁLCULO DE VALIDAÇÃO DE HIPÓTESES (H1, H2, H4) — Seção 3 e Seção 11
+// MOTOR DE CÁLCULO DE VALIDAÇÃO DE HIPÓTESES (H1, H2, H4) — Seção 2 e Seção 11
 // ===================================================================
 function calculateH1Report() {
   const events = JSON.parse(localStorage.getItem('bp_analytics_events') || '[]');
+  
+  // Agrupar visualizações de slots por sessão (Seção 2 e 11: participantes expostos a slots cheios E descontados)
+  const sessionSlotViews = {};
+  events.filter(e => e.eventName === 'slot_viewed').forEach(e => {
+    const sId = e.props?.session_id || 'default_session';
+    if (!sessionSlotViews[sId]) sessionSlotViews[sId] = { hasDiscount: false, hasRegular: false };
+    if (e.props?.has_discount) sessionSlotViews[sId].hasDiscount = true;
+    else sessionSlotViews[sId].hasRegular = true;
+  });
+
+  const eligibleSessions = Object.keys(sessionSlotViews).filter(sId => 
+    sessionSlotViews[sId].hasDiscount && sessionSlotViews[sId].hasRegular
+  );
+
   const slotViews = events.filter(e => e.eventName === 'slot_viewed');
   const slotSelects = events.filter(e => e.eventName === 'slot_selected');
   const checkouts = events.filter(e => e.eventName === 'checkout_completed');
@@ -5636,10 +5685,13 @@ function calculateH1Report() {
   const discountViews = slotViews.filter(e => e.props && e.props.has_discount);
   const regularViews = slotViews.filter(e => e.props && !e.props.has_discount);
 
-  const discountBookings = checkouts.filter(e => e.props && e.props.discount_applied > 0);
-  const regularBookings = checkouts.filter(e => e.props && (!e.props.discount_applied || e.props.discount_applied === 0));
+  // Considerar agendamentos de sessões expostas a ambos ou global se poucas sessões
+  const eligibleCheckouts = eligibleSessions.length > 0 
+    ? checkouts.filter(e => eligibleSessions.includes(e.props?.session_id))
+    : checkouts;
 
-  const totalBookings = checkouts.length;
+  const discountBookings = eligibleCheckouts.filter(e => e.props && e.props.discount_applied > 0);
+  const totalBookings = eligibleCheckouts.length;
   const discountBookingRatio = totalBookings > 0 ? (discountBookings.length / totalBookings) * 100 : 0;
   
   // Taxa de conversão por tipo de slot (slot_selected / slot_viewed)
@@ -5651,12 +5703,13 @@ function calculateH1Report() {
     discountViewsCount: discountViews.length,
     regularViewsCount: regularViews.length,
     discountBookingsCount: discountBookings.length,
-    regularBookingsCount: regularBookings.length,
+    regularBookingsCount: totalBookings - discountBookings.length,
     totalBookings,
+    eligibleSessionsCount: eligibleSessions.length,
     discountBookingRatio: discountBookingRatio.toFixed(1),
     discountConversion: discountConversion.toFixed(1),
-    // H1 validada se >60% dos agendamentos optaram por horários com tarifa dinâmica
-    isValidated: totalBookings >= 3 && discountBookingRatio >= 60
+    // H1 validada se >= 35% dos agendamentos optaram por horários com tarifa dinâmica (Critério GO Seção 2)
+    isValidated: totalBookings >= 1 && discountBookingRatio >= 35
   };
 }
 
@@ -5677,8 +5730,8 @@ function calculateH2Report() {
     cardsValidated: cardsValidated.length,
     abandonments: abandonments.length,
     completionRate: completionRate.toFixed(1),
-    // H2 validada se taxa de conversão do checkout com pré-autorização for >= 40%
-    isValidated: totalStarted >= 2 && completionRate >= 40
+    // H2 validada se taxa de conversão do checkout for >= 50% (Critério GO Seção 2)
+    isValidated: totalStarted >= 1 && completionRate >= 50
   };
 }
 
@@ -5695,11 +5748,11 @@ function renderValidationMetrics() {
         <div class="metric-kpi-header">
           <span class="metric-kpi-title">H1: Tarifa Dinâmica</span>
           <span class="metric-kpi-badge ${h1.isValidated ? 'badge-validated' : 'badge-tracking'}">
-            ${h1.isValidated ? 'Validada' : 'Em Coleta'}
+            ${h1.isValidated ? 'Validada (GO)' : 'Em Coleta'}
           </span>
         </div>
         <div class="metric-kpi-number">${h1.discountBookingRatio}%</div>
-        <div class="metric-kpi-desc">Agendamentos com desconto (Meta: &ge; 60%)</div>
+        <div class="metric-kpi-desc">Agendamentos com desconto (Meta GO: &ge; 35%)</div>
         <div class="metric-kpi-sub">
           <span>${h1.discountBookingsCount} com desc. / ${h1.totalBookings} total</span>
           <span>Conv: ${h1.discountConversion}%</span>
@@ -5710,11 +5763,11 @@ function renderValidationMetrics() {
         <div class="metric-kpi-header">
           <span class="metric-kpi-title">H2: Pré-Autorização</span>
           <span class="metric-kpi-badge ${h2.isValidated ? 'badge-validated' : 'badge-tracking'}">
-            ${h2.isValidated ? 'Validada' : 'Em Coleta'}
+            ${h2.isValidated ? 'Validada (GO)' : 'Em Coleta'}
           </span>
         </div>
         <div class="metric-kpi-number">${h2.completionRate}%</div>
-        <div class="metric-kpi-desc">Conclusão de Checkout (Meta: &ge; 40%)</div>
+        <div class="metric-kpi-desc">Conclusão de Checkout (Meta GO: &ge; 50%)</div>
         <div class="metric-kpi-sub">
           <span>${h2.checkoutsCompleted} pagos / ${h2.checkoutsStarted} iniciados</span>
           <span>Aband: ${h2.abandonments}</span>

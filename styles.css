@@ -2873,6 +2873,39 @@ body.fullscreen-mode .device-shell {
   to   { transform: translateY(0);     opacity: 1; }
 }
 
+/* Aviso de fallback de localização na Home (Seção 6.4) */
+.home-location-fallback {
+  margin: 0 18px 14px;
+  background: rgba(254, 243, 199, 0.96);
+  border: 1px solid #FDE68A;
+  color: #92400E;
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 15px;
+  animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.home-location-fallback svg {
+  flex-shrink: 0;
+}
+
+/* Botão primário desabilitado (onboarding só habilita com formulário completo) */
+.card-action-btn:disabled {
+  background: var(--outline-variant);
+  color: var(--neutral-muted);
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
+.card-action-btn:disabled:active {
+  transform: none;
+}
+
 /* ===================================================================
    SMART HAIRCUT ON-DEMAND MATCHMAKER (Corte Inteligente sob Demanda)
    =================================================================== */

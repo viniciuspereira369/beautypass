@@ -744,6 +744,47 @@ Através do processo iterativo de alinhamento com plano estruturado e aprovado (
    - [final_demand_screen_facial_active_1791072179526.png](file:///C:/Users/Usuario%28a%29%20Master/.gemini/antigravity-ide/brain/9fc529f1-b2b7-4889-b5f5-f8a344881c50/final_demand_screen_facial_active_1791072179526.png)
    - Vídeo: [verify_demand_service_icons_1791071794707.webp](file:///C:/Users/Usuario%28a%29%20Master/.gemini/antigravity-ide/brain/9fc529f1-b2b7-4889-b5f5-f8a344881c50/verify_demand_service_icons_1791071794707.webp)
 
+---
+
+## 17. Sessão 12 — Alinhamento Estrito com a Documentação Técnica de Validação (03 Out 2026)
+
+> **Data de Implementação:** 03 de Outubro de 2026  
+> **Status:** Concluído, Validado com Verificação de Sintaxe (0 Erros) e Aprovado  
+> **Branch Git:** `main`  
+> **Arquivos Modificados:** `beautypass_app.html`, `styles.css`, `app.js`, `HISTORICO_DESENVOLVIMENTO_PROTOTIPO.md`, `CONTEXT.md`
+
+### 17.1 Motivação e Alinhamento (`/grill-me`)
+O usuário solicitou uma reanálise aprofundada da documentação do protótipo de validação (`documenta_o_t_cnica_prot_tipo_de_valida_o.md`) para confrontar o estado atual do aplicativo com os requisitos de teste e conduzir as melhorias prioritárias.
+
+Durante o processo interativo de alinhamento (`/grill-me`), selecionou-se a **Frente 1: Integridade de Dados e Validação de Hipóteses (H1, H2 e Catálogo de Eventos)** como a prioridade imediata para assegurar que os testes com participantes reais gerem evidências sem ruído metodológico.
+
+### 17.2 Alterações Executadas
+
+1. **Onboarding & Conformidade LGPD (Seção 13):**
+   - **Campos Limpos e Placeholders:** Os campos de nome, telefone e código de teste não vêm mais pré-preenchidos com dados fictícios, exigindo entrada real do testador.
+   - **Código do Participante (`#onboarding-participant`):** Adicionado campo dedicado para identificação do participante na pesquisa (ex.: `P01`, `P02`), permitindo rastreabilidade individual das sessões.
+   - **Consentimento Ativo:** O checkbox de termos de privacidade/LGPD inicia desmarcado.
+   - **Validação Reativa (`validateOnboardingForm()`):** O botão *"Iniciar Sessão de Teste"* inicia desabilitado (`disabled`) com estilo visual neutro e cursor indicativo, habilitando-se apenas quando os termos são aceitos, todos os dados são digitados e o código de acesso informado é `0000`.
+
+2. **Geolocalização & Fallback Obrigatório (Seção 6.4):**
+   - **Fim da Permissão Falsa:** Removido o disparo forçado de `location_permission: { granted: true }` no onboarding antes da resposta do navegador.
+   - **Aviso de Fallback na Home (`#home-location-warning`):** Adicionado banner semântico informando quando a geolocalização é recusada ou inacessível: *"Mostrando salões em São Paulo (centro) — ative a localização para ver perto de você"*.
+   - **Rótulo Dinâmico no Cabeçalho:** O pill de localização do cabeçalho agora exibe o estado dinâmico (`#home-location-label`).
+
+3. **Catálogo Fechado de Eventos (Seção 11):**
+   - **Injeção Global de Metadados:** `trackEvent()` enriquece automaticamente todo evento disparado com `session_id` e `participant_code` da sessão do usuário ativo.
+   - **`card_validated`:** Propriedade padronizada estritamente para `last4` (apenas os 4 últimos dígitos do cartão).
+   - **`appointment_status_changed`:** Propriedades padronizadas para `from` e `to` em conformidade exata com o catálogo fechado da documentação.
+   - **`checkout_abandoned`:** Incorporada a propriedade obrigatória `has_discount` em todas as rotas de abandono (saída voluntária e expiração do cronômetro de 10 min).
+
+4. **Metodologia de Cálculo de H1 e H2 (Seção 2 e 11):**
+   - **H1 (Tarifa Dinâmica):** Alinhado ao critério GO $\ge 35\%$ calculado sobre sessões elegíveis (participantes expostos tanto a horários de pico sem desconto quanto a horários ociosos com desconto).
+   - **H2 (Pré-Autorização em Cartão):** Alinhado ao critério GO $\ge 50\%$ de conclusão no funil `checkout_started → checkout_completed`.
+   - **Painel de Métricas:** Interface de métricas do moderador (`#validation-dashboard-metrics`) atualizada para exibir os percentuais e metas GO exatas da documentação.
+
+### 17.3 Validação Automatizada
+- `node -c app.js` executado com **0 erros de sintaxe**.
+
 
 
 

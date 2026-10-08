@@ -2988,6 +2988,7 @@ const AppState = {
   activeFilter: 'all',
   activeCategory: 'all',
   homeSearchQuery: '',
+  favoriteSalonIds: new Set(JSON.parse(localStorage.getItem('bp_favorite_salons') || '[]')),
   isCardValid: false,
   selectedPaymentMethod: 'card', // 'card' | 'pix'
   confirmedAppointment: null,
@@ -3703,6 +3704,50 @@ function setQuickFilter(type, btnEl) {
   renderHomeFeed();
 }
 
+function toggleFavoriteSalon(salonId, event) {
+  if (event) {
+    event.stopPropagation();
+  }
+  const isFav = AppState.favoriteSalonIds.has(salonId);
+  if (isFav) {
+    AppState.favoriteSalonIds.delete(salonId);
+    showToast('Salão removido dos favoritos');
+  } else {
+    AppState.favoriteSalonIds.add(salonId);
+    showToast('Salão adicionado aos seus favoritos! ❤️');
+  }
+  localStorage.setItem('bp_favorite_salons', JSON.stringify([...AppState.favoriteSalonIds]));
+  
+  updateFavoriteButtonsState(salonId);
+
+  if (AppState.activeFilter === 'favorites') {
+    renderHomeFeed();
+  }
+}
+
+function toggleFavoriteCurrentSalon() {
+  if (AppState.selectedSalon) {
+    toggleFavoriteSalon(AppState.selectedSalon.id);
+  }
+}
+
+function updateFavoriteButtonsState(salonId) {
+  const isFav = AppState.favoriteSalonIds.has(salonId);
+  if (AppState.selectedSalon && AppState.selectedSalon.id === salonId) {
+    const detailFavBtn = document.getElementById('detail-fav-btn');
+    if (detailFavBtn) {
+      detailFavBtn.classList.toggle('active', isFav);
+      const svg = detailFavBtn.querySelector('svg');
+      if (svg) svg.setAttribute('fill', isFav ? 'currentColor' : 'none');
+    }
+  }
+  document.querySelectorAll(`.card-fav-btn[onclick*="'${salonId}'"]`).forEach(btn => {
+    btn.classList.toggle('active', isFav);
+    const svg = btn.querySelector('svg');
+    if (svg) svg.setAttribute('fill', isFav ? 'currentColor' : 'none');
+  });
+}
+
 function clearAllHomeFilters() {
   AppState.activeCategory = 'all';
   AppState.activeFilter = 'all';
@@ -3766,6 +3811,8 @@ function getFilteredSalons() {
     });
   } else if (AppState.activeFilter === 'proximity') {
     list = [...list].sort((a, b) => a.distanceKm - b.distanceKm);
+  } else if (AppState.activeFilter === 'favorites') {
+    list = list.filter(salon => AppState.favoriteSalonIds.has(salon.id));
   }
   
   return list;
@@ -3797,7 +3844,9 @@ function renderHomeFeed() {
 
       let filterDesc = '';
       if (hasCategory && hasFilter) {
-        const filterName = AppState.activeFilter === 'proximity' ? 'Mais Próximos' : 'Maior Economia';
+        let filterName = 'Maior Economia';
+        if (AppState.activeFilter === 'proximity') filterName = 'Mais Próximos';
+        if (AppState.activeFilter === 'favorites') filterName = 'Favoritos';
         filterDesc = `Filtrando por <strong>${catLabels[AppState.activeCategory] || AppState.activeCategory}</strong> • <strong>${filterName}</strong>`;
       } else if (hasCategory) {
         filterDesc = `Mostrando <strong>${salonsToDisplay.length} estabelecimentos</strong> com <strong>${catLabels[AppState.activeCategory] || AppState.activeCategory}</strong>`;
@@ -3805,6 +3854,8 @@ function renderHomeFeed() {
         filterDesc = `Ordenado por <strong>Mais Próximos de você</strong> (&lt; 2 km primeiro)`;
       } else if (AppState.activeFilter === 'economy') {
         filterDesc = `Ordenado por <strong>Maior Economia</strong> (Até 35% de desconto)`;
+      } else if (AppState.activeFilter === 'favorites') {
+        filterDesc = `Mostrando <strong>${salonsToDisplay.length} salões salvos nos seus favoritos</strong>`;
       } else if (hasSearch) {
         filterDesc = `Resultados para <strong>"${AppState.homeSearchQuery}"</strong> (${salonsToDisplay.length})`;
       }
@@ -3830,12 +3881,13 @@ function renderHomeFeed() {
   feedContainer.innerHTML = '';
 
   if (salonsToDisplay.length === 0) {
+    const isFavFilter = AppState.activeFilter === 'favorites';
     feedContainer.innerHTML = `
       <div style="text-align:center; padding:32px 16px; color:var(--neutral-muted);">
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-bottom:8px; opacity:0.6;"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-        <p style="font-size:13px; font-weight:700;">Nenhum estabelecimento encontrado</p>
-        <p style="font-size:11px; margin-top:4px;">Tente selecionar outra categoria ou limpar os filtros ativos.</p>
-        <button class="card-action-btn" style="margin-top:14px; max-width:200px; margin-inline:auto;" onclick="clearAllHomeFilters()">Limpar Filtros</button>
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-bottom:8px; opacity:0.6;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <p style="font-size:13px; font-weight:700;">${isFavFilter ? 'Nenhum salão salvo nos favoritos' : 'Nenhum estabelecimento encontrado'}</p>
+        <p style="font-size:11px; margin-top:4px;">${isFavFilter ? 'Toque no ícone de coração nos estabelecimentos para salvá-los aqui!' : 'Tente selecionar outra categoria ou limpar os filtros ativos.'}</p>
+        <button class="card-action-btn" style="margin-top:14px; max-width:200px; margin-inline:auto;" onclick="clearAllHomeFilters()">Ver Todos os Salões</button>
       </div>
     `;
     return;
@@ -3885,12 +3937,16 @@ function renderHomeFeed() {
 
     // Texto limpo de prova social (ex: "Camila agendou há 14 min")
     const cleanSocialProofText = (salon.socialProof || '').replace(/^#/, '');
+    const isFav = AppState.favoriteSalonIds.has(salon.id);
 
     const card = document.createElement('div');
     card.className = 'social-salon-card';
     card.innerHTML = `
       <div class="card-media-wrap">
         <img src="${cardImage}" alt="${salon.name}" loading="lazy" onerror="this.onerror=null; this.src='salon_hair_boutique.jpg'">
+        <button class="card-fav-btn ${isFav ? 'active' : ''}" onclick="toggleFavoriteSalon('${salon.id}', event)" title="Favoritar ${salon.name}">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2.2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
         <div class="social-proof-pill">
           <span class="live-pulse-dot"></span>
           <span>${cleanSocialProofText}</span>
@@ -4110,6 +4166,7 @@ function renderMapBottomSheet(salons = MOCK_SALONS) {
   }
 
   salons.forEach(salon => {
+    const walkMin = Math.round(salon.distanceKm * 12);
     const card = document.createElement('div');
     card.id = `sheet-card-${salon.id}`;
     card.className = 'mini-salon-card';
@@ -4122,7 +4179,8 @@ function renderMapBottomSheet(salons = MOCK_SALONS) {
         <h4 class="mini-salon-name">${salon.name}</h4>
         <div class="mini-salon-meta">
           <span style="display:inline-flex; align-items:center; gap:3px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>${salon.neighborhood} · ${salon.distanceKm} km</span>
-          <span style="font-weight:700; color:var(--primary);">A partir de R$ ${((salon.services && salon.services[0]) || salon.service).basePrice.toFixed(2)}</span>
+          <span class="mini-card-walk"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="5" r="2"/><path d="m9 20 3-6 3 2 2 4"/><path d="m6 16 4-3 1-4 3 3 4-2"/></svg> ${walkMin} min a pé</span>
+          <span style="font-weight:700; color:var(--primary); margin-top:2px; display:block;">A partir de R$ ${((salon.services && salon.services[0]) || salon.service).basePrice.toFixed(2)}</span>
         </div>
       </div>
     `;
@@ -4752,6 +4810,59 @@ function selectService(serviceId) {
   updateRadialClock();
 }
 
+// Mini-Galeria de Fotos do Estabelecimento (Portfólio — Seção 3 e 10)
+const CATEGORY_GALLERY_PHOTOS = {
+  hair: [
+    "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?auto=format&fit=crop&w=800&q=80"
+  ],
+  nails: [
+    "https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1519014816548-bf5fe059798b?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1522337094344-664f2c4256ea?auto=format&fit=crop&w=800&q=80"
+  ],
+  barber: [
+    "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=800&q=80"
+  ],
+  massage: [
+    "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=800&q=80"
+  ],
+  esthetic: [
+    "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1512290900672-1f41d3d62325?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?auto=format&fit=crop&w=800&q=80"
+  ]
+};
+
+function getSalonGalleryImages(salon) {
+  const cat = salon.category || 'hair';
+  const pool = CATEGORY_GALLERY_PHOTOS[cat] || CATEGORY_GALLERY_PHOTOS.hair;
+  return [salon.image, ...pool.slice(1, 4)];
+}
+
+function selectGalleryImage(imgUrl, thumbEl) {
+  const heroImg = document.getElementById('detail-hero-img');
+  if (heroImg) {
+    heroImg.style.opacity = '0.6';
+    heroImg.src = imgUrl;
+    setTimeout(() => {
+      heroImg.style.opacity = '1';
+    }, 120);
+  }
+  document.querySelectorAll('.gallery-thumb-item').forEach(t => t.classList.remove('active'));
+  if (thumbEl) thumbEl.classList.add('active');
+}
+
 function renderDetailScreen() {
   const salon = AppState.selectedSalon;
   if (!salon) return;
@@ -4767,6 +4878,32 @@ function renderDetailScreen() {
   document.getElementById('detail-salon-rating').textContent = `${salon.rating} (${salon.reviewsCount} avaliações)`;
   document.getElementById('detail-service-title').textContent = activeService.name;
   document.getElementById('detail-service-desc').textContent = `${activeService.durationMinutes} min • ${activeService.description}`;
+
+  // Atualiza estado do botão de favorito no cabeçalho de detalhes
+  const isFav = AppState.favoriteSalonIds.has(salon.id);
+  const detailFavBtn = document.getElementById('detail-fav-btn');
+  if (detailFavBtn) {
+    detailFavBtn.classList.toggle('active', isFav);
+    const svg = detailFavBtn.querySelector('svg');
+    if (svg) svg.setAttribute('fill', isFav ? 'currentColor' : 'none');
+  }
+
+  // Renderiza Mini-Galeria do Estabelecimento (Portfólio — Seção 3 e 10)
+  const galleryStrip = document.getElementById('detail-photo-gallery');
+  if (galleryStrip) {
+    galleryStrip.innerHTML = '';
+    const galleryPhotos = getSalonGalleryImages(salon);
+    const galleryCount = document.getElementById('detail-gallery-count');
+    if (galleryCount) galleryCount.textContent = `${galleryPhotos.length} fotos`;
+
+    galleryPhotos.forEach((imgUrl, idx) => {
+      const thumb = document.createElement('div');
+      thumb.className = `gallery-thumb-item ${idx === 0 ? 'active' : ''}`;
+      thumb.onclick = () => selectGalleryImage(imgUrl, thumb);
+      thumb.innerHTML = `<img src="${imgUrl}" alt="Ambiente ${idx + 1}" loading="lazy" onerror="this.src='treatment_hair_salon.jpg'">`;
+      galleryStrip.appendChild(thumb);
+    });
+  }
 
   // Renderiza Catálogo de Serviços do Salão (Seção 6.1 e 6.3)
   renderDetailServices(salon);
@@ -5397,6 +5534,57 @@ async function confirmBooking() {
 }
 
 // --- SCREEN 5: CONFIRMATION & MEUS AGENDAMENTOS ---
+
+// Renderização do QR Code do Voucher Digital (Critério C6 da Seção 14 da Spec)
+function renderVoucherQRCode(containerId, voucherCode) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  container.innerHTML = `
+    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" fill="#FFFFFF"/>
+      <!-- Top Left Position Detection -->
+      <rect x="6" y="6" width="26" height="26" rx="4" fill="#00685F"/>
+      <rect x="10" y="10" width="18" height="18" rx="2" fill="#FFFFFF"/>
+      <rect x="14" y="14" width="10" height="10" rx="1.5" fill="#00685F"/>
+      
+      <!-- Top Right Position Detection -->
+      <rect x="68" y="6" width="26" height="26" rx="4" fill="#00685F"/>
+      <rect x="72" y="10" width="18" height="18" rx="2" fill="#FFFFFF"/>
+      <rect x="76" y="14" width="10" height="10" rx="1.5" fill="#00685F"/>
+      
+      <!-- Bottom Left Position Detection -->
+      <rect x="6" y="68" width="26" height="26" rx="4" fill="#00685F"/>
+      <rect x="10" y="72" width="18" height="18" rx="2" fill="#FFFFFF"/>
+      <rect x="14" y="76" width="10" height="10" rx="1.5" fill="#00685F"/>
+      
+      <!-- Data Pattern Matrix Cells (Serene Teal & Menta) -->
+      <rect x="36" y="8" width="8" height="8" rx="1" fill="#0D9488"/>
+      <rect x="48" y="12" width="8" height="8" rx="1" fill="#00685F"/>
+      <rect x="36" y="22" width="10" height="8" rx="1" fill="#134E4A"/>
+      <rect x="50" y="24" width="6" height="6" rx="1" fill="#0D9488"/>
+      <rect x="8" y="36" width="8" height="10" rx="1" fill="#00685F"/>
+      <rect x="20" y="40" width="10" height="8" rx="1" fill="#0D9488"/>
+      <rect x="34" y="36" width="8" height="8" rx="1" fill="#134E4A"/>
+      <rect x="68" y="36" width="10" height="8" rx="1" fill="#00685F"/>
+      <rect x="82" y="40" width="8" height="10" rx="1" fill="#0D9488"/>
+      <rect x="38" y="50" width="20" height="6" rx="1" fill="#134E4A"/>
+      <rect x="66" y="52" width="12" height="8" rx="1" fill="#0D9488"/>
+      <rect x="82" y="56" width="8" height="12" rx="1" fill="#00685F"/>
+      <rect x="36" y="66" width="10" height="10" rx="1" fill="#0D9488"/>
+      <rect x="50" y="64" width="8" height="12" rx="1" fill="#00685F"/>
+      <rect x="62" y="70" width="12" height="8" rx="1" fill="#134E4A"/>
+      <rect x="78" y="74" width="10" height="14" rx="1" fill="#0D9488"/>
+      <rect x="48" y="80" width="10" height="8" rx="1" fill="#00685F"/>
+      
+      <!-- Center Emblem Badge (BeautyPass Seal) -->
+      <circle cx="50" cy="50" r="12" fill="#00685F"/>
+      <circle cx="50" cy="50" r="9" fill="#5EEAD4"/>
+      <path d="M47 50.5l2 2 4-4" stroke="#00685F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  `;
+}
+
 function renderConfirmScreen() {
   const appt = AppState.confirmedAppointment;
   if (!appt) return;
@@ -5418,6 +5606,11 @@ function renderConfirmScreen() {
   const displayDate = appt.date || formatAppointmentDisplayDate(appt.rawDate || AppState.selectedDate);
   document.getElementById('confirm-time').textContent = `${displayDate} às ${appt.time}`;
   document.getElementById('confirm-total-paid').textContent = `R$ ${appt.pricing.finalPrice.toFixed(2)}`;
+
+  // Renderiza QR Code no Voucher Digital (Critério C6 da Seção 14 da Spec)
+  renderVoucherQRCode('confirm-qrcode-frame', appt.id);
+  const qrCodeTextEl = document.getElementById('confirm-qrcode-voucher-code');
+  if (qrCodeTextEl) qrCodeTextEl.textContent = `Código: ${appt.id}`;
 }
 
 // --- MODAL DE CANCELAMENTO (T4 da Spec) ---
@@ -5991,7 +6184,10 @@ function renderAppointmentsScreen() {
 
       <div class="appt-card-actions">
         ${appt.status === 'CONFIRMED' ? `
-          <button class="appt-btn-outline" onclick="openVoucherForAppt('${appt.id}')">Ver Voucher</button>
+          <button class="appt-btn-outline" onclick="openVoucherForAppt('${appt.id}')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="vertical-align:-1px; margin-right:3px;"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Ver QR Code & Voucher
+          </button>
           <button class="appt-btn-outline" style="color:var(--error); border-color:#FECACA;" onclick="openCancelModalForAppt('${appt.id}')">Cancelar</button>
         ` : `
           <button class="appt-btn-primary" onclick="rebookSalon('${appt.salon.id}')">Agendar Novamente</button>
@@ -6569,6 +6765,129 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Inicializa Sessão ou Onboarding
   initSessionState();
+
+  // Inicializa Progressive Web App (PWA) e Service Worker
+  initPwa();
 });
+
+// ===================================================================
+// PROGRESSIVE WEB APP (PWA) INITIALIZATION & INSTALL PROMPT
+// ===================================================================
+let deferredPwaPrompt = null;
+
+function initPwa() {
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then((registration) => {
+          console.log('[PWA] Service Worker registrado com sucesso:', registration.scope);
+        })
+        .catch((err) => {
+          console.warn('[PWA] Falha ao registrar Service Worker:', err);
+        });
+    });
+  }
+
+  // Captura do evento nativo de instalação do Android/Chrome
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPwaPrompt = e;
+    console.log('[PWA] Evento beforeinstallprompt capturado!');
+
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                         window.matchMedia('(display-mode: fullscreen)').matches ||
+                         window.navigator.standalone === true;
+
+    if (!isStandalone && !sessionStorage.getItem('pwa_banner_dismissed')) {
+      const banner = document.getElementById('pwa-install-banner');
+      if (banner) banner.style.display = 'flex';
+    }
+
+    const settingsBtn = document.getElementById('settings-install-pwa-btn');
+    if (settingsBtn) {
+      settingsBtn.style.display = 'flex';
+    }
+  });
+
+  // Evento de instalação concluída
+  window.addEventListener('appinstalled', () => {
+    console.log('[PWA] Aplicativo instalado com sucesso no dispositivo!');
+    deferredPwaPrompt = null;
+    const banner = document.getElementById('pwa-install-banner');
+    if (banner) banner.style.display = 'none';
+
+    const settingsBtn = document.getElementById('settings-install-pwa-btn');
+    if (settingsBtn) settingsBtn.style.display = 'none';
+
+    const installedBadge = document.getElementById('pwa-installed-badge');
+    if (installedBadge) installedBadge.style.display = 'flex';
+
+    if (typeof showToast === 'function') {
+      showToast('BeautyPass instalado na tela inicial com sucesso!');
+    }
+  });
+
+  // Verifica se já está rodando em modo standalone / fullscreen
+  const isInstalled = window.matchMedia('(display-mode: standalone)').matches ||
+                      window.matchMedia('(display-mode: fullscreen)').matches ||
+                      window.navigator.standalone === true;
+  if (isInstalled) {
+    const banner = document.getElementById('pwa-install-banner');
+    if (banner) banner.style.display = 'none';
+    const settingsBtn = document.getElementById('settings-install-pwa-btn');
+    if (settingsBtn) settingsBtn.style.display = 'none';
+    const installedBadge = document.getElementById('pwa-installed-badge');
+    if (installedBadge) installedBadge.style.display = 'flex';
+  }
+
+  // Tratar atalhos rápidos do Android via URL query param (?screen=ondemand, ?screen=reservations, ?screen=map)
+  const urlParams = new URLSearchParams(window.location.search);
+  const targetScreen = urlParams.get('screen');
+  if (targetScreen) {
+    setTimeout(() => {
+      if (typeof navigateTo === 'function') {
+        navigateTo(targetScreen);
+      }
+    }, 350);
+  }
+}
+
+window.triggerPwaInstall = async function() {
+  if (deferredPwaPrompt) {
+    deferredPwaPrompt.prompt();
+    const { outcome } = await deferredPwaPrompt.userChoice;
+    console.log('[PWA] Resposta do usuário à instalação:', outcome);
+    deferredPwaPrompt = null;
+    const banner = document.getElementById('pwa-install-banner');
+    if (banner) banner.style.display = 'none';
+    if (outcome === 'accepted') {
+      if (typeof showToast === 'function') {
+        showToast('Instalando o aplicativo no seu dispositivo...');
+      }
+    }
+  } else {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                         window.matchMedia('(display-mode: fullscreen)').matches ||
+                         window.navigator.standalone === true;
+    if (isStandalone) {
+      if (typeof showToast === 'function') {
+        showToast('O BeautyPass já está instalado como aplicativo!');
+      }
+    } else {
+      if (typeof showToast === 'function') {
+        showToast('Toque no menu (⋮) do Chrome e selecione "Instalar aplicativo"');
+      } else {
+        alert('Para instalar:\n1. Toque no menu (⋮) do navegador.\n2. Selecione "Adicionar à tela inicial" ou "Instalar aplicativo".');
+      }
+    }
+  }
+};
+
+window.dismissPwaBanner = function() {
+  const banner = document.getElementById('pwa-install-banner');
+  if (banner) banner.style.display = 'none';
+  sessionStorage.setItem('pwa_banner_dismissed', 'true');
+};
+
 
 

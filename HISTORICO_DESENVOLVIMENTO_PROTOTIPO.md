@@ -865,6 +865,120 @@ Foi desenvolvido o script `test_validation_sprint.py` executando testes end-to-e
 
 **Resultado da Suite:** 10/10 testes aprovados com 100% de sucesso.
 
+---
+
+## 19. Sessão 14 — Implementação Integral dos Requisitos de UI/UX, Alinhamento /grill-me e Validação E2E
+
+### 19.1 Contexto e Objetivos
+Após análise minuciosa entre a implementação de [beautypass_app.html](file:///c:/Users/Usuario(a)%20Master/Documents/python/Projeto%20BeautyPass/beautypass_app.html), [app.js](file:///c:/Users/Usuario(a)%20Master/Documents/python/Projeto%20BeautyPass/app.js), [styles.css](file:///c:/Users/Usuario(a)%20Master/Documents/python/Projeto%20BeautyPass/styles.css) e as quatro documentações fundamentais do ecossistema:
+1. `documenta_o_t_cnica_prot_tipo_de_valida_o.md`
+2. `documenta_o_ui_ux_agendamento_de_corridas_aut_nomas.md`
+3. `documenta_o_ui_ux_app_de_mobilidade_urbana.md`
+4. `documenta_o_ui_ux_app_social_food_delivery.md`
+
+O usuário solicitou a implementação de todos os itens pendentes com alinhamento interativo `/grill-me` para resolução de trade-offs arquiteturais e de interface.
+
+### 19.2 Decisões Alinhadas no Protocolo `/grill-me`
+1. **QR Code no Voucher Digital (Critério C6):** Renderizado vetorialmente em formato SVG com padrão de matrizSerene Mint/Teal e selo central BeautyPass diretamente dentro do `.itinerary-card` no `#screen-confirm`. Em "Meus Agendamentos", o botão secundário foi atualizado para `"Ver QR Code & Voucher"` com ícone vetorial dedicado, reabrindo o voucher para check-in presencial no salão.
+2. **Favoritos (Persistência & Filtro Rápido):** Botão de coração interativo presente nos cards do feed (`.card-fav-btn`, posicionado com ergonomia no canto inferior direito da imagem em `bottom: 12px; right: 12px;`, desobstruindo a métrica de quilômetros `0.8 km` no topo direito) e no topo da tela de detalhe (`#detail-fav-btn`), com persistência local em `localStorage` (`bp_favorite_salons`), empty state dedicado e chip de filtro rápido `"Favoritos"` com feedback na barra de status da Home.
+3. **Mini-Galeria de Fotos do Salão (Seções 3 e 10):** Carrossel horizontal de 4 miniaturas em alta resolução (`.gallery-thumb-item`) no `#screen-detail`, organizadas por categoria estética (cabelo, unhas, barbearia, massagem, estética facial), onde o clique do usuário substitui a fotografia Hero principal (`#detail-hero-img`) com transição suave de opacidade.
+4. **Selo "Imagem Ilustrativa" (Seção 12.5):** Decisão expressa do usuário de **não sobrepor selos de disclaimer** nas fotografias para preservar a limpeza visual e estética premium do produto.
+5. **Tempo a Pé no Mapa Geral (Bottom Sheet):** Adicionado badge com estimativa de caminhada a pé (`X min a pé` baseado na velocidade média urbana de 5 km/h ~ 12 min/km) em cada estabelecimento listado no Bottom Sheet do mapa.
+6. **Literalidade da Copy no Checkout (Seção 6.2):** Atualizado o aviso de rodapé para a literalidade exata exigida na documentação: `"Pagamento simulado — nenhum valor será cobrado neste teste."`.
+7. **Barra de Controle Superior:** Mantida conforme design original sem cronômetro na barra externa, preservando o foco operacional no dispositivo simulado.
+
+### 19.3 Componentes Desenvolvidos e Modificados
+- **[beautypass_app.html](file:///c:/Users/Usuario(a)%20Master/Documents/python/Projeto%20BeautyPass/beautypass_app.html):**
+  - Adicionado chip de filtro rápido `"Favoritos"` com atributo `data-filter="favorites"` e ícone vetorial SVG.
+  - Inserido botão de favoritar `#detail-fav-btn` no cabeçalho de `#screen-detail`.
+  - Inserido container da mini-galeria `#detail-photo-gallery` logo abaixo do hero card no `#screen-detail`.
+  - Atualizada a cópia literal do aviso de teste no `#checkout-notice-text`.
+  - Inserido frame do QR Code `#confirm-qrcode-frame` e pill com código do voucher no `#screen-confirm`.
+- **[styles.css](file:///c:/Users/Usuario(a)%20Master/Documents/python/Projeto%20BeautyPass/styles.css):**
+  - Classes do sistema de favoritos: `.card-fav-btn`, `.card-fav-btn.active`, `.detail-fav-btn.active`.
+  - Classes da mini-galeria: `.detail-gallery-wrap`, `.detail-thumbnails-strip`, `.gallery-thumb-item`, `.gallery-thumb-item.active`.
+  - Classes do QR Code do voucher: `.voucher-qrcode-section`, `.voucher-qrcode-frame`, `.voucher-qrcode-tag`, `.voucher-qrcode-sub`.
+  - Classes de estimativa de caminhada: `.mini-card-walk`.
+- **[app.js](file:///c:/Users/Usuario(a)%20Master/Documents/python/Projeto%20BeautyPass/app.js):**
+  - Gerenciamento de favoritos com persistência via `localStorage` e métodos `toggleFavoriteSalon`, `toggleFavoriteCurrentSalon`, `updateFavoriteButtonsState`.
+  - Suporte ao filtro rápido `'favorites'` em `getFilteredSalons()` e `renderHomeFeed()` com empty state contextual.
+  - Catálogo de fotos temáticas de alta resolução em `CATEGORY_GALLERY_PHOTOS` e rotinas `getSalonGalleryImages` e `selectGalleryImage`.
+  - Geração vetorial do QR Code com matriz Serene Mint/Teal em `renderVoucherQRCode` e integração com `renderConfirmScreen`.
+  - Integração do tempo de caminhada a pé nos cards do Bottom Sheet do mapa geral.
+  - Atualização do botão de ação em `renderAppointmentsScreen` para `"Ver QR Code & Voucher"`.
+  - Eliminação estrita de qualquer emoji residual (100% SVG line-art).
+
+### 19.4 Validação Automatizada E2E (Playwright)
+Criado script de teste `test_validation_session14.py` que testou e aprovou 100% dos requisitos:
+1. **Teste 1:** Login Onboarding e chegada à Home com sucesso.
+2. **Teste 2:** Favoritar estabelecimento no feed, verificar classe ativa, persistência em `localStorage` e filtro rápido `'Favoritos'`.
+3. **Teste 3:** Detalhe do salão com reflexo de favorito ativo e troca interativa de fotos na mini-galeria de 4 imagens.
+4. **Teste 4:** Agendamento com seleção adaptativa de data útil.
+5. **Teste 5:** Presença da cópia literal exata da Seção 6.2 no checkout.
+6. **Teste 6:** Confirmação do agendamento e renderização do QR Code SVG com código idêntico ao voucher.
+7. **Teste 7:** Navegação para "Meus Agendamentos", validação do botão "Ver QR Code & Voucher" e reabertura do voucher.
+8. **Teste 8:** Presença e cálculo das estimativas de caminhada a pé (`X min a pé`) nos 24 estabelecimentos do Bottom Sheet do mapa geral.
+
+**Resultado da Suite:** 8/8 testes aprovados com 100% de sucesso.
+**Regressão da Suite Anterior (`test_validation_sprint.py`):** 10/10 testes aprovados com 100% de sucesso.
+
+---
+
+## 20. Sessão 15 — Elaboração do Aplicativo Real Android (Jetpack Compose & Material 3) com Emulador Interativo do Google Pixel 8 Pro
+
+### 20.1 Contexto e Alinhamento /grill-me
+Com a maturidade e 100% de conformidade do protótipo web com todas as especificações e testes científicos, o usuário solicitou o início da elaboração de um **aplicativo real nativo em Android**, acompanhado de visualização interativa em um emulador.
+
+Pelo protocolo interativo **/grill-me**, foram decididos os seguintes pilares:
+1. **Stack Tecnológica:** Padrão oficial moderno do Google Android — **Kotlin**, **Jetpack Compose (Material 3)**, **Architecture Components (MVVM/MVI)** e **Navigation Compose**.
+2. **Estratégia de Visualização:** Construção da estrutura real de código nativo do Android em `android/` acompanhada de um **Emulador Android Interativo de Alta Fidelidade (Google Pixel 8 Pro)** no navegador para visualização imediata com controles de hardware, Logcat e inspeção de código em tempo real.
+3. **Escopo Funcional:** Fluxo completo ponta a ponta (Onboarding com LGPD -> Home/Feed com filtros rápidos e favoritos -> Detalhes com mini-galeria de 4 fotos e seletor dinâmico -> Checkout com Luhn/Pix e timer de 10 min -> Voucher com QR Code vetorial e trajeto a pé -> Meus Agendamentos e Mapa com tempo de caminhada).
+4. **Organização:** Estrutura organizada e modular na pasta [android/](file:///c:/Users/Usuario(a)%20Master/Documents/python/Projeto%20BeautyPass/android).
+
+### 20.2 Estrutura do Projeto Android Nativo Criada
+- **Build & Configuração:**
+  - `android/settings.gradle.kts`: Declaração do módulo `:app` e repositórios Google/MavenCentral.
+  - `android/build.gradle.kts` & `android/gradle.properties`: Plugins do Android Application 8.5.2 e Kotlin 1.9.24.
+  - `android/app/build.gradle.kts`: SDK 34 (Android 14), Compose Compiler, Material 3, Navigation Compose, Coil e Coroutines.
+  - `android/app/src/main/AndroidManifest.xml`: Configuração de Activity, permissões de Internet e Localização.
+- **Design System & Modelos (`com.beautypass.app`):**
+  - `theme/Color.kt`, `Theme.kt`, `Type.kt`: Tokens Serene Teal, Mint, Coral Promo e Material You.
+  - `model/SalonModels.kt`: Data classes para `Salon`, `Service`, `Staff`, `Appointment`, `SlotPricing`.
+  - `data/SalonRepository.kt`: Repositório com StateFlow reativo de favoritos e agendamentos.
+  - `ui/components/SalonCard.kt`: Componente Compose com os 4 quadrantes calibrados (favorito no canto inferior direito, distância no topo direito).
+  - `ui/components/VoucherQrCodeView.kt`: Componente Canvas desenhando o QR Code vetorial Serene Mint com selo central.
+  - `ui/screens/`: Telas `HomeScreen`, `SalonDetailScreen`, `CheckoutScreen`, `ConfirmScreen`, `AppointmentsScreen`, `MapScreen`.
+  - `navigation/BeautyPassNavigation.kt`: NavHost com rotas tipadas e NavigationBar Material 3.
+  - `MainActivity.kt`: Entry point com `ComponentActivity` e tema Compose.
+  - `android/README.md`: Guia passo a passo para abrir e rodar no Android Studio.
+
+### 20.3 Emulador Android Interativo do Google Pixel 8 Pro
+Criada a página [android_emulator.html](file:///c:/Users/Usuario(a)%20Master/Documents/python/Projeto%20BeautyPass/android_emulator.html) acessível localmente:
+- Chassi físico fidedigno do Google Pixel 8 Pro com câmera punch-hole centralizada, cantos de 52px e botões de hardware (Power para ligar/desligar tela, Volume +/-).
+- Barra de status nativa do Android (Relógio em tempo real, 5G, Wi-Fi e indicador de bateria 100%).
+- Barra inferior de navegação por gestos do Android.
+- Modo de exibição imersivo em tela cheia do app dentro do Pixel (removendo controles de desktop).
+- Painel de ferramentas lateral:
+  - Especificações do hardware (Android 14 API 34, 120Hz LTPO OLED, 1344 x 2992 px).
+  - Logcat em tempo real com streaming de eventos e transições de tela do Android.
+  - Inspetor dinâmico de código Jetpack Compose com trechos correspondentes à tela ativa.
+  - Ação para testar Notificação Push do Salão no topo do aparelho.
+
+### 20.4 Decisão Estratégica de Distribuição Mobile: Adoção do PWA (Progressive Web App Instalável)
+Em discussão sobre alternativas de distribuição do aplicativo real sem dependência da Google Play Store ou lojas terceiras:
+- **Análise das Alternativas:**
+  1. *APK Direto (.apk Sideloading):* Exige envio manual do arquivo compilado, autorização de "instalação de fontes desconhecidas" nas configurações de segurança do aparelho do usuário e reinstalações manuais a cada atualização.
+  2. *PWA (Progressive Web App Instalável):* Padrão web moderno do W3C e do Google Android. Permite que o usuário instale o BeautyPass com 1 toque diretamente pelo navegador (Google Chrome, Edge ou Samsung Internet), gerando um WebAPK com ícone oficial na gaveta de aplicativos do smartphone, tela de abertura (*splash screen*), execução em tela cheia (sem barra de URL do navegador), cache offline via Service Worker e atualizações automáticas e instantâneas a cada novo deploy.
+- **Decisão do Usuário:**
+  - Foi formalmente definido e acordado que o projeto **seguirá com a opção do PWA Instalável**.
+- **Roadmap Técnico do PWA Definido:**
+  - Criação do manifesto oficial `manifest.json` com nome, ícones em alta resolução (192x192, 512x512), cores do tema Serene Teal (`#00685F`) e modo de exibição `standalone`.
+  - Implementação e registro do Service Worker (`sw.js`) para cache de assets e suporte offline.
+  - Integração do evento nativo `beforeinstallprompt` com botão/banner discreto e elegante no app: *"Instalar BeautyPass no Celular"*.
+
+
+
+
 
 
 

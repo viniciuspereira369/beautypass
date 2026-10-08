@@ -2,12 +2,22 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>BeautyPass — Marketplace de Serviços de Beleza</title>
   <meta name="description" content="Descoberta, agendamento de alta precisão e preços dinâmicos em salões de beleza e estética.">
+  <meta name="theme-color" content="#00685F">
   
+  <!-- PWA & Mobile Web App Meta Tags -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="BeautyPass">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+
   <!-- Favicon -->
   <link rel="icon" type="image/jfif" href="Logo BeautyPass.jfif">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 
   <!-- Google Fonts: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,6 +31,20 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <script>
+    // Detecção de emulador e modo PWA instalado (Standalone / Fullscreen)
+    const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches ||
+                             window.matchMedia('(display-mode: fullscreen)').matches ||
+                             window.navigator.standalone === true ||
+                             window.location.search.includes('standalone=true');
+
+    if (window.self !== window.top || window.location.search.includes('emulator=true')) {
+      document.body.classList.add('in-emulator');
+    }
+    if (isStandaloneMode) {
+      document.body.classList.add('in-pwa-standalone');
+    }
+  </script>
 
   <!-- Top Controller Bar (Ajuste de Teste e Visualizador) -->
   <header class="prototype-controller">
@@ -130,6 +154,22 @@
            SCREEN 1: HOME (SOCIAL PROOF FEED & QUICK HUB)
            ========================================================= -->
       <section id="screen-home" class="screen active">
+
+        <!-- PWA In-App Install Banner -->
+        <div id="pwa-install-banner" class="pwa-install-banner" style="display:none;">
+          <div class="pwa-banner-content">
+            <img src="icons/icon-96.png" alt="BeautyPass" class="pwa-banner-icon">
+            <div class="pwa-banner-text">
+              <span class="pwa-banner-title">Instalar BeautyPass</span>
+              <span class="pwa-banner-desc">Tela cheia nativa e acesso offline no seu celular</span>
+            </div>
+          </div>
+          <div class="pwa-banner-actions">
+            <button id="pwa-install-btn" class="btn-pwa-install" onclick="triggerPwaInstall()">Instalar</button>
+            <button id="pwa-dismiss-btn" class="btn-pwa-dismiss" onclick="dismissPwaBanner()" aria-label="Fechar">✕</button>
+          </div>
+        </div>
+
         <!-- Header Contextual -->
         <div class="home-header">
           <div class="user-greeting">
@@ -226,17 +266,21 @@
 
         <!-- Filtros Rápidos -->
         <div class="filter-chips-row">
-          <button class="filter-chip active" onclick="setQuickFilter('all', this)">
+          <button class="filter-chip active" data-filter="all" onclick="setQuickFilter('all', this)">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/></svg>
             <span>Todos</span>
           </button>
-          <button class="filter-chip" onclick="setQuickFilter('economy', this)">
+          <button class="filter-chip" data-filter="economy" onclick="setQuickFilter('economy', this)">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
             <span>Maior Economia (Até 35% OFF)</span>
           </button>
-          <button class="filter-chip" onclick="setQuickFilter('proximity', this)">
+          <button class="filter-chip" data-filter="proximity" onclick="setQuickFilter('proximity', this)">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
             <span>Mais Próximos (&lt; 2 km)</span>
+          </button>
+          <button class="filter-chip" data-filter="favorites" onclick="setQuickFilter('favorites', this)">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <span>Favoritos</span>
           </button>
         </div>
 
@@ -300,9 +344,14 @@
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
             </button>
             <span style="font-size: 14px; font-weight: 700; color: var(--neutral-text);">Agendamento de Precisão</span>
-            <button class="back-circle-btn" onclick="openPriceHelpModal()" title="Por que o preço varia?">
-              <span style="font-weight:800; font-size:14px; color:var(--primary);">?</span>
-            </button>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <button class="back-circle-btn" id="detail-fav-btn" onclick="toggleFavoriteCurrentSalon()" title="Favoritar Estabelecimento">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              </button>
+              <button class="back-circle-btn" onclick="openPriceHelpModal()" title="Por que o preço varia?">
+                <span style="font-weight:800; font-size:14px; color:var(--primary);">?</span>
+              </button>
+            </div>
           </div>
 
           <!-- Hero Cover Card -->
@@ -325,6 +374,17 @@
                 <div id="detail-service-title" style="font-size:14px; font-weight:700; margin-top:2px;">Escova Modeladora & Nutrição</div>
                 <p id="detail-service-desc" style="font-size:12px; color:var(--neutral-muted); margin-top:3px;">Lavagem e escova modeladora.</p>
               </div>
+            </div>
+          </div>
+
+          <!-- Mini-Galeria do Estabelecimento (Portfólio de Fotos — Seção 3 e 10) -->
+          <div class="detail-gallery-wrap">
+            <div class="section-header" style="padding:0 0 6px;">
+              <span class="section-title" style="font-size:13px;">Ambiente & Espaço</span>
+              <span style="font-size:11px; color:var(--neutral-muted);" id="detail-gallery-count">4 fotos</span>
+            </div>
+            <div id="detail-photo-gallery" class="detail-thumbnails-strip">
+              <!-- Injetado dinamicamente via app.js -->
             </div>
           </div>
 
@@ -600,8 +660,8 @@
           </div>
 
           <!-- Avisos Obrigatórios da Seção 6.2 -->
-          <div class="checkout-disclaimer">
-            <strong>Aviso de Teste:</strong> Pagamento simulado — nenhum valor real será cobrado.<br>
+          <div id="checkout-notice-text" class="checkout-disclaimer">
+            <strong>Aviso de Teste:</strong> Pagamento simulado — nenhum valor será cobrado neste teste.<br>
             <span style="font-size:10px; margin-top:2px; display:inline-block;">
               Ao concluir, você autoriza o salão a reter até 30% do valor em caso de não comparecimento.
             </span>
@@ -647,6 +707,18 @@
               </div>
             </div>
 
+            <!-- QR Code do Voucher Digital (Critério C6 da Seção 14 da Spec) -->
+            <div class="voucher-qrcode-section">
+              <div class="voucher-qrcode-frame" id="confirm-qrcode-frame">
+                <!-- Injetado dinamicamente via app.js -->
+              </div>
+              <div class="voucher-qrcode-meta">
+                <span class="voucher-qrcode-tag">QR Code de Check-in no Salão</span>
+                <span class="voucher-qrcode-sub">Apresente este código na recepção ao chegar</span>
+                <span id="confirm-qrcode-voucher-code" style="font-size:10.5px; font-weight:800; color:var(--primary); font-family:monospace; margin-top:3px; display:inline-block;"></span>
+              </div>
+            </div>
+
             <div style="border-top:1px dashed var(--outline-variant); margin-top:14px; padding-top:12px; display:flex; justify-content:space-between; align-items:center;">
               <div>
                 <div id="confirm-service-name" style="font-size:13px; font-weight:700;">Escova Modeladora</div>
@@ -686,6 +758,25 @@
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                 Participante Ativo
               </span>
+            </div>
+          </div>
+
+          <!-- Card de Instalação PWA Nativa no Android -->
+          <div class="profile-section-card" id="pwa-settings-card">
+            <div class="profile-section-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+              <span>Aplicativo Android (PWA)</span>
+            </div>
+            <p style="font-size:11.5px; color:var(--neutral-muted); line-height:16px; margin-bottom:12px;">
+              Instale o BeautyPass na tela inicial do seu celular para acesso instantâneo em tela cheia imersiva e suporte offline.
+            </p>
+            <button id="settings-install-pwa-btn" class="profile-action-btn" style="border-color:var(--primary); color:white; background:var(--primary); font-weight:700;" onclick="triggerPwaInstall()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Instalar BeautyPass no Celular</span>
+            </button>
+            <div id="pwa-installed-badge" style="display:none; align-items:center; gap:8px; font-size:12px; color:var(--economy-green); font-weight:700; margin-top:10px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Aplicativo instalado com sucesso!</span>
             </div>
           </div>
 

@@ -44,6 +44,12 @@ O **BeautyPass** é uma plataforma e clube de assinatura de estética, beleza e 
 | **Fase 16** | *"Foco específico na foto no centro da tela: sugestão mais simples e minimalista"* | Alinhamento via `/grill-me` e `/plan`. Correção do seletor CSS `.card-media-wrap > img` e remoção da foto de pessoa sobre a foto do salão, eliminando o avatar gigante obstrutivo. Introdução de tag flutuante minimalista translúcida (`rgba(15, 23, 42, 0.68)`) com ponto pulsante verde (`.live-pulse-dot`) e texto limpo. Restauração do bloco estilizado de amigas em comum (`.card-mutual-friends`) com fundo menta suave, avatares em stack de 22px e frases de recomendação autênticas conforme preferência do usuário. Validação visual 100% via browser subagent. |
 | **Fase 17** | *"Ajuste dos ícones dos serviços na guia Pedir Agora para ficarem condizentes com os serviços oferecidos"* | Alinhamento via `/grill-me` e `/plan`. Substituição de ícones genéricos/desconexos (microfone em Unhas, papel em Barbearia, avatar em Massagem, carinha sorridente em Estética) por 5 ícones vetoriais SVG de alta precisão (Line-art premium com traço 2.2px): Tesoura com mechas modeladoras (Cabelo), Vidro de esmalte com pincel e brilho (Unhas), Navalhete clássico articulado de lâmina aberta (Barbearia), Flor de lótus zen com pétalas fluidas (Massagem) e Perfil facial feminino sereno com estrelas de brilho/glow (Estética Facial). Sincronização em `beautypass_app.html`, `app.js` e `styles.css`. Validação visual 100% via browser subagent. |
 | **Fase 18** | *"Alinhamento com a Documentação Técnica de Validação (Frente 1: Integridade de Dados, Eventos e Métricas H1/H2)"* | Reanálise da spec técnica `documenta_o_t_cnica_prot_tipo_de_valida_o.md` e alinhamento via `/grill-me`. Reformulação do Onboarding com campos em branco, identificador do participante (`#onboarding-participant`, ex.: `P01`), termos LGPD desmarcados e validação reativa do botão com código fixo `0000`. Remoção de permissão falsa de GPS e adição de banner de fallback na Home (`#home-location-warning`). Padronização rigorosa do catálogo de eventos (Seção 11): injeção automática de `session_id` e `participant_code`, `last4` em `card_validated`, `from`/`to` em `appointment_status_changed` e `has_discount` em `checkout_abandoned`. Calibração dos limiares GO para H1 &ge; 35% e H2 &ge; 50% com atualização do painel de métricas. |
+| **Fase 19** | *"Sprint Final de Blindagem e Validação Científica do Protótipo (14 Tickets)"* | Implementação do Web App Google Apps Script sem servidor (`google_apps_script.js`), trava de double-booking concorrente com erro 409 simulado, buffer de latência de 1.4s, cronômetro regressivo com expiração de slot, bateria completa de 10 testes SUS na finalização de sessão, testes E2E Playwright (`test_validation_sprint.py`) aprovados com 100% de sucesso. |
+| **Fase 20** | *"Implementação Integral dos Requisitos de UI/UX e Alinhamento /grill-me (Sessão 14)"* | Fechamento integral de todas as pendências das documentações: QR Code vetorial SVG Serene Mint/Teal no Voucher Digital (`.itinerary-card`) e botão "Ver QR Code & Voucher" nos agendamentos ativos; sistema interativo de Favoritos no Feed e Detalhe com persistência em `localStorage` e chip de filtro rápido; mini-galeria de 4 fotos em alta definição por categoria com troca interativa na foto Hero principal; estimativa de caminhada a pé nos 24 salões do Bottom Sheet do mapa; copy exata no checkout ("Pagamento simulado — nenhum valor será cobrado neste teste."); isenção de selo de disclaimer fotográfico e preservação da barra superior conforme alinhamento do usuário; suite E2E Playwright dedicada (`test_validation_session14.py`) com 8/8 testes aprovados e 0 regressões. |
+| **Fase 21** | *"Elaboração do Aplicativo Real Android (Jetpack Compose & Material 3) com Emulador Pixel 8 Pro"* | Alinhamento via `/grill-me`. Construção da estrutura nativa oficial Google Android em `android/` (Kotlin, Jetpack Compose 1.6, Material 3, Navigation Compose, Coil e StateFlow MVI), cobrindo todo o fluxo ponta a ponta (Home com favoritos, Detalhes com mini-galeria, Checkout com Luhn/timer, Voucher com QR Code Canvas e Mapa com tempo a pé). Criação do Emulador Android Interativo de alta fidelidade do Google Pixel 8 Pro (`android_emulator.html`) com hardware controls, Logcat em tempo real e inspetor de código Compose. |
+| **Fase 22** | *"Decisão Estratégica de Distribuição: Adoção do PWA (Progressive Web App Instalável)"* | Decisão formal do usuário de seguir com a distribuição do aplicativo real via PWA instalável diretamente pelo navegador móvel sem dependência de lojas de aplicativos (Play Store), viabilizando instalação com 1 toque, WebAPK na gaveta de apps, execução em tela cheia (standalone), suporte offline (Service Worker) e atualizações instantâneas. |
+| **Fase 23** | *"Implementação Integral do PWA com Alinhamento /grill-me (Fullscreen, Service Worker & Shortcuts)"* | Alinhamento interativo via `/grill-me`. Geração de pool completo de ícones de alta resolução PNG (72 a 512px e maskable) a partir do logotipo mestre; criação do `manifest.webmanifest` em modo `fullscreen` imersivo com 3 App Shortcuts no Android (Pedir Agora, Agendamentos e Mapa); Service Worker (`sw.js`) com estratégia Stale-While-Revalidate e suporte offline robusto; banner in-app inteligente (`#pwa-install-banner`) com captura do evento nativo `beforeinstallprompt`; card de instalação PWA na tela de Ajustes (`#pwa-settings-card`); botão de simulação no emulador Pixel 8 Pro (`android_emulator.html`); e suite de testes E2E Playwright (`test_pwa_implementation.py`) aprovada com 100% de sucesso. |
+
 
 
 ---
@@ -53,8 +59,24 @@ O **BeautyPass** é uma plataforma e clube de assinatura de estética, beleza e 
 ```text
 Projeto BeautyPass/
 │
+├── android/                 # NOVO: Projeto Nativo Android (Kotlin + Jetpack Compose)
+│   ├── build.gradle.kts     # Build do Gradle raiz
+│   ├── settings.gradle.kts  # Módulos do projeto (:app)
+│   ├── app/
+│   │   ├── build.gradle.kts # Dependências Compose Material 3, Navigation e Coil
+│   │   └── src/main/java/com/beautypass/app/
+│   │       ├── MainActivity.kt
+│   │       ├── theme/       # Design System (Color.kt, Theme.kt, Type.kt)
+│   │       ├── model/       # Data classes (Salon, Service, Appointment)
+│   │       ├── data/        # Repositório reativo (SalonRepository.kt)
+│   │       ├── navigation/  # NavHost & Rotas (BeautyPassNavigation.kt)
+│   │       └── ui/
+│   │           ├── components/ # SalonCard.kt, VoucherQrCodeView.kt
+│   │           └── screens/    # HomeScreen, SalonDetailScreen, CheckoutScreen...
+│   └── README.md            # Guia de execução no Android Studio
+│
+├── android_emulator.html    # NOVO: Emulador Android Oficial (Google Pixel 8 Pro)
 ├── beautypass_app.html      # APLICAÇÃO PRINCIPAL: Single Page App completa
-│                            # (carteira, salões, modal de recarga, reviews e fotos)
 ├── index.html               # Portal Institucional / Landing page com atalhos para o app
 ├── styles.css               # Folha de estilos corporativa com tokens de design
 ├── app.js                   # Scripts de interatividade da landing page
@@ -90,7 +112,7 @@ Projeto BeautyPass/
 
 ## 5. Próximos Passos e Oportunidades Futuras
 
-1. **PWA (Progressive Web App):** Adicionar `manifest.json` e service worker para possibilitar a instalação do app na tela inicial do smartphone como aplicativo nativo.
+1. **PWA Instalável (Prioridade Imediata Aprovada na Fase 22):** Implementação do `manifest.json`, Service Worker (`sw.js`) para suporte offline e botão nativo de instalação no navegador móvel, viabilizando o uso como aplicativo baixável sem Play Store.
 2. **Backend & Persistência:** Implementar camada de banco de dados (ex: Supabase ou Firebase) para autenticação de usuários, persistência do saldo de créditos e agendamentos reais em tempo real.
 3. **Gateway de Pagamento:** Integrar checkout (PIX / Cartão de Crédito via Stripe ou Mercado Pago) no modal de recarga de créditos.
 4. **Painel do Salão (B2B):** Desenvolver tela para os estabelecimentos parceiros gerenciarem horários ociosos para o encaixe imediato e validarem vouchers de créditos.

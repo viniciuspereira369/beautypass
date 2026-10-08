@@ -1,0 +1,92 @@
+{
+  "name": "BeautyPass — Beleza & Bem-Estar",
+  "short_name": "BeautyPass",
+  "description": "Descoberta georreferenciada, agendamento de alta precisão e preços dinâmicos em salões de beleza e estética.",
+  "start_url": "./beautypass_app.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "theme_color": "#00685F",
+  "background_color": "#F8FAF9",
+  "lang": "pt-BR",
+  "categories": ["lifestyle", "beauty", "shopping"],
+  "icons": [
+    {
+      "src": "icons/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Pedir Agora (Encaixe Imediato)",
+      "short_name": "Pedir Agora",
+      "description": "Encaixe imediato sob demanda com algoritmo de tarifa justa",
+      "url": "./beautypass_app.html?screen=ondemand",
+      "icons": [{ "src": "icons/shortcut-ondemand.png", "sizes": "96x96", "type": "image/png" }]
+    },
+    {
+      "name": "Meus Agendamentos",
+      "short_name": "Agendamentos",
+      "description": "Visualize seus vouchers e histórico de agendamentos",
+      "url": "./beautypass_app.html?screen=reservations",
+      "icons": [{ "src": "icons/shortcut-reservations.png", "sizes": "96x96", "type": "image/png" }]
+    },
+    {
+      "name": "Explorar no Mapa",
+      "short_name": "Mapa",
+      "description": "Localize salões parceiros próximos em São Paulo",
+      "url": "./beautypass_app.html?screen=map",
+      "icons": [{ "src": "icons/shortcut-map.png", "sizes": "96x96", "type": "image/png" }]
+    }
+  ]
+}

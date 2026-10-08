@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BeautyPass — Emulador Android Oficial (Google Pixel 8 Pro)</title>
+  <link rel="icon" type="image/jfif" href="Logo BeautyPass.jfif">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-desk: #0B0F17;
+      --card-panel: #131B2A;
+      --border-panel: #1E293B;
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --teal-primary: #00685F;
+      --mint-glow: #0D9488;
+      --mint-light: #5EEAD4;
+      --pixel-bezel: #111418;
+      --pixel-frame: #242933;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      background: radial-gradient(circle at 20% 20%, #111827 0%, #080C14 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Top Studio Header */
+    .studio-header {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-panel);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .studio-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .studio-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid rgba(13, 148, 136, 0.4);
+    }
+
+    .studio-title {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .studio-badge {
+      background: rgba(13, 148, 136, 0.2);
+      color: var(--mint-light);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+      border: 1px solid rgba(94, 234, 212, 0.3);
+    }
+
+    .studio-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-action {
+      background: var(--card-panel);
+      border: 1px solid var(--border-panel);
+      color: var(--text-main);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-action:hover {
+      background: #1E293B;
+      border-color: var(--mint-glow);
+    }
+
+    .btn-primary-action {
+      background: linear-gradient(135deg, #00685F 0%, #0D9488 100%);
+      border: none;
+      color: white;
+      box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35);
+    }
+
+    .btn-primary-action:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(13, 148, 136, 0.5);
+    }
+
+    /* Main Studio Layout */
+    .studio-workspace {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 480px 420px;
+      gap: 24px;
+      padding: 24px;
+      align-items: start;
+      max-width: 1720px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    @media (max-width: 1300px) {
+      .studio-workspace {
+        grid-template-columns: 1fr auto;
+      }
+      .inspector-col {
+        display: none;
+      }
+    }
+
+    /* Side Overview Panel */
+    .overview-card {
+      background: var(--card-panel);
+      border: 1px solid var(--border-panel);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .overview-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--mint-light);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .spec-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 12.5px;
+    }
+
+    .spec-item:last-child {
+      border-bottom: none;
+    }
+
+    .spec-label {
+      color: var(--text-muted);
+    }
+
+    .spec-value {
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* Pixel 8 Pro Device Wrapper */
+    .emulator-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .pixel-device {
+      width: 412px;
+      height: 870px;
+      background: #000000;
+      border-radius: 52px;
+      box-shadow: 
+        0 0 0 10px #1E232E,
+        0 0 0 12px #333B4A,
+        0 0 0 14px #14171E,
+        0 24px 60px rgba(0, 0, 0, 0.8),
+        0 0 40px rgba(13, 148, 136, 0.15);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: filter 0.3s;
+    }
+
+    .pixel-device.screen-off {
+      filter: brightness(0.02);
+    }
+
+    /* Physical Buttons on Edge */
+    .hw-btn {
+      position: absolute;
+      background: #2C3340;
+      border-radius: 4px;
+      cursor: pointer;
+      z-index: 10;
+      transition: background 0.1s;
+    }
+
+    .hw-btn:active {
+      background: var(--mint-glow);
+    }
+
+    .hw-power {
+      right: -20px;
+      top: 190px;
+      width: 6px;
+      height: 52px;
+    }
+
+    .hw-vol-up {
+      right: -20px;
+      top: 265px;
+      width: 6px;
+      height: 48px;
+    }
+
+    .hw-vol-down {
+      right: -20px;
+      top: 325px;
+      width: 6px;
+      height: 48px;
+    }
+
+    /* Pixel Punch-Hole Camera */
+    .pixel-punch-hole {
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 14px;
+      height: 14px;
+      background: #0B0E14;
+      border-radius: 50%;
+      z-index: 999;
+      box-shadow: inset 0 0 3px rgba(255, 255, 255, 0.15);
+    }
+
+    /* Android Status Bar */
+    .android-status-bar {
+      height: 38px;
+      background: #00685F;
+      color: #FFFFFF;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      font-size: 11.5px;
+      font-weight: 700;
+      user-select: none;
+      z-index: 900;
+      letter-spacing: 0.2px;
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    /* Android Gesture Navigation Bar */
+    .android-gesture-bar {
+      height: 22px;
+      background: #FFFFFF;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 900;
+      cursor: pointer;
+    }
+
+    .gesture-pill {
+      width: 72px;
+      height: 4.5px;
+      background: #0F172A;
+      border-radius: 4px;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+    }
+
+    .gesture-pill:hover {
+      opacity: 1;
+    }
+
+    /* App Frame inside Screen */
+    .screen-viewport {
+      flex: 1;
+      width: 100%;
+      height: calc(100% - 60px);
+      border: none;
+      background: #F8FAF9;
+    }
+
+    /* Push Notification Banner */
+    .android-notification {
+      position: absolute;
+      top: 44px;
+      left: 14px;
+      right: 14px;
+      background: rgba(15, 23, 42, 0.94);
+      backdrop-filter: blur(12px);
+      color: white;
+      padding: 12px 14px;
+      border-radius: 18px;
+      z-index: 950;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      display: none;
+      animation: dropNotification 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes dropNotification {
+      from { transform: translateY(-30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Right Column: Code & Logcat Inspector */
+    .inspector-col {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .logcat-container {
+      background: #06090F;
+      border: 1px solid var(--border-panel);
+      border-radius: 14px;
+      padding: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      height: 260px;
+      overflow-y: auto;
+      color: #A5B4FC;
+    }
+
+    .log-line {
+      margin-bottom: 4px;
+      line-height: 1.4;
+    }
+
+    .log-tag {
+      color: #38BDF8;
+      font-weight: 600;
+    }
+
+    .log-info { color: #4ADE80; }
+    .log-warn { color: #FBBF24; }
+    .log-nav { color: #F472B6; }
+
+    .code-snippet-box {
+      background: #0B0F17;
+      border: 1px solid var(--border-panel);
+      border-radius: 14px;
+      padding: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #E2E8F0;
+      max-height: 380px;
+      overflow-y: auto;
+    }
+
+    .code-keyword { color: #F43F5E; font-weight: 600; }
+    .code-func { color: #38BDF8; }
+    .code-type { color: #FBBF24; }
+    .code-str { color: #34D399; }
+  </style>
+</head>
+<body>
+
+  <!-- Top Studio Header -->
+  <header class="studio-header">
+    <div class="studio-brand">
+      <img src="Logo BeautyPass.jfif" alt="Logo" class="studio-logo">
+      <div class="studio-title">
+        <span>BeautyPass Android Studio</span>
+        <span class="studio-badge">Jetpack Compose • Material 3</span>
+      </div>
+    </div>
+    <div class="studio-actions">
+      <button class="btn-action" onclick="triggerPwaInstallTest()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        <span>Simular Prompt PWA</span>
+      </button>
+      <button class="btn-action" onclick="triggerPushNotification()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        <span>Testar Push Notificação</span>
+      </button>
+      <button class="btn-action" onclick="togglePower()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
+        <span>Ligar/Desligar Tela</span>
+      </button>
+      <button class="btn-action btn-primary-action" onclick="openAndroidStudioFolder()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+        <span>Ver Código Kotlin (android/)</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="studio-workspace">
+
+    <!-- Left Column: Specs & Arquitetura -->
+    <aside class="overview-col">
+      <div class="overview-card">
+        <h3 class="overview-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+          Google Pixel 8 Pro
+        </h3>
+        <div class="spec-item">
+          <span class="spec-label">Sistema Operacional</span>
+          <span class="spec-value">Android 14 (API 34)</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">Resolução / Densidade</span>
+          <span class="spec-value">1344 x 2992 px (489 ppi)</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">Taxa de Atualização</span>
+          <span class="spec-value">120 Hz Smooth Display</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">UI Framework</span>
+          <span class="spec-value">Jetpack Compose 1.6</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">Design System</span>
+          <span class="spec-value">Material You (M3)</span>
+        </div>
+      </div>
+
+      <div class="overview-card">
+        <h3 class="overview-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+          Módulos Kotlin Implementados
+        </h3>
+        <div class="spec-item">
+          <span class="spec-label">MainActivity.kt</span>
+          <span class="spec-value" style="color:var(--mint-light);">ComponentActivity</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">HomeScreen.kt</span>
+          <span class="spec-value">LazyColumn + Favoritos</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">SalonDetailScreen.kt</span>
+          <span class="spec-value">Mini-Galeria + Slots</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">VoucherQrCodeView.kt</span>
+          <span class="spec-value">Canvas Compose Nativo</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">SalonRepository.kt</span>
+          <span class="spec-value">StateFlow + MVI</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Center Column: Emulador Pixel 8 Pro -->
+    <section class="emulator-center">
+      <!-- Botões de Hardware Externos -->
+      <div class="hw-btn hw-power" title="Power (Liga/Desliga Tela)" onclick="togglePower()"></div>
+      <div class="hw-btn hw-vol-up" title="Volume +" onclick="adjustVolume(1)"></div>
+      <div class="hw-btn hw-vol-down" title="Volume -" onclick="adjustVolume(-1)"></div>
+
+      <!-- Moldura Física do Pixel 8 Pro -->
+      <div class="pixel-device" id="pixel-device">
+        <!-- Punch Hole Camera -->
+        <div class="pixel-punch-hole"></div>
+
+        <!-- Android Status Bar -->
+        <div class="android-status-bar">
+          <span id="android-clock">14:32</span>
+          <div class="status-icons">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L12 22l7.03-4.39C20.26 16.07 21 14.12 21 12c0-4.97-4.03-9-9-9z"/></svg>
+            <span>5G</span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="7" width="18" height="11" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"></rect><rect x="4" y="9" width="13" height="7" rx="1" ry="1"></rect><path d="M22 11v3"></path></svg>
+          </div>
+        </div>
+
+        <!-- Simulação de Notificação Push -->
+        <div class="android-notification" id="push-notification">
+          <div style="display:flex; gap:10px; align-items:center;">
+            <div style="background:var(--teal-primary); border-radius:8px; padding:6px; display:flex;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M20 6L9 17l-5-5"></path></svg>
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:11.5px; font-weight:700; color:var(--mint-light);">BeautyPass • Confirmação</div>
+              <div style="font-size:11px; color:#F8FAFC; margin-top:2px;">Seu agendamento foi confirmado! Apresente o QR Code no salão.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Viewport do App -->
+        <iframe src="beautypass_app.html?emulator=true&p=P01" class="screen-viewport" id="app-iframe"></iframe>
+
+        <!-- Android Gesture Bar -->
+        <div class="android-gesture-bar" onclick="triggerAndroidHomeGesture()">
+          <div class="gesture-pill"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Column: Live Logcat & Compose Inspector -->
+    <section class="inspector-col">
+      <div class="overview-card" style="margin-bottom:0;">
+        <h3 class="overview-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+          Logcat ao Vivo (Android Runtime)
+        </h3>
+        <div class="logcat-container" id="logcat-stream">
+          <div class="log-line"><span class="log-tag">[BeautyPassApp]</span> <span class="log-info">I/Lifecycle: MainActivity onCreate() -> Jetpack Compose inicializado</span></div>
+          <div class="log-line"><span class="log-tag">[BeautyPassApp]</span> <span class="log-info">I/Navigation: NavHost startDestination = "home"</span></div>
+          <div class="log-line"><span class="log-tag">[BeautyPassApp]</span> <span class="log-nav">D/StateFlow: 24 salões carregados em SalonRepository</span></div>
+          <div class="log-line"><span class="log-tag">[BeautyPassApp]</span> <span class="log-info">I/UI: HomeScreen renderizado com sucesso (Feed + Favoritos)</span></div>
+          <div class="log-line"><span class="log-tag">[BeautyPassApp]</span> <span class="log-nav">D/Location: Coordenadas do usuário fixadas em Jardins (-23.5650, -46.6810)</span></div>
+        </div>
+      </div>
+
+      <div class="overview-card">
+        <h3 class="overview-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+          Código Jetpack Compose Equivalente
+        </h3>
+        <div class="code-snippet-box">
+<span class="code-keyword">@Composable</span>
+<span class="code-keyword">fun</span> <span class="code-func">SalonCard</span>(
+    salon: <span class="code-type">Salon</span>,
+    isFavorite: <span class="code-type">Boolean</span>,
+    onFavoriteClick: () -> <span class="code-type">Unit</span>
+) {
+    <span class="code-func">Card</span>(shape = <span class="code-func">RoundedCornerShape</span>(18.dp)) {
+        <span class="code-func">Box</span> {
+            <span class="code-func">AsyncImage</span>(model = salon.imageUrl)
+            <span class="code-comment">// Canto Inferior Direito: Favorito</span>
+            <span class="code-func">IconButton</span>(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(12.dp)
+            ) {
+                <span class="code-func">Icon</span>(
+                    imageVector = <span class="code-keyword">if</span> (isFavorite) 
+                        Icons.Filled.Favorite 
+                    <span class="code-keyword">else</span> Icons.Outlined.FavoriteBorder,
+                    tint = <span class="code-keyword">if</span> (isFavorite) ErrorRed <span class="code-keyword">else</span> Color.White
+                )
+            }
+        }
+    }
+}
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // Atualização contínua do relógio do Android
+    function updateAndroidClock() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const el = document.getElementById('android-clock');
+      if (el) el.textContent = `${hours}:${minutes}`;
+    }
+    setInterval(updateAndroidClock, 1000);
+    updateAndroidClock();
+
+    // Liga / Desliga Tela do Pixel
+    let isScreenOn = true;
+    function togglePower() {
+      const device = document.getElementById('pixel-device');
+      isScreenOn = !isScreenOn;
+      if (device) {
+        if (!isScreenOn) {
+          device.classList.add('screen-off');
+          addLogcat('I/PowerManager: Tela desligada (Go to sleep)');
+        } else {
+          device.classList.remove('screen-off');
+          addLogcat('I/PowerManager: Tela ligada (Waking up)');
+        }
+      }
+    }
+
+    // Volume
+    function adjustVolume(delta) {
+      addLogcat(`D/AudioService: Ajustando volume de mídia (${delta > 0 ? '+1' : '-1'})`);
+    }
+
+    // Testar Notificação Push
+    function triggerPushNotification() {
+      const el = document.getElementById('push-notification');
+      if (el) {
+        el.style.display = 'block';
+        addLogcat('I/NotificationManager: Disparo de push notification local');
+        setTimeout(() => {
+          el.style.display = 'none';
+        }, 4500);
+      }
+    }
+
+    // Simular Prompt de Instalação PWA
+    function triggerPwaInstallTest() {
+      addLogcat('I/PWA: Evento beforeinstallprompt disparado (WebAPK)');
+      const iframe = document.getElementById('app-iframe');
+      if (iframe && iframe.contentDocument) {
+        const banner = iframe.contentDocument.getElementById('pwa-install-banner');
+        if (banner) {
+          banner.style.display = 'flex';
+          addLogcat('I/UI: Banner de instalação do BeautyPass exibido no feed');
+        }
+      }
+    }
+
+    // Gesture Bar Home
+    function triggerAndroidHomeGesture() {
+      addLogcat('I/GestureNav: Gesto Home acionado na barra inferior');
+      const iframe = document.getElementById('app-iframe');
+      if (iframe && iframe.contentWindow && iframe.contentWindow.navigateTo) {
+        iframe.contentWindow.navigateTo('home');
+      }
+    }
+
+    function addLogcat(message) {
+      const stream = document.getElementById('logcat-stream');
+      if (!stream) return;
+      const line = document.createElement('div');
+      line.className = 'log-line';
+      const time = new Date().toLocaleTimeString();
+      line.innerHTML = `<span class="log-tag">[BeautyPassApp]</span> <span class="log-info">${time} ${message}</span>`;
+      stream.appendChild(line);
+      stream.scrollTop = stream.scrollHeight;
+    }
+
+    function openAndroidStudioFolder() {
+      alert('Projeto Android completo disponível na pasta android/\nAbra no Android Studio com File > Open > selecione a pasta android!');
+    }
+  </script>
+</body>
+</html>

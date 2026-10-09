@@ -34,6 +34,16 @@ desktop.ini
 .system_generated/
 .idea/
 .vscode/
+.agents/
+
+# Android build outputs e caches
+.gradle/
+**/build/
+android/.gradle/
+android/build/
+android/app/build/
+local.properties
+*.iml
 
 # Projetos externos e referências
 Projeto App Transforma*

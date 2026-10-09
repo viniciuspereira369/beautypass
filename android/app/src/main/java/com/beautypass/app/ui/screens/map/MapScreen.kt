@@ -1,7 +1,9 @@
 package com.beautypass.app.ui.screens.map
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,8 +11,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DirectionsWalk
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.outlined.DirectionsWalk
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,6 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -27,6 +33,14 @@ import com.beautypass.app.data.SalonRepository
 import com.beautypass.app.model.Salon
 import com.beautypass.app.theme.*
 
+/**
+ * Tela de Mapa: Mapa Vetorial Urbano & Bottom Sheet com Tempos de Caminhada a Pé.
+ *
+ * Implementado conforme especificações de:
+ * - documenta_o_ui_ux_app_de_mobilidade_urbana.md (Inspiração 2)
+ * - test_validation_session14.py (Asserção mandatória de badges contendo "min a pé")
+ * - DESIGN.md (Serene Mint & Teal Tokens)
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
@@ -34,11 +48,30 @@ fun MapScreen(
     modifier: Modifier = Modifier
 ) {
     var selectedSalon by remember { mutableStateOf<Salon?>(SalonRepository.salons.firstOrNull()) }
+    val salons = remember { SalonRepository.salons }
+
+    val infiniteTransition = rememberInfiniteTransition(label = "mapUserPulse")
+    val pulseScale by infiniteTransition.animateFloat(
+        initialValue = 0.8f,
+        targetValue = 1.4f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1200, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "userHalo"
+    )
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Mapa de Salões Próximos", fontSize = 17.sp, fontWeight = FontWeight.Bold) },
+                title = {
+                    Text(
+                        text = "Mapa de Salões Próximos",
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = OceanicCharcoal
+                    )
+                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = SurfaceWhite)
             )
         }
@@ -49,130 +82,223 @@ fun MapScreen(
                 .padding(padding)
                 .background(BackgroundLight)
         ) {
-            // Representação Vetorial de Mapa (São Paulo - Jardins & Pinheiros)
+            // Seção 1: Viewport Cartográfico Vetorial em Canvas
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1.2f)
+                    .weight(1f)
                     .background(Color(0xFFE2E8F0))
             ) {
-                // Desenho Vetorial com Malha de Vias e Marcadores
                 Canvas(modifier = Modifier.fillMaxSize()) {
                     val w = size.width
                     val h = size.height
 
-                    // Linhas simulando avenidas principais (Rebouças, Faria Lima, Oscar Freire)
-                    drawLine(color = Color(0xFFCBD5E1), start = Offset(0f, h * 0.3f), end = Offset(w, h * 0.7f), strokeWidth = 14f)
-                    drawLine(color = Color(0xFFCBD5E1), start = Offset(w * 0.2f, 0f), end = Offset(w * 0.8f, h), strokeWidth = 12f)
-                    drawLine(color = Color.White, start = Offset(0f, h * 0.3f), end = Offset(w, h * 0.7f), strokeWidth = 8f)
-                    drawLine(color = Color.White, start = Offset(w * 0.2f, 0f), end = Offset(w * 0.8f, h), strokeWidth = 6f)
+                    // Avenidas Principais de São Paulo (Faria Lima, Rebouças, Oscar Freire, Paulista)
+                    drawLine(color = Color(0xFFCBD5E1), start = Offset(0f, h * 0.28f), end = Offset(w, h * 0.72f), strokeWidth = 16f)
+                    drawLine(color = Color(0xFFCBD5E1), start = Offset(w * 0.18f, 0f), end = Offset(w * 0.82f, h), strokeWidth = 14f)
+                    drawLine(color = SurfaceWhite, start = Offset(0f, h * 0.28f), end = Offset(w, h * 0.72f), strokeWidth = 8f)
+                    drawLine(color = SurfaceWhite, start = Offset(w * 0.18f, 0f), end = Offset(w * 0.82f, h), strokeWidth = 7f)
 
-                    // Ponto do Usuário (Ponto Azul Pulsante com Anel)
-                    drawCircle(color = Color(0x3300685F), center = Offset(w * 0.45f, h * 0.55f), radius = 24f)
-                    drawCircle(color = SereneTeal, center = Offset(w * 0.45f, h * 0.55f), radius = 10f)
-                    drawCircle(color = Color.White, center = Offset(w * 0.45f, h * 0.55f), radius = 4f)
+                    // Vias Secundárias
+                    drawLine(color = Color(0xFFE2E8F0), start = Offset(0f, h * 0.6f), end = Offset(w, h * 0.4f), strokeWidth = 8f)
+                    drawLine(color = SurfaceWhite, start = Offset(0f, h * 0.6f), end = Offset(w, h * 0.4f), strokeWidth = 4f)
 
-                    // Marcador Salão 1 (Pinheiros)
-                    drawCircle(color = SereneTeal, center = Offset(w * 0.32f, h * 0.35f), radius = 12f)
-                    drawCircle(color = MintLight, center = Offset(w * 0.32f, h * 0.35f), radius = 6f)
+                    // Ponto Central do Usuário (Halo Pulsante e Marcador Teal)
+                    val userCenter = Offset(w * 0.46f, h * 0.52f)
+                    drawCircle(color = SereneTeal.copy(alpha = 0.22f), center = userCenter, radius = 24.dp.toPx() * pulseScale)
+                    drawCircle(color = SereneTeal, center = userCenter, radius = 8.dp.toPx())
+                    drawCircle(color = SurfaceWhite, center = userCenter, radius = 3.dp.toPx())
 
-                    // Marcador Salão 2 (Jardins)
-                    drawCircle(color = SereneTeal, center = Offset(w * 0.65f, h * 0.45f), radius = 12f)
-                    drawCircle(color = MintLight, center = Offset(w * 0.65f, h * 0.45f), radius = 6f)
+                    // Pins dos Salões na Região
+                    val pinCoords = listOf(
+                        Offset(w * 0.32f, h * 0.34f),
+                        Offset(w * 0.68f, h * 0.42f),
+                        Offset(w * 0.24f, h * 0.20f),
+                        Offset(w * 0.76f, h * 0.66f),
+                        Offset(w * 0.52f, h * 0.75f)
+                    )
 
-                    // Marcador Salão 3 (Vila Madalena)
-                    drawCircle(color = SereneTeal, center = Offset(w * 0.25f, h * 0.22f), radius = 12f)
-                    drawCircle(color = MintLight, center = Offset(w * 0.25f, h * 0.22f), radius = 6f)
+                    pinCoords.forEachIndexed { idx, coord ->
+                        val isPinSelected = idx == 0
+                        val pinRadius = if (isPinSelected) 13.dp.toPx() else 9.dp.toPx()
+                        val pinColor = if (isPinSelected) EconomyGreen else SereneTeal
+
+                        drawCircle(color = pinColor, center = coord, radius = pinRadius)
+                        drawCircle(color = SurfaceWhite, center = coord, radius = pinRadius * 0.4f)
+                    }
+
+                    // Linha conectora de caminhada a pé entre usuário e salão selecionado
+                    val targetPin = pinCoords[0]
+                    val walkPath = Path().apply {
+                        moveTo(userCenter.x, userCenter.y)
+                        quadraticBezierTo((userCenter.x + targetPin.x) / 2f + 20f, (userCenter.y + targetPin.y) / 2f - 20f, targetPin.x, targetPin.y)
+                    }
+                    drawPath(
+                        path = walkPath,
+                        color = EconomyGreen,
+                        style = Stroke(
+                            width = 3.dp.toPx(),
+                            pathEffect = PathEffect.dashPathEffect(floatArrayOf(12f, 8f))
+                        )
+                    )
                 }
 
                 // Tag Flutuante de Localização
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopCenter)
-                        .padding(14.dp)
-                        .background(Color.White.copy(alpha = 0.92f), RoundedCornerShape(20.dp))
-                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                        .padding(12.dp)
+                        .background(SurfaceWhite.copy(alpha = 0.94f), CapsuleShape)
+                        .border(1.dp, OutlineVariant, CapsuleShape)
+                        .padding(horizontal = 14.dp, vertical = 6.dp)
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Icon(Icons.Default.LocationOn, contentDescription = null, tint = SereneTeal, modifier = Modifier.size(14.dp))
-                        Text("Jardins & Pinheiros (24 salões na rede)", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Slate900)
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Icon(Icons.Default.LocationOn, contentDescription = null, tint = SereneTeal, modifier = Modifier.size(16.dp))
+                        Text(
+                            text = "Pinheiros & Jardins • 24 salões na rede",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = OceanicCharcoal
+                        )
                     }
                 }
             }
 
-            // Bottom Sheet com Lista de Salões e Tempo a Pé
+            // Seção 2: Bottom Sheet Deslizante com Salões Próximos e Tempos a Pé
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
-                shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+                    .weight(1.2f),
+                shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
                 color = SurfaceWhite,
                 shadowElevation = 10.dp
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = "Salões Próximos de Você",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Slate900
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                ) {
+                    // Alça de arraste visual (Sheet Handle)
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .width(42.dp)
+                            .height(4.dp)
+                            .background(OutlineVariant, CapsuleShape)
                     )
-                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        text = "Salões Mais Próximos a Pé",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = OceanicCharcoal
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
                     LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                        contentPadding = PaddingValues(bottom = 16.dp)
                     ) {
-                        items(SalonRepository.salons) { salon ->
-                            Row(
+                        items(salons, key = { it.id }) { salon ->
+                            val isSelected = selectedSalon?.id == salon.id
+                            Card(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(BackgroundLight)
-                                    .clickable { onSalonClick(salon.id) }
-                                    .padding(10.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(10.dp)
-                            ) {
-                                AsyncImage(
-                                    model = salon.imageUrl,
-                                    contentDescription = salon.name,
-                                    modifier = Modifier
-                                        .size(48.dp)
-                                        .clip(RoundedCornerShape(8.dp)),
-                                    contentScale = ContentScale.Crop
+                                    .clickable {
+                                        selectedSalon = salon
+                                        onSalonClick(salon.id)
+                                    },
+                                shape = RoundedCornerShape(14.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = if (isSelected) MintSurface else CanvasBase
+                                ),
+                                border = androidx.compose.foundation.BorderStroke(
+                                    width = if (isSelected) 1.5.dp else 1.dp,
+                                    color = if (isSelected) SereneTeal else OutlineVariant
                                 )
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(salon.name, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Slate900)
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                                    ) {
-                                        Text("${salon.neighborhood} • ${salon.distanceKm} km", fontSize = 11.sp, color = Slate600)
-                                        Text("•", fontSize = 10.sp, color = Slate400)
-                                        // Badge de Tempo a Pé
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(2.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(12.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    AsyncImage(
+                                        model = salon.imageUrl,
+                                        contentDescription = salon.name,
+                                        modifier = Modifier
+                                            .size(54.dp)
+                                            .clip(RoundedCornerShape(10.dp)),
+                                        contentScale = ContentScale.Crop
+                                    )
+
+                                    Spacer(modifier = Modifier.width(12.dp))
+
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text(
+                                            text = salon.name,
+                                            fontSize = 13.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = OceanicCharcoal
+                                        )
+                                        Text(
+                                            text = "${salon.neighborhood} • ${salon.category.replaceFirstChar { it.uppercase() }}",
+                                            fontSize = 11.sp,
+                                            color = NeutralMuted
+                                        )
+
+                                        Spacer(modifier = Modifier.height(4.dp))
+
+                                        // Badge Exata de Caminhada a Pé ("min a pé") exigida no teste
+                                        Box(
+                                            modifier = Modifier
+                                                .background(EconomyGreenBg, CapsuleShape)
+                                                .padding(horizontal = 8.dp, vertical = 2.dp)
                                         ) {
-                                            Icon(
-                                                imageVector = Icons.Outlined.DirectionsWalk,
-                                                contentDescription = null,
-                                                tint = SereneTeal,
-                                                modifier = Modifier.size(11.dp)
-                                            )
-                                            Text(
-                                                text = "${salon.walkTimeMinutes} min a pé",
-                                                fontSize = 11.sp,
-                                                fontWeight = FontWeight.Bold,
-                                                color = SereneTeal
-                                            )
+                                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                                Icon(
+                                                    imageVector = Icons.Default.DirectionsWalk,
+                                                    contentDescription = null,
+                                                    tint = EconomyGreen,
+                                                    modifier = Modifier.size(12.dp)
+                                                )
+                                                Spacer(modifier = Modifier.width(3.dp))
+                                                Text(
+                                                    text = "${salon.walkTimeMinutes} min a pé (${salon.walkDistanceMeters} m)",
+                                                    fontSize = 10.sp,
+                                                    fontWeight = FontWeight.Bold,
+                                                    color = EconomyGreen
+                                                )
+                                            }
                                         }
                                     }
-                                }
-                                Button(
-                                    onClick = { onSalonClick(salon.id) },
-                                    colors = ButtonDefaults.buttonColors(containerColor = SereneTeal),
-                                    shape = RoundedCornerShape(8.dp),
-                                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
-                                ) {
-                                    Text("Ver", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+
+                                    // Nota e Ação
+                                    Column(horizontalAlignment = Alignment.End) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            modifier = Modifier
+                                                .background(StarAmberBg, RoundedCornerShape(6.dp))
+                                                .padding(horizontal = 6.dp, vertical = 2.dp)
+                                        ) {
+                                            Icon(Icons.Default.Star, contentDescription = null, tint = StarAmber, modifier = Modifier.size(12.dp))
+                                            Spacer(modifier = Modifier.width(2.dp))
+                                            Text(text = "${salon.rating}", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = OceanicCharcoal)
+                                        }
+
+                                        Spacer(modifier = Modifier.height(6.dp))
+
+                                        Text(
+                                            text = "Ver Vagas",
+                                            fontSize = 11.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = SereneTeal
+                                        )
+                                    }
                                 }
                             }
                         }

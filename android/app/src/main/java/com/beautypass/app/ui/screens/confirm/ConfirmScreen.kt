@@ -1,6 +1,7 @@
 package com.beautypass.app.ui.screens.confirm
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -8,7 +9,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.outlined.DirectionsWalk
+import androidx.compose.material.icons.filled.DirectionsWalk
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -22,6 +25,14 @@ import com.beautypass.app.data.SalonRepository
 import com.beautypass.app.theme.*
 import com.beautypass.app.ui.components.VoucherQrCodeView
 
+/**
+ * Tela 5B: Voucher Digital & Confirmação de Agendamento.
+ *
+ * Implementado conforme especificações de:
+ * - ORIGINAL_REQUEST.md (R1.5)
+ * - documenta_o_t_cnica_prot_tipo_de_valida_o.md (Seção 8 - Voucher Digital e QR Code)
+ * - Renderiza VoucherQrCodeView vetorial em Canvas e itinerário de confirmação.
+ */
 @Composable
 fun ConfirmScreen(
     appointmentId: String,
@@ -45,143 +56,177 @@ fun ConfirmScreen(
     ) {
         Spacer(modifier = Modifier.height(10.dp))
 
-        // Ícone de Sucesso
+        // Ícone de Sucesso com Pulso Suave
         Box(
             modifier = Modifier
-                .size(64.dp)
-                .background(MintSurface, CircleShape),
+                .size(68.dp)
+                .background(MintSurface, CircleShape)
+                .border(2.dp, MintLight, CircleShape),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = Icons.Default.Check,
                 contentDescription = "Confirmado",
                 tint = SereneTeal,
-                modifier = Modifier.size(36.dp)
+                modifier = Modifier.size(38.dp)
             )
         }
 
         Text(
             text = "Agendamento Confirmado!",
             style = MaterialTheme.typography.headlineMedium,
-            color = Slate900
+            fontWeight = FontWeight.ExtraBold,
+            color = OceanicCharcoal
         )
+
         Text(
-            text = "Seu horário foi garantido no sistema.",
+            text = "Seu horário foi garantido no sistema com tarifa congelada.",
             fontSize = 13.sp,
-            color = Slate600
+            color = NeutralMuted
         )
 
-        // Card do Itinerário & Voucher Digital
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(18.dp),
-            colors = CardDefaults.cardColors(containerColor = SurfaceWhite),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(18.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+        // Componente Especializado: Voucher com QR Code Vetorial
+        VoucherQrCodeView(
+            voucherCode = appointment?.id ?: appointmentId
+        )
+
+        // Card do Itinerário e Dados da Reserva
+        if (appointment != null) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(18.dp),
+                colors = CardDefaults.cardColors(containerColor = SurfaceWhite),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                border = androidx.compose.foundation.BorderStroke(1.dp, OutlineVariant)
             ) {
-                // Destino e Endereço
-                Column {
-                    Text(
-                        text = "Destino Confirmado",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Slate400
-                    )
-                    Text(
-                        text = appointment?.salon?.name ?: "Ateliê Belle Époque",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Slate900
-                    )
-                    Text(
-                        text = appointment?.salon?.address ?: "R. Fradique Coutinho, 980 - Pinheiros",
-                        fontSize = 12.sp,
-                        color = Slate600
-                    )
-                }
-
-                // Trajeto a Pé (Métrica de Mobilidade)
-                val walkMinutes = appointment?.walkingTimeMin ?: 10
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MintSurface, RoundedCornerShape(8.dp))
-                        .padding(horizontal = 10.dp, vertical = 6.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                Column(
+                    modifier = Modifier.padding(18.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Outlined.DirectionsWalk,
-                        contentDescription = null,
-                        tint = SereneTeal,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Text(
-                        text = "Trajeto a pé: $walkMinutes min até o salão",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = SereneTeal
-                    )
-                }
-
-                HorizontalDivider(color = OutlineBorder)
-
-                // Resumo do Serviço
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column {
-                        Text(
-                            text = appointment?.service?.name ?: "Serviço",
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Bold
+                    // Salão e Endereço
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.LocationOn,
+                            contentDescription = null,
+                            tint = SereneTeal,
+                            modifier = Modifier
+                                .size(20.dp)
+                                .padding(top = 2.dp)
                         )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column {
+                            Text(
+                                text = appointment.salon.name,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = OceanicCharcoal
+                            )
+                            Text(
+                                text = appointment.salon.address,
+                                fontSize = 12.sp,
+                                color = NeutralMuted
+                            )
+                        }
+                    }
+
+                    // Estimativa de Caminhada a Pé
+                    Box(
+                        modifier = Modifier
+                            .background(MintSurface, CapsuleShape)
+                            .padding(horizontal = 10.dp, vertical = 4.dp)
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.DirectionsWalk,
+                                contentDescription = null,
+                                tint = SereneTeal,
+                                modifier = Modifier.size(14.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "${appointment.walkingTimeMin ?: appointment.salon.walkTimeMinutes} min a pé (${appointment.salon.walkDistanceMeters} m)",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = SereneTealDark
+                            )
+                        }
+                    }
+
+                    Divider(color = OutlineVariant, thickness = 0.8.dp)
+
+                    // Serviço e Horário
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.Schedule, contentDescription = null, tint = SereneTeal, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Column {
+                                Text(
+                                    text = appointment.service.name,
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = OceanicCharcoal
+                                )
+                                Text(
+                                    text = "${appointment.dateDisplay} às ${appointment.timeSlot} • ${appointment.service.durationMinutes} min",
+                                    fontSize = 11.sp,
+                                    color = NeutralMuted
+                                )
+                            }
+                        }
+
                         Text(
-                            text = "${appointment?.dateDisplay ?: "Hoje"} às ${appointment?.timeSlot ?: "14:00"}",
-                            fontSize = 11.sp,
-                            color = Slate600
+                            text = "R$ ${String.format("%.2f", appointment.finalPrice)}",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = SereneTeal
                         )
                     }
-                    Text(
-                        text = "R$ ${String.format("%.2f", appointment?.finalPrice ?: 84.0)}",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = SereneTeal
-                    )
                 }
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                // QR Code Vetorial do Voucher Digital (Critério C6)
-                VoucherQrCodeView(voucherCode = appointment?.voucherQrCode ?: "BP-772282")
             }
         }
 
-        // Botões de Navegação
+        Spacer(modifier = Modifier.height(10.dp))
+
+        // Botões de Ação
         Button(
             onClick = onGoToAppointments,
-            colors = ButtonDefaults.buttonColors(containerColor = SereneTeal),
-            shape = RoundedCornerShape(12.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp)
+                .height(48.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = SereneTeal)
         ) {
-            Text("Ver Meus Agendamentos", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+            Text(
+                text = "Ver Meus Agendamentos",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = SurfaceWhite
+            )
         }
 
         OutlinedButton(
             onClick = onGoToHome,
-            shape = RoundedCornerShape(12.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp)
+                .height(48.dp),
+            shape = RoundedCornerShape(12.dp),
+            border = androidx.compose.foundation.BorderStroke(1.dp, SereneTeal)
         ) {
-            Text("Voltar ao Início", fontSize = 14.sp, color = Slate800)
+            Text(
+                text = "Voltar ao Início",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = SereneTeal
+            )
         }
+
+        Spacer(modifier = Modifier.height(20.dp))
     }
 }

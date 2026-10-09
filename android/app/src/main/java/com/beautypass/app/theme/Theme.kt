@@ -2,24 +2,39 @@ package com.beautypass.app.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+
+// =====================================================================
+// DESIGN SYSTEM OFICIAL BEAUTYPASS — TEMA MATERIAL 3 (THE TRIPLE FUSION)
+// =====================================================================
 
 private val LightColorScheme = lightColorScheme(
     primary = SereneTeal,
     onPrimary = SurfaceWhite,
-    primaryContainer = MintSurface,
-    onPrimaryContainer = SereneTealDark,
+    primaryContainer = SereneTealContainer,
+    onPrimaryContainer = SereneTealOnContainer,
     secondary = MintPrimary,
     onSecondary = SurfaceWhite,
+    secondaryContainer = MintContainer,
+    onSecondaryContainer = MintOnContainer,
     tertiary = CoralPromo,
-    background = BackgroundLight,
+    onTertiary = SurfaceWhite,
+    tertiaryContainer = CoralPromoBg,
+    onTertiaryContainer = CoralPromoText,
+    background = CanvasBase,
+    onBackground = NeutralText,
     surface = SurfaceWhite,
-    onBackground = Slate900,
-    onSurface = Slate900,
+    onSurface = NeutralText,
+    surfaceVariant = MintSurface,
+    onSurfaceVariant = NeutralMuted,
+    surfaceTint = MintSurface,
     outline = OutlineBorder,
-    error = ErrorRed
+    outlineVariant = OutlineVariant,
+    error = ErrorRed,
+    errorContainer = ErrorContainer,
+    onError = SurfaceWhite
 )
 
 private val DarkColorScheme = darkColorScheme(
@@ -28,12 +43,23 @@ private val DarkColorScheme = darkColorScheme(
     primaryContainer = SereneTealDark,
     onPrimaryContainer = MintLight,
     secondary = MintPrimary,
+    onSecondary = Slate900,
+    secondaryContainer = SereneTeal,
+    onSecondaryContainer = MintSurface,
+    tertiary = CoralPromo,
+    onTertiary = Slate900,
+    tertiaryContainer = Slate800,
+    onTertiaryContainer = CoralPromo,
     background = Slate900,
     surface = Slate800,
     onBackground = Slate50,
     onSurface = Slate50,
+    surfaceVariant = Slate800,
+    onSurfaceVariant = Slate400,
     outline = Slate600,
-    error = ErrorRed
+    outlineVariant = Slate800,
+    error = ErrorRed,
+    onError = Slate900
 )
 
 @Composable
@@ -46,6 +72,7 @@ fun BeautyPassTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
+        shapes = Shapes,
         content = content
     )
 }

@@ -10,6 +10,10 @@ import androidx.compose.ui.Modifier
 import com.beautypass.app.navigation.BeautyPassApp
 import com.beautypass.app.theme.BeautyPassTheme
 
+/**
+ * MainActivity: Ponto de entrada nativo do aplicativo Android BeautyPass.
+ * Inicializa o tema oficial M3 (Serene Mint & Teal) e o orquestrador BeautyPassApp.
+ */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Background: Squircle with Serene Teal (#00685F) -->
+    <path
+        android:fillColor="#00685F"
+        android:pathData="M22,0 L86,0 C98,0 108,10 108,22 L108,86 C108,98 98,108 86,108 L22,108 C10,108 0,98 0,86 L0,22 C0,10 10,0 22,0 Z" />
+
+    <!-- Subtle Teal Gradient Highlight Layer -->
+    <path
+        android:fillColor="#0D9488"
+        android:pathData="M22,4 L86,4 C96,4 104,12 104,22 L104,60 C70,55 38,70 4,80 L4,22 C4,12 12,4 22,4 Z" />
+
+    <!-- Outer Lotus Wing - Left (Mint Accent #89F5E7) -->
+    <path
+        android:fillColor="#89F5E7"
+        android:pathData="M54,68 C38,68 28,58 26,48 C34,51 44,58 54,68 Z" />
+
+    <!-- Outer Lotus Wing - Right (Mint Accent #89F5E7) -->
+    <path
+        android:fillColor="#89F5E7"
+        android:pathData="M54,68 C70,68 80,58 82,48 C74,51 64,58 54,68 Z" />
+
+    <!-- Inner Lotus Petal - Left (Luminous Mint #5EEAD4) -->
+    <path
+        android:fillColor="#5EEAD4"
+        android:pathData="M54,64 C44,60 33,48 35,36 C42,40 50,48 54,64 Z" />
+
+    <!-- Inner Lotus Petal - Right (Luminous Mint #5EEAD4) -->
+    <path
+        android:fillColor="#5EEAD4"
+        android:pathData="M54,64 C64,60 75,48 73,36 C66,40 58,48 54,64 Z" />
+
+    <!-- Central Majestic Petal (Pure Mint #6EF9E2) -->
+    <path
+        android:fillColor="#6EF9E2"
+        android:pathData="M54,26 C57,36 63,48 54,64 C45,48 51,36 54,26 Z" />
+
+    <!-- Spa Wellness Sanctuary Base Arc (Crisp White #FFFFFF) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,68 C38,80 70,80 78,68 C70,74 38,74 30,68 Z" />
+
+    <!-- Central Diamond Starburst (Crisp White #FFFFFF) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,40 L56.5,45.5 L62,48 L56.5,50.5 L54,56 L51.5,50.5 L46,48 L51.5,45.5 Z" />
+
+    <!-- Accent Sparkle - Top Right (#5EEAD4) -->
+    <path
+        android:fillColor="#5EEAD4"
+        android:pathData="M74,27 L75.5,29.5 L78,31 L75.5,32.5 L74,35 L72.5,32.5 L70,31 L72.5,29.5 Z" />
+
+    <!-- Accent Sparkle - Top Left (#5EEAD4) -->
+    <path
+        android:fillColor="#5EEAD4"
+        android:pathData="M34,29 L35,31 L37,32 L35,33 L34,35 L33,33 L31,32 L33,31 Z" />
+
+    <!-- Base Identity Bar (Crisp White #FFFFFF) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M40,82 L68,82 C69.5,82 71,83 71,84.5 C71,86 69.5,87 68,87 L40,87 C38.5,87 37,86 37,84.5 C37,83 38.5,82 40,82 Z" />
+
+</vector>

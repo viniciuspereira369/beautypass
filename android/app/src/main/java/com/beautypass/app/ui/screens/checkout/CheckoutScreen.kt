@@ -1,5 +1,9 @@
 package com.beautypass.app.ui.screens.checkout
 
+import android.Manifest
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -15,6 +19,7 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.*
@@ -22,6 +27,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -33,6 +39,7 @@ import com.beautypass.app.data.PricingEngine
 import com.beautypass.app.data.SalonRepository
 import com.beautypass.app.model.Appointment
 import com.beautypass.app.model.AppointmentStatus
+import com.beautypass.app.notification.BeautyPassNotificationHelper
 import com.beautypass.app.theme.*
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
@@ -80,7 +87,27 @@ fun CheckoutScreen(
         LuhnValidator.isValid(rawCardNumber)
     }
 
-    // Cronômetro regressivo de 10 minutos (600 segundos)
+    val context = LocalContext.current
+    var hasAlertedTwoMinutes by remember { mutableStateOf(false) }
+    var showPermissionContextDialog by remember { mutableStateOf(false) }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { _ ->
+        // Status de permissão gerenciado pelo sistema operacional
+    }
+
+    // Inicialização do canal de notificação oficial e verificação contextual de permissão
+    LaunchedEffect(Unit) {
+        BeautyPassNotificationHelper.createNotificationChannel(context)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (!BeautyPassNotificationHelper.hasNotificationPermission(context)) {
+                showPermissionContextDialog = true
+            }
+        }
+    }
+
+    // Cronômetro regressivo de 10 minutos (600 segundos) com disparo do alerta aos 2 minutos (120s)
     var secondsLeft by remember { mutableStateOf(600) }
     var isExpired by remember { mutableStateOf(false) }
 
@@ -88,6 +115,15 @@ fun CheckoutScreen(
         while (secondsLeft > 0) {
             delay(1000L)
             secondsLeft -= 1
+            if (secondsLeft <= 120 && !hasAlertedTwoMinutes) {
+                hasAlertedTwoMinutes = true
+                BeautyPassNotificationHelper.showFreezeTimerAlert(
+                    context = context,
+                    salonName = salon.name,
+                    minutesLeft = 2,
+                    priceFinal = frozenSnapshot.priceFinal
+                )
+            }
         }
         isExpired = true
     }
@@ -167,6 +203,14 @@ fun CheckoutScreen(
                                 )
 
                                 SalonRepository.addAppointment(appointment)
+                                BeautyPassNotificationHelper.showBookingConfirmedNotification(
+                                    context = context,
+                                    appointmentId = generatedId,
+                                    salonName = salon.name,
+                                    serviceName = service.name,
+                                    dateDisplay = appointment.dateDisplay,
+                                    timeSlot = appointment.timeSlot
+                                )
                                 onBookingConfirmed(generatedId)
                             }
                         },
@@ -539,5 +583,65 @@ fun CheckoutScreen(
                 }
             }
         }
+    }
+
+    // Diálogo Contextual de Solicitação de Permissão de Notificações (Serene Mint & Teal)
+    if (showPermissionContextDialog) {
+        AlertDialog(
+            onDismissRequest = { showPermissionContextDialog = false },
+            icon = {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .background(MintSurface, CircleShape)
+                        .border(1.5.dp, MintLight, CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.NotificationsActive,
+                        contentDescription = null,
+                        tint = SereneTeal,
+                        modifier = Modifier.size(26.dp)
+                    )
+                }
+            },
+            title = {
+                Text(
+                    text = "Alertas de Reserva em Tempo Real",
+                    fontSize = 17.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = OceanicCharcoal
+                )
+            },
+            text = {
+                Text(
+                    text = "Para garantir que você não perca a tarifa congelada (alerta aos 2 minutos restantes) e receba seu voucher de confirmação instantâneo, ative as notificações do BeautyPass.",
+                    fontSize = 13.sp,
+                    color = OceanicCharcoal,
+                    lineHeight = 18.sp
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showPermissionContextDialog = false
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = SereneTeal),
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Text("Ativar Notificações", color = SurfaceWhite, fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showPermissionContextDialog = false }) {
+                    Text("Agora Não", color = NeutralMuted, fontWeight = FontWeight.Medium)
+                }
+            },
+            containerColor = SurfaceWhite,
+            shape = RoundedCornerShape(16.dp)
+        )
     }
 }

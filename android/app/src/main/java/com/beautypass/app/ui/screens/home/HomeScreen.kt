@@ -59,6 +59,7 @@ fun HomeScreen(
     var selectedFilter by remember { mutableStateOf(QuickFilter.ALL) }
     var searchQuery by remember { mutableStateOf("") }
 
+    // Favoritos persistidos de forma reativa no Room Database (SQLite via FavoriteDao)
     val favoriteIds by SalonRepository.favoriteIds.collectAsState()
 
     val categories = remember {

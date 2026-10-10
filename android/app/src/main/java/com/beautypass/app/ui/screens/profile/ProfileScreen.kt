@@ -51,6 +51,15 @@ fun ProfileScreen(
 ) {
     val appointments by SalonRepository.appointments.collectAsState()
     val favoriteIds by SalonRepository.favoriteIds.collectAsState()
+    val userProfile by SalonRepository.userProfile.collectAsState()
+    val latestSusEvaluation by SalonRepository.latestSusEvaluation.collectAsState()
+
+    val effectiveParticipantCode = remember(userProfile, participantCode) {
+        userProfile?.participantId?.takeIf { it.isNotBlank() } ?: participantCode
+    }
+    val effectiveParticipantName = remember(userProfile, participantName) {
+        userProfile?.name?.takeIf { it.isNotBlank() } ?: participantName
+    }
 
     // 10 Perguntas Literais da Escala SUS (Português)
     val susQuestions = remember {
@@ -72,6 +81,7 @@ fun ProfileScreen(
     var susAnswers by remember { mutableStateOf<Map<Int, Int>>(emptyMap()) }
     var retentionResponse by remember { mutableStateOf<Boolean?>(null) } // true: Sim, false: Não
     var savedEvaluation by remember { mutableStateOf<SUSEvaluation?>(null) }
+    val activeEvaluation = savedEvaluation ?: latestSusEvaluation
     var showSusModal by remember { mutableStateOf(false) }
     var showDeleteDataModal by remember { mutableStateOf(false) }
 
@@ -137,7 +147,7 @@ fun ProfileScreen(
                     Column(modifier = Modifier.weight(1f)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = participantName,
+                                text = effectiveParticipantName,
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = OceanicCharcoal
@@ -149,15 +159,16 @@ fun ProfileScreen(
                                     .padding(horizontal = 6.dp, vertical = 2.dp)
                             ) {
                                 Text(
-                                    text = participantCode,
+                                    text = effectiveParticipantCode,
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = SereneTealDark
                                 )
                             }
                         }
+                        val phoneSubtitle = userProfile?.phone?.takeIf { it.isNotBlank() }
                         Text(
-                            text = "Participante da Sessão de Teste",
+                            text = if (phoneSubtitle != null) "Participante da Sessão • $phoneSubtitle" else "Participante da Sessão de Teste",
                             fontSize = 12.sp,
                             color = NeutralMuted
                         )
@@ -261,7 +272,7 @@ fun ProfileScreen(
 
                     Spacer(modifier = Modifier.height(14.dp))
 
-                    if (savedEvaluation != null) {
+                    if (activeEvaluation != null) {
                         // Resultado SUS Calculado
                         Box(
                             modifier = Modifier
@@ -278,7 +289,7 @@ fun ProfileScreen(
                                 ) {
                                     Text("Pontuação SUS Calculada:", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = OceanicCharcoal)
                                     Text(
-                                        text = "${savedEvaluation!!.susScore.toInt()} / 100",
+                                        text = "${activeEvaluation.susScore.toInt()} / 100",
                                         fontSize = 18.sp,
                                         fontWeight = FontWeight.ExtraBold,
                                         color = SereneTeal
@@ -286,19 +297,19 @@ fun ProfileScreen(
                                 }
                                 Spacer(modifier = Modifier.height(4.dp))
                                 val classification = when {
-                                    savedEvaluation!!.susScore >= 80.3 -> "Usabilidade Excelente (Grau A)"
-                                    savedEvaluation!!.susScore >= 68.0 -> "Boa Usabilidade (Aprovado no Benchmark)"
+                                    activeEvaluation.susScore >= 80.3 -> "Usabilidade Excelente (Grau A)"
+                                    activeEvaluation.susScore >= 68.0 -> "Boa Usabilidade (Aprovado no Benchmark)"
                                     else -> "Marginal / Requer Melhorias"
                                 }
                                 Text(
                                     text = classification,
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = if (savedEvaluation!!.susScore >= 68) EconomyGreen else CoralPromoText
+                                    color = if (activeEvaluation.susScore >= 68) EconomyGreen else CoralPromoText
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = "Usaria o app novamente na rotina? " + if (savedEvaluation!!.retentionYes) "Sim" else "Não",
+                                    text = "Usaria o app novamente na rotina? " + if (activeEvaluation.retentionYes) "Sim" else "Não",
                                     fontSize = 11.sp,
                                     color = NeutralMuted
                                 )
@@ -317,7 +328,7 @@ fun ProfileScreen(
                         colors = ButtonDefaults.buttonColors(containerColor = SereneTeal)
                     ) {
                         Text(
-                            text = if (savedEvaluation == null) "Avaliar Sessão (SUS)" else "Reavaliar Sessão (SUS)",
+                            text = if (activeEvaluation == null) "Avaliar Sessão (SUS)" else "Reavaliar Sessão (SUS)",
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
                             color = SurfaceWhite
@@ -522,13 +533,15 @@ fun ProfileScreen(
                                 timeZone = TimeZone.getTimeZone("UTC")
                             }.format(Date())
 
-                            savedEvaluation = SUSEvaluation(
-                                participantCode = participantCode,
+                            val eval = SUSEvaluation(
+                                participantCode = effectiveParticipantCode,
                                 answers = susAnswers,
                                 susScore = finalScore,
                                 retentionYes = retentionResponse == true,
                                 evaluatedAtIso = nowIso
                             )
+                            savedEvaluation = eval
+                            SalonRepository.saveSusEvaluation(eval)
                             showSusModal = false
                         }
                     },

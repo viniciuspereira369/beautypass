@@ -1,9 +1,21 @@
 package com.beautypass.app.data
 
+import android.content.Context
+import com.beautypass.app.data.local.BeautyPassDatabase
+import com.beautypass.app.data.local.entity.AppointmentEntity
+import com.beautypass.app.data.local.entity.FavoriteEntity
+import com.beautypass.app.data.local.entity.SusEvaluationEntity
+import com.beautypass.app.data.local.entity.UserProfileEntity
 import com.beautypass.app.model.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 // =====================================================================
 // REPOSITÓRIO DETERMINÍSTICO OFICIAL BEAUTYPASS (SÃO PAULO)
@@ -13,11 +25,76 @@ import kotlinx.coroutines.flow.asStateFlow
 
 object SalonRepository {
 
+    private val repositoryScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private var database: BeautyPassDatabase? = null
+    private var isInitialized = false
+
     private val _favoriteIds = MutableStateFlow<Set<String>>(setOf())
     val favoriteIds: StateFlow<Set<String>> = _favoriteIds.asStateFlow()
 
     private val _appointments = MutableStateFlow<List<Appointment>>(emptyList())
     val appointments: StateFlow<List<Appointment>> = _appointments.asStateFlow()
+
+    private val _userProfile = MutableStateFlow<UserProfileEntity?>(null)
+    val userProfile: StateFlow<UserProfileEntity?> = _userProfile.asStateFlow()
+
+    private val _latestSusEvaluation = MutableStateFlow<SUSEvaluation?>(null)
+    val latestSusEvaluation: StateFlow<SUSEvaluation?> = _latestSusEvaluation.asStateFlow()
+
+    /**
+     * Inicializa a camada de persistência com o banco Room SQLite.
+     * Conecta os DAOs reativos diretamente aos StateFlows do repositório.
+     */
+    fun initialize(context: Context, databaseOverride: BeautyPassDatabase? = null) {
+        if (isInitialized && databaseOverride == null) return
+        val db = databaseOverride ?: BeautyPassDatabase.getDatabase(context)
+        database = db
+        isInitialized = true
+
+        // Observador reativo de favoritos persistidos
+        repositoryScope.launch {
+            db.favoriteDao().getAllFavoriteIds().collectLatest { ids ->
+                _favoriteIds.value = ids.toSet()
+            }
+        }
+
+        // Observador reativo de agendamentos no SQLite (com hidratação pelo catálogo determinístico)
+        repositoryScope.launch {
+            db.appointmentDao().getAllAppointments().collectLatest { entities ->
+                val domainList = entities.mapNotNull { entity ->
+                    val salon = getSalonById(entity.salonId) ?: return@mapNotNull null
+                    val service = salon.services.find { it.id == entity.serviceId }
+                        ?: Service(
+                            id = entity.serviceId,
+                            name = "Serviço Especializado",
+                            durationMinutes = 45,
+                            basePrice = entity.finalPrice,
+                            category = salon.category,
+                            description = "Serviço agendado no BeautyPass"
+                        )
+                    val staff = salon.staff.find { it.id == entity.staffId }
+                    entity.toDomain(salon = salon, service = service, staff = staff)
+                }
+                _appointments.value = domainList
+            }
+        }
+
+        // Observador reativo de perfil do usuário
+        repositoryScope.launch {
+            db.userProfileDao().getUserProfile().collectLatest { profile ->
+                _userProfile.value = profile
+            }
+        }
+
+        // Observador reativo de avaliação SUS
+        repositoryScope.launch {
+            db.susEvaluationDao().getLatestEvaluation().collectLatest { entity ->
+                _latestSusEvaluation.value = entity?.toDomain()
+            }
+        }
+    }
+
+    fun getDatabaseInstance(): BeautyPassDatabase? = database
 
     // Bancos de imagens de alta definição por categoria (Unsplash)
     private val HAIR_GALLERY = listOf(
@@ -1327,10 +1404,20 @@ object SalonRepository {
 
     fun toggleFavorite(salonId: String) {
         val current = _favoriteIds.value
-        _favoriteIds.value = if (current.contains(salonId)) {
+        val isFav = current.contains(salonId)
+        _favoriteIds.value = if (isFav) {
             current - salonId
         } else {
             current + salonId
+        }
+        database?.let { db ->
+            repositoryScope.launch {
+                if (isFav) {
+                    db.favoriteDao().deleteFavorite(salonId)
+                } else {
+                    db.favoriteDao().insertFavorite(FavoriteEntity(salonId = salonId))
+                }
+            }
         }
     }
 
@@ -1352,7 +1439,12 @@ object SalonRepository {
     }
 
     fun addAppointment(appointment: Appointment) {
-        _appointments.value = listOf(appointment) + _appointments.value
+        _appointments.value = listOf(appointment) + _appointments.value.filter { it.id != appointment.id }
+        database?.let { db ->
+            repositoryScope.launch {
+                db.appointmentDao().insertAppointment(AppointmentEntity.fromDomain(appointment))
+            }
+        }
     }
 
     fun cancelAppointment(
@@ -1371,6 +1463,46 @@ object SalonRepository {
                 it
             }
         }
+        database?.let { db ->
+            repositoryScope.launch {
+                db.appointmentDao().cancelAppointment(
+                    id = appointmentId,
+                    status = AppointmentStatus.CANCELLED_BY_USER.name,
+                    reason = reason,
+                    fee = cancellationFee
+                )
+            }
+        }
+    }
+
+    fun saveUserProfile(
+        participantId: String,
+        name: String,
+        phone: String,
+        lgpdAccepted: Boolean
+    ) {
+        val entity = UserProfileEntity(
+            participantId = participantId,
+            name = name,
+            phone = phone,
+            lgpdAccepted = lgpdAccepted,
+            acceptedAtTimestamp = System.currentTimeMillis()
+        )
+        _userProfile.value = entity
+        database?.let { db ->
+            repositoryScope.launch {
+                db.userProfileDao().insertOrUpdateProfile(entity)
+            }
+        }
+    }
+
+    fun saveSusEvaluation(evaluation: SUSEvaluation) {
+        _latestSusEvaluation.value = evaluation
+        database?.let { db ->
+            repositoryScope.launch {
+                db.susEvaluationDao().insertEvaluation(SusEvaluationEntity.fromDomain(evaluation))
+            }
+        }
     }
 
     fun getAppointmentsForSalon(salonId: String): List<Appointment> {
@@ -1381,8 +1513,43 @@ object SalonRepository {
         return _appointments.value.filter { it.dateDisplay == dateDisplay }
     }
 
+    /**
+     * Hard Delete LGPD: Exclui permanentemente todos os registros do usuário
+     * nas 4 tabelas SQLite (appointments, favorites, user_profile, sus_evaluations)
+     * e redefine todos os StateFlows para estado inicial.
+     */
     fun clearAllData() {
         _favoriteIds.value = emptySet()
         _appointments.value = emptyList()
+        _userProfile.value = null
+        _latestSusEvaluation.value = null
+
+        database?.let { db ->
+            repositoryScope.launch {
+                db.appointmentDao().deleteAllAppointments()
+                db.favoriteDao().deleteAllFavorites()
+                db.userProfileDao().deleteUserProfile()
+                db.susEvaluationDao().deleteAllEvaluations()
+            }
+        }
+    }
+
+    /**
+     * Versão suspensa para exclusão atômica síncrona em rotinas de teste.
+     */
+    suspend fun clearAllDataSuspend() {
+        _favoriteIds.value = emptySet()
+        _appointments.value = emptyList()
+        _userProfile.value = null
+        _latestSusEvaluation.value = null
+
+        database?.let { db ->
+            withContext(Dispatchers.IO) {
+                db.appointmentDao().deleteAllAppointments()
+                db.favoriteDao().deleteAllFavorites()
+                db.userProfileDao().deleteUserProfile()
+                db.susEvaluationDao().deleteAllEvaluations()
+            }
+        }
     }
 }

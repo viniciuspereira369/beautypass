@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,6 +30,7 @@ import com.beautypass.app.data.BookingEngine
 import com.beautypass.app.data.SalonRepository
 import com.beautypass.app.model.Appointment
 import com.beautypass.app.model.AppointmentStatus
+import com.beautypass.app.notification.BeautyPassNotificationHelper
 import com.beautypass.app.theme.*
 import kotlin.math.round
 
@@ -47,6 +49,7 @@ fun AppointmentsScreen(
     onBookNowClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     var selectedTab by remember { mutableStateOf(0) } // 0: Ativos, 1: Histórico
     val appointments by SalonRepository.appointments.collectAsState()
 
@@ -419,6 +422,12 @@ fun AppointmentsScreen(
                             reason = finalReason,
                             cancellationFee = retentionFee
                         )
+                        BeautyPassNotificationHelper.showCancellationNotification(
+                            context = context,
+                            salonName = appt.salon.name,
+                            cancellationFee = retentionFee
+                        )
+                        selectedTab = 1
                         appointmentToCancel = null
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = CoralPromo)

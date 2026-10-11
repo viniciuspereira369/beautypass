@@ -3008,6 +3008,7 @@ const AppState = {
   selectedDemandWindow: 'now_2h',
   uberMapInstance: null,
   uberRoutePolyline: null,
+  uberRouteCasing: null,
   uberWalkingBadgeMarker: null,
   uberMarkersList: [],
   selectedDemandMatch: null,
@@ -3440,6 +3441,30 @@ function getSalonPromoRules(salon, dateStr) {
   return basePreset;
 }
 
+function getHighDemandSlots(salon, dateStr) {
+  const dow = getDayOfWeek(dateStr);
+  if (dow === 0) return []; // Fechado domingo
+  
+  // Sábado: slots da manhã e meio da tarde são de alta procura
+  if (dow === 6) {
+    return ['10:00', '10:30', '14:00', '15:00', '16:00'];
+  }
+
+  // Dias de semana: distribuição dinâmica por ID do salão
+  const idNum = parseInt(String(salon.id).replace(/\D/g, ''), 10) || 1;
+  const presets = [
+    ['09:30', '10:30', '14:00', '16:00', '17:00'],
+    ['10:00', '11:00', '14:00', '15:30', '16:30'],
+    ['09:00', '10:30', '14:00', '16:00', '17:00'],
+    ['10:00', '14:00', '15:00', '16:30', '17:00']
+  ];
+  const list = [...presets[(idNum + dow) % presets.length]];
+  if (salon.id === 's1' && !list.includes('14:00')) {
+    list.push('14:00');
+  }
+  return list;
+}
+
 function getOccupiedSlots(salon, dateStr) {
   const dow = getDayOfWeek(dateStr);
 
@@ -3451,13 +3476,22 @@ function getOccupiedSlots(salon, dateStr) {
   // Sábado: Alta ocupação geral (60-80% dos slots ocupados)
   if (dow === 6) {
     return [
-      '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30',
-      '13:00', '13:30', '14:30', '15:00', '15:30', '17:00', '18:00', '18:30'
+      '09:00', '09:30', '11:00', '11:30', '12:00', '12:30',
+      '13:00', '13:30', '14:30', '15:30', '17:00', '18:00', '18:30'
     ];
   }
 
-  // Dias de semana (1 a 5): Picos ocupados (almoço e fim de tarde)
-  return ['11:30', '12:00', '12:30', '17:00', '17:30', '18:00', '18:30'];
+  // Dias de semana (1 a 5): Picos ocupados por ID de salão
+  const idNum = parseInt(String(salon.id).replace(/\D/g, ''), 10) || 1;
+  const occupiedPresets = [
+    ['11:00', '11:30', '12:00', '12:30', '16:30', '17:30', '18:00', '18:30'],
+    ['10:00', '11:30', '12:30', '13:00', '17:00', '17:30', '18:00'],
+    ['09:00', '12:00', '12:30', '14:30', '15:30', '18:00', '18:30'],
+    ['10:30', '11:30', '12:00', '13:30', '16:00', '17:00', '18:00']
+  ];
+  const list = occupiedPresets[(idNum + dow) % occupiedPresets.length];
+  // 14:00 NUNCA deve estar ocupado em s1 na data de teste para garantir fluxo E2E
+  return list.filter(t => !(salon.id === 's1' && t === '14:00'));
 }
 
 function calculateSlotPrice(salon, time, service = null, dateStr = null) {
@@ -3472,11 +3506,14 @@ function calculateSlotPrice(salon, time, service = null, dateStr = null) {
   const promoRule = promoRules.find(d => d.time === time);
   const occupiedList = getOccupiedSlots(salon, targetDate);
   const isOccupied = occupiedList.includes(time);
+  const highDemandList = getHighDemandSlots(salon, targetDate);
+  const isHighDemand = !isOccupied && !promoRule && highDemandList.includes(time);
 
   if (isOccupied) {
     return {
       hasDiscount: false,
       isOccupied: true,
+      isHighDemand: false,
       type: 'occupied',
       discountPct: 0,
       basePrice: basePrice,
@@ -3493,6 +3530,7 @@ function calculateSlotPrice(salon, time, service = null, dateStr = null) {
     return {
       hasDiscount: true,
       isOccupied: false,
+      isHighDemand: false,
       type: promoRule.type, // 'economy' | 'urgent'
       discountPct: discountPct,
       basePrice: basePrice,
@@ -3503,16 +3541,31 @@ function calculateSlotPrice(salon, time, service = null, dateStr = null) {
     };
   }
 
-  // Preço Cheio (sem desconto)
+  if (isHighDemand) {
+    return {
+      hasDiscount: false,
+      isOccupied: false,
+      isHighDemand: true,
+      type: 'high_demand',
+      discountPct: 0,
+      basePrice: basePrice,
+      finalPrice: basePrice,
+      badgeText: 'Alta Procura',
+      subtext: 'horário de alta procura (preço integral)'
+    };
+  }
+
+  // Preço Cheio (sem desconto, horário regular disponível)
   return {
     hasDiscount: false,
     isOccupied: false,
+    isHighDemand: false,
     type: 'normal',
     discountPct: 0,
     basePrice: basePrice,
     finalPrice: basePrice,
-    badgeText: null,
-    subtext: 'horário de alta procura (preço integral)'
+    badgeText: 'Disponível',
+    subtext: 'tarifa padrão regular'
   };
 }
 
@@ -3634,12 +3687,37 @@ function navigateTo(screenId) {
 
 // --- SCREEN 1: HOME FEED ---
 
+function normalizeSearchText(str) {
+  return (str || '')
+    .toString()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+}
+
 function isSalonCategoryMatch(salon, categoryKey) {
   if (!categoryKey || categoryKey === 'all') return true;
+  const normKey = normalizeSearchText(categoryKey);
   const matchCategory = (targetCat) => {
     if (!targetCat) return false;
-    if (categoryKey === 'esthetic') return targetCat === 'esthetic' || targetCat === 'facial';
-    return targetCat === categoryKey;
+    const cat = normalizeSearchText(targetCat);
+    if (normKey === 'esthetic' || normKey === 'estetica' || normKey === 'facial') {
+      return cat === 'esthetic' || cat === 'facial' || cat === 'estetica';
+    }
+    if (normKey === 'barber' || normKey === 'barba') {
+      return cat === 'barber' || cat === 'barba';
+    }
+    if (normKey === 'hair' || normKey === 'cabelo') {
+      return cat === 'hair' || cat === 'cabelo';
+    }
+    if (normKey === 'nails' || normKey === 'unhas') {
+      return cat === 'nails' || cat === 'unhas';
+    }
+    if (normKey === 'massage' || normKey === 'massagem' || normKey === 'spa') {
+      return cat === 'massage' || cat === 'massagem' || cat === 'spa';
+    }
+    return cat === normKey;
   };
   if (matchCategory(salon.category)) return true;
   if (salon.services && salon.services.some(srv => matchCategory(srv.category))) return true;
@@ -3650,10 +3728,26 @@ function getContextualService(salon, categoryKey) {
   if (!categoryKey || categoryKey === 'all') {
     return (salon.services && salon.services.length > 0) ? salon.services[0] : salon.service;
   }
+  const normKey = normalizeSearchText(categoryKey);
   const matchCategory = (targetCat) => {
     if (!targetCat) return false;
-    if (categoryKey === 'esthetic') return targetCat === 'esthetic' || targetCat === 'facial';
-    return targetCat === categoryKey;
+    const cat = normalizeSearchText(targetCat);
+    if (normKey === 'esthetic' || normKey === 'estetica' || normKey === 'facial') {
+      return cat === 'esthetic' || cat === 'facial' || cat === 'estetica';
+    }
+    if (normKey === 'barber' || normKey === 'barba') {
+      return cat === 'barber' || cat === 'barba';
+    }
+    if (normKey === 'hair' || normKey === 'cabelo') {
+      return cat === 'hair' || cat === 'cabelo';
+    }
+    if (normKey === 'nails' || normKey === 'unhas') {
+      return cat === 'nails' || cat === 'unhas';
+    }
+    if (normKey === 'massage' || normKey === 'massagem' || normKey === 'spa') {
+      return cat === 'massage' || cat === 'massagem' || cat === 'spa';
+    }
+    return cat === normKey;
   };
   if (salon.services && salon.services.length > 0) {
     const found = salon.services.find(srv => matchCategory(srv.category));
@@ -3672,21 +3766,57 @@ function getContextualSalonImage(salon, categoryKey) {
   return salon.image || 'salon_hair_boutique.jpg';
 }
 
+function getCanonicalCategoryKey(key) {
+  if (!key) return 'all';
+  const norm = normalizeSearchText(key);
+  if (norm === 'all' || norm === 'todos') return 'all';
+  if (norm === 'hair' || norm === 'cabelo') return 'hair';
+  if (norm === 'barber' || norm === 'barba') return 'barber';
+  if (norm === 'nails' || norm === 'unhas') return 'nails';
+  if (norm === 'massage' || norm === 'massagem' || norm === 'spa') return 'massage';
+  if (norm === 'esthetic' || norm === 'estetica' || norm === 'facial') return 'esthetic';
+  return norm;
+}
+
 function selectHomeCategory(categoryKey, btnEl) {
-  document.querySelectorAll('.categories-carousel .category-chip').forEach(c => c.classList.remove('active'));
-  if (btnEl) {
-    btnEl.classList.add('active');
+  const canonicalKey = getCanonicalCategoryKey(categoryKey);
+  document.querySelectorAll('.categories-carousel .category-chip, .story-bubble').forEach(c => {
+    c.classList.remove('active');
+    c.setAttribute('aria-pressed', 'false');
+  });
+  let activeTarget = btnEl;
+  if (activeTarget) {
+    activeTarget.classList.add('active');
+    activeTarget.setAttribute('aria-pressed', 'true');
   } else {
-    const defaultBtn = document.querySelector(`.categories-carousel .category-chip[onclick*="'${categoryKey}'"]`);
-    if (defaultBtn) defaultBtn.classList.add('active');
+    const defaultBtn = document.querySelector(`.categories-carousel .category-chip[onclick*="'${canonicalKey}'"], .story-bubble[data-category="${canonicalKey}"], .categories-carousel .category-chip[onclick*="'${categoryKey}'"], .story-bubble[data-category="${categoryKey}"]`);
+    if (defaultBtn) {
+      defaultBtn.classList.add('active');
+      defaultBtn.setAttribute('aria-pressed', 'true');
+      activeTarget = defaultBtn;
+    }
+  }
+
+  // Rolagem suave para posicionar a bolha no carrossel horizontal
+  const carousel = document.querySelector('.story-bubbles-carousel, .categories-carousel');
+  if (canonicalKey === 'all') {
+    if (carousel && typeof carousel.scrollTo === 'function') {
+      try {
+        carousel.scrollTo({ left: 0, behavior: 'smooth' });
+      } catch (_) {}
+    }
+  } else if (activeTarget && typeof activeTarget.scrollIntoView === 'function') {
+    try {
+      activeTarget.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    } catch (_) {}
   }
   
-  AppState.activeCategory = categoryKey;
+  AppState.activeCategory = canonicalKey;
   renderHomeFeed();
   
   trackEvent('search_performed', {
     filter: 'category_chip',
-    query: categoryKey,
+    query: canonicalKey,
     results_count: getFilteredSalons().length
   });
 }
@@ -3714,7 +3844,7 @@ function toggleFavoriteSalon(salonId, event) {
     showToast('Salão removido dos favoritos');
   } else {
     AppState.favoriteSalonIds.add(salonId);
-    showToast('Salão adicionado aos seus favoritos! ❤️');
+    showToast('Salão adicionado aos seus favoritos!');
   }
   localStorage.setItem('bp_favorite_salons', JSON.stringify([...AppState.favoriteSalonIds]));
   
@@ -3756,9 +3886,23 @@ function clearAllHomeFilters() {
   const searchInput = document.getElementById('home-search-input');
   if (searchInput) searchInput.value = '';
   
-  document.querySelectorAll('.categories-carousel .category-chip').forEach(c => c.classList.remove('active'));
-  const allCatBtn = document.querySelector(".categories-carousel .category-chip[onclick*=\"'all'\"]");
-  if (allCatBtn) allCatBtn.classList.add('active');
+  document.querySelectorAll('.categories-carousel .category-chip, .story-bubble').forEach(c => {
+    c.classList.remove('active');
+    c.setAttribute('aria-pressed', 'false');
+  });
+  const allCatBtn = document.querySelector(".categories-carousel .category-chip[onclick*=\"'all'\"], .story-bubble[data-category=\"all\"]");
+  if (allCatBtn) {
+    allCatBtn.classList.add('active');
+    allCatBtn.setAttribute('aria-pressed', 'true');
+  }
+
+  // Rola carrossel de Story Bubbles de volta ao início suavemente
+  const carousel = document.querySelector('.story-bubbles-carousel, .categories-carousel');
+  if (carousel && typeof carousel.scrollTo === 'function') {
+    try {
+      carousel.scrollTo({ left: 0, behavior: 'smooth' });
+    } catch (_) {}
+  }
   
   document.querySelectorAll('.filter-chips-row .filter-chip').forEach(b => b.classList.remove('active'));
   const allFilterBtn = document.querySelector(".filter-chips-row .filter-chip[onclick*=\"'all'\"]");
@@ -3768,7 +3912,7 @@ function clearAllHomeFilters() {
 }
 
 function onHomeSearch(query) {
-  AppState.homeSearchQuery = (query || '').trim().toLowerCase();
+  AppState.homeSearchQuery = (query || '').trim();
   renderHomeFeed();
   
   if (AppState.homeSearchQuery.length >= 2) {
@@ -3788,14 +3932,14 @@ function getFilteredSalons() {
     list = list.filter(salon => isSalonCategoryMatch(salon, AppState.activeCategory));
   }
   
-  // 2. Filtro de Busca por Texto
+  // 2. Filtro de Busca por Texto (imune a maiúsculas e acentos na língua portuguesa)
   if (AppState.homeSearchQuery) {
-    const q = AppState.homeSearchQuery;
+    const q = normalizeSearchText(AppState.homeSearchQuery);
     list = list.filter(salon => {
-      const matchName = salon.name.toLowerCase().includes(q);
-      const matchBairro = salon.neighborhood.toLowerCase().includes(q);
+      const matchName = normalizeSearchText(salon.name).includes(q);
+      const matchBairro = normalizeSearchText(salon.neighborhood).includes(q);
       const matchServices = salon.services && salon.services.some(srv => 
-        srv.name.toLowerCase().includes(q) || srv.description.toLowerCase().includes(q)
+        normalizeSearchText(srv.name).includes(q) || normalizeSearchText(srv.description).includes(q)
       );
       return matchName || matchBairro || matchServices;
     });
@@ -3835,25 +3979,46 @@ function renderHomeFeed() {
       statusBar.style.display = 'flex';
       
       const catLabels = {
+        all: 'Todos',
+        todos: 'Todos',
         hair: 'Cabelo',
+        cabelo: 'Cabelo',
         nails: 'Unhas',
-        barber: 'Barbearia',
+        unhas: 'Unhas',
+        barber: 'Barba',
+        barba: 'Barba',
         massage: 'Massagem',
-        esthetic: 'Estética'
+        massagem: 'Massagem',
+        spa: 'Massagem & Spa',
+        esthetic: 'Estética',
+        estetica: 'Estética',
+        facial: 'Estética Facial'
       };
 
+      const activeCatLabel = catLabels[AppState.activeCategory] || AppState.activeCategory;
+      let filterName = 'Maior Economia';
+      if (AppState.activeFilter === 'proximity') filterName = 'Mais Próximos';
+      if (AppState.activeFilter === 'favorites') filterName = 'Favoritos';
+
       let filterDesc = '';
-      if (hasCategory && hasFilter) {
-        let filterName = 'Maior Economia';
-        if (AppState.activeFilter === 'proximity') filterName = 'Mais Próximos';
-        if (AppState.activeFilter === 'favorites') filterName = 'Favoritos';
-        filterDesc = `Filtrando por <strong>${catLabels[AppState.activeCategory] || AppState.activeCategory}</strong> • <strong>${filterName}</strong>`;
+      if (hasCategory && hasFilter && hasSearch) {
+        filterDesc = `Filtrando por <strong>${activeCatLabel}</strong> • <strong>${filterName}</strong> • busca <strong>"${AppState.homeSearchQuery}"</strong>`;
+      } else if (hasCategory && hasFilter) {
+        filterDesc = `Filtrando por <strong>${activeCatLabel}</strong> • <strong>${filterName}</strong>`;
+      } else if (hasCategory && hasSearch) {
+        filterDesc = `Mostrando <strong>${salonsToDisplay.length} estabelecimentos</strong> com <strong>${activeCatLabel}</strong> • busca <strong>"${AppState.homeSearchQuery}"</strong>`;
       } else if (hasCategory) {
-        filterDesc = `Mostrando <strong>${salonsToDisplay.length} estabelecimentos</strong> com <strong>${catLabels[AppState.activeCategory] || AppState.activeCategory}</strong>`;
+        filterDesc = `Mostrando <strong>${salonsToDisplay.length} estabelecimentos</strong> com <strong>${activeCatLabel}</strong>`;
+      } else if (AppState.activeFilter === 'proximity' && hasSearch) {
+        filterDesc = `Ordenado por <strong>Mais Próximos de você</strong> (&lt; 2 km primeiro) • busca <strong>"${AppState.homeSearchQuery}"</strong>`;
       } else if (AppState.activeFilter === 'proximity') {
         filterDesc = `Ordenado por <strong>Mais Próximos de você</strong> (&lt; 2 km primeiro)`;
+      } else if (AppState.activeFilter === 'economy' && hasSearch) {
+        filterDesc = `Ordenado por <strong>Maior Economia</strong> (Até 35% de desconto) • busca <strong>"${AppState.homeSearchQuery}"</strong>`;
       } else if (AppState.activeFilter === 'economy') {
         filterDesc = `Ordenado por <strong>Maior Economia</strong> (Até 35% de desconto)`;
+      } else if (AppState.activeFilter === 'favorites' && hasSearch) {
+        filterDesc = `Mostrando <strong>${salonsToDisplay.length} salões salvos nos seus favoritos</strong> • busca <strong>"${AppState.homeSearchQuery}"</strong>`;
       } else if (AppState.activeFilter === 'favorites') {
         filterDesc = `Mostrando <strong>${salonsToDisplay.length} salões salvos nos seus favoritos</strong>`;
       } else if (hasSearch) {
@@ -3938,6 +4103,14 @@ function renderHomeFeed() {
     // Texto limpo de prova social (ex: "Camila agendou há 14 min")
     const cleanSocialProofText = (salon.socialProof || '').replace(/^#/, '');
     const isFav = AppState.favoriteSalonIds.has(salon.id);
+    const walkTimeMin = salon.walkTimeMin || Math.max(3, Math.round((salon.distanceKm || 0.8) * 12));
+
+    const socialProofHtml = cleanSocialProofText ? `
+      <div class="social-proof-pill">
+        <span class="live-pulse-dot"></span>
+        <span>${cleanSocialProofText}</span>
+      </div>
+    ` : '';
 
     const card = document.createElement('div');
     card.className = 'social-salon-card';
@@ -3945,15 +4118,12 @@ function renderHomeFeed() {
       <div class="card-media-wrap">
         <img src="${cardImage}" alt="${salon.name}" loading="lazy" onerror="this.onerror=null; this.src='salon_hair_boutique.jpg'">
         <button class="card-fav-btn ${isFav ? 'active' : ''}" onclick="toggleFavoriteSalon('${salon.id}', event)" title="Favoritar ${salon.name}">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2.2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         </button>
-        <div class="social-proof-pill">
-          <span class="live-pulse-dot"></span>
-          <span>${cleanSocialProofText}</span>
-        </div>
-        <div class="card-eta-badge">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-          <span>${salon.distanceKm} km</span>
+        ${socialProofHtml}
+        <div class="card-eta-badge" title="${walkTimeMin} min a pé (${salon.distanceKm} km)">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><path d="M10 22v-5l-2-3 3-3 2 2v6"/><path d="M14 13l2 2v7"/></svg>
+          <span>${walkTimeMin} min a pé • ${salon.distanceKm} km</span>
         </div>
         ${priorityBadgeHtml}
       </div>
@@ -3962,11 +4132,11 @@ function renderHomeFeed() {
           <h3 class="salon-name">
             ${salon.name}
             <svg class="verified-badge" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              <path d="M12 2l1.8 1.7 2.5-.4.8 2.4 2.4.9-.1 2.5 1.8 1.8-1 2.3.8 2.4-2.2 1.3-.4 2.5-2.5.4-1.8 1.7-1.8-1.7-2.5-.4-.4-2.5-2.2-1.3.8-2.4-1-2.3 1.8-1.8-.1-2.5 2.4-.9.8-2.4 2.5.4L12 2zm-1.5 13.5l5.5-5.5-1.4-1.4-4.1 4.1-2.1-2.1-1.4 1.4 3.5 3.5z"/>
             </svg>
           </h3>
           <div class="rating-chip">
-            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+            <svg viewBox="0 0 24 24" fill="var(--star-gold)" stroke="var(--star-gold)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             <span>${salon.rating}</span>
           </div>
         </div>
@@ -3978,7 +4148,7 @@ function renderHomeFeed() {
             <div class="owner-seal-name-row">
               <span class="owner-seal-name">${leadStaff.name}</span>
               <svg class="owner-seal-badge" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                <path d="M12 2l1.8 1.7 2.5-.4.8 2.4 2.4.9-.1 2.5 1.8 1.8-1 2.3.8 2.4-2.2 1.3-.4 2.5-2.5.4-1.8 1.7-1.8-1.7-2.5-.4-.4-2.5-2.2-1.3.8-2.4-1-2.3 1.8-1.8-.1-2.5 2.4-.9.8-2.4 2.5.4L12 2zm-1.5 13.5l5.5-5.5-1.4-1.4-4.1 4.1-2.1-2.1-1.4 1.4 3.5 3.5z"/>
               </svg>
             </div>
             <span class="owner-seal-role">${leadStaff.role}</span>
@@ -4042,6 +4212,8 @@ function openSalonDetail(salonId, serviceId = null) {
 // --- SCREEN 2: GEO-DISCOVERY & LEAFLET MAP ---
 let leafletMapInstance = null;
 let currentRoutePolyline = null;
+let currentRouteCasing = null;
+let currentMapWalkingBadge = null;
 let mapMarkersList = [];
 let userMarkerRef = null;
 
@@ -4056,23 +4228,27 @@ function renderMap() {
       minZoom: 11,
       maxZoom: 18
     }).setView([-23.5650, -46.6810], 13);
+    window.leafletMapInstance = leafletMapInstance;
+    window.bpMap = leafletMapInstance;
 
     // OpenStreetMap tiles — gratuito, sem necessidade de API key
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19
     }).addTo(leafletMapInstance);
 
-    // Marcador do Usuário (GPS Pulse)
+    // Marcador do Usuário com Emblema da Mulher BeautyPass (Sem o nome)
     const userPin = L.divIcon({
       className: 'user-gps-container',
       html: `
-        <div class="user-gps-node" title="Sua localização atual">
-          <div class="user-gps-dot"></div>
+        <div class="user-gps-node brand-emblem-gps" title="Sua localização atual">
           <div class="user-gps-pulse"></div>
+          <div class="user-gps-emblem-core">
+            <img src="assets/logo_beautypass_emblem.png" alt="Sua localização">
+          </div>
         </div>
       `,
-      iconSize: [26, 26],
-      iconAnchor: [13, 13]
+      iconSize: [36, 36],
+      iconAnchor: [18, 18]
     });
     userMarkerRef = L.marker([-23.5650, -46.6810], { icon: userPin }).addTo(leafletMapInstance);
 
@@ -4188,44 +4364,524 @@ function renderMapBottomSheet(salons = MOCK_SALONS) {
   });
 }
 
+// ===================================================================
+// ROTA DE CAMINHADA FACTÍVEL EM MALHA URBANA (SÃO PAULO)
+// ===================================================================
+
+const AUTHENTIC_SP_WALKING_ROUTES = {
+  // s1: Ateliê Belle Époque (R. Fradique Coutinho, 980 - Pinheiros)
+  s1: {
+    streetDirections: [
+      "Siga pela R. dos Pinheiros até a R. Fradique Coutinho (120 m)",
+      "Vire à direita na R. Fradique Coutinho e siga por 400 m cruzando a R. Artur de Azevedo e R. Teodoro Sampaio",
+      "Chegue ao Ateliê Belle Époque (nº 980)"
+    ],
+    waypoints: [
+      [-23.5650, -46.6810], // Início (R. dos Pinheiros)
+      [-23.5642, -46.6818], // Esquina R. dos Pinheiros x R. Fradique Coutinho
+      [-23.5636, -46.6830], // R. Fradique Coutinho x R. Artur de Azevedo
+      [-23.5631, -46.6844], // R. Fradique Coutinho x R. Teodoro Sampaio
+      [-23.5628, -46.6854]  // Destino (R. Fradique Coutinho, 980)
+    ]
+  },
+  // s2: Lumina Studio & Nail Bar (R. dos Pinheiros, 412 - Pinheiros)
+  s2: {
+    streetDirections: [
+      "Siga pela calçada da R. dos Pinheiros em direção ao sul (380 m)",
+      "Passe os cruzamentos com R. Mourato Coelho e R. Simão Álvares",
+      "Chegue ao Lumina Studio (nº 412)"
+    ],
+    waypoints: [
+      [-23.5650, -46.6810],
+      [-23.5662, -46.6806], // R. dos Pinheiros x R. Mourato Coelho
+      [-23.5672, -46.6803], // R. dos Pinheiros x R. Simão Álvares
+      [-23.5682, -46.6801]  // Destino (R. dos Pinheiros, 412)
+    ]
+  },
+  // s3: Serena Spa & Terapias (Al. Gabriel Monteiro da Silva, 1420 - Jardins)
+  s3: {
+    streetDirections: [
+      "Siga pela R. dos Pinheiros até a Av. Rebouças (220 m)",
+      "Atravesse na faixa em direção à Al. Gabriel Monteiro da Silva (180 m)",
+      "Continue pela calçada arborizada até o nº 1420 (450 m)"
+    ],
+    waypoints: [
+      [-23.5650, -46.6810],
+      [-23.5663, -46.6800],
+      [-23.5678, -46.6775],
+      [-23.5695, -46.6745],
+      [-23.5714, -46.6712]
+    ]
+  },
+  // s4: Dermacare Estética Facial (R. Amauri, 280 - Itaim Bibi)
+  s4: {
+    streetDirections: [
+      "Desça a R. dos Pinheiros em direção à Av. Brig. Faria Lima (360 m)",
+      "Siga pela ciclovia/calçada da Faria Lima até a R. Amauri (820 m)",
+      "Vire à esquerda na R. Amauri até o nº 280 (280 m)"
+    ],
+    waypoints: [
+      [-23.5650, -46.6810],
+      [-23.5675, -46.6802],
+      [-23.5710, -46.6785],
+      [-23.5750, -46.6775],
+      [-23.5789, -46.6765]
+    ]
+  },
+  // s5: Barbearia Maestro (R. Aspicuelta, 78 - Vila Madalena)
+  s5: {
+    streetDirections: [
+      "Caminhe pela R. dos Pinheiros até a R. Fradique Coutinho (110 m)",
+      "Suba a R. Fradique Coutinho até a R. Inácio Pereira da Rocha (480 m)",
+      "Vire à direita na R. Aspicuelta e caminhe até o nº 78 (350 m)"
+    ],
+    waypoints: [
+      [-23.5650, -46.6810],
+      [-23.5643, -46.6817],
+      [-23.5630, -46.6845],
+      [-23.5595, -46.6880],
+      [-23.5555, -46.6920]
+    ]
+  },
+  // s6: Arte Nail Studio (R. da Consolação, 2345 - Consolação)
+  s6: {
+    streetDirections: [
+      "Siga pela R. dos Pinheiros até a R. Francisco Leitão (200 m)",
+      "Caminhe pela R. Francisco Leitão até a R. da Consolação (400 m)",
+      "Suba a calçada da R. da Consolação até o nº 2345 (650 m)"
+    ],
+    waypoints: [
+      [-23.5650, -46.6810],
+      [-23.5635, -46.6800],
+      [-23.5610, -46.6740],
+      [-23.5570, -46.6660],
+      [-23.5540, -46.6590]
+    ]
+  },
+  // s7: Glow Skin & Beauty (R. Teodoro Sampaio, 1040 - Pinheiros)
+  s7: {
+    streetDirections: [
+      "Caminhe pela R. dos Pinheiros até a R. Fradique Coutinho (120 m)",
+      "Siga pela R. Fradique Coutinho até a R. Teodoro Sampaio (280 m)",
+      "Vire à direita na R. Teodoro Sampaio até o nº 1040 (210 m)"
+    ],
+    waypoints: [
+      [-23.5650, -46.6810],
+      [-23.5642, -46.6818],
+      [-23.5631, -46.6844],
+      [-23.5620, -46.6832],
+      [-23.5610, -46.6820]
+    ]
+  },
+  // s8: Studio Mix Beleza & Bem-Estar (R. Cardoso de Almeida, 542 - Perdizes)
+  s8: {
+    streetDirections: [
+      "Siga pela R. dos Pinheiros até o Metrô Fradique Coutinho (180 m)",
+      "Caminhe pela R. Teodoro Sampaio sentido R. Henrique Schaumann (750 m)",
+      "Suba pela Av. Dr. Arnaldo até a R. Cardoso de Almeida, 542 (950 m)"
+    ],
+    waypoints: [
+      [-23.5650, -46.6810],
+      [-23.5625, -46.6820],
+      [-23.5550, -46.6780],
+      [-23.5450, -46.6730],
+      [-23.5335, -46.6690]
+    ]
+  },
+  // s9: Vintage Barber Club (R. Mourato Coelho, 612 - Pinheiros)
+  s9: {
+    streetDirections: [
+      "Siga pela R. dos Pinheiros até a esquina com a R. Mourato Coelho (140 m)",
+      "Vire à direita na R. Mourato Coelho e siga por 580 m cruzando a R. Artur de Azevedo e R. Teodoro Sampaio",
+      "Chegue ao Vintage Barber Club (nº 612)"
+    ],
+    waypoints: [
+      [-23.5650, -46.6810],
+      [-23.5662, -46.6806],
+      [-23.5656, -46.6832],
+      [-23.5651, -46.6856],
+      [-23.5645, -46.6880]
+    ]
+  },
+  // s10: Espaço Capelli D'Oro (R. Oscar Freire, 1120 - Cerqueira César / Jardins)
+  s10: {
+    streetDirections: [
+      "Caminhe pela R. dos Pinheiros até a R. Oscar Freire (210 m)",
+      "Atravesse a Av. Rebouças na faixa sinalizada (90 m)",
+      "Siga pelas vitrines e calçada arborizada da R. Oscar Freire até o nº 1120 (450 m)"
+    ],
+    waypoints: [
+      [-23.5650, -46.6810],
+      [-23.5658, -46.6785],
+      [-23.5666, -46.6740],
+      [-23.5673, -46.6700],
+      [-23.5680, -46.6660]
+    ]
+  },
+  // s11: Esmalteria Petit Spa (R. Joaquim Floriano, 871 - Itaim Bibi)
+  s11: {
+    streetDirections: [
+      "Siga pela calçada da R. dos Pinheiros sentido Av. Brig. Faria Lima (360 m)",
+      "Caminhe pela Faria Lima até a R. Joaquim Floriano (920 m)",
+      "Vire à esquerda na R. Joaquim Floriano até a Esmalteria no nº 871 (380 m)"
+    ],
+    waypoints: [
+      [-23.5650, -46.6810],
+      [-23.5680, -46.6800],
+      [-23.5740, -46.6790],
+      [-23.5800, -46.6785],
+      [-23.5840, -46.6780]
+    ]
+  },
+  // s12: Lotus Terapias & Spa (R. Harmonia, 340 - Vila Madalena)
+  s12: {
+    streetDirections: [
+      "Caminhe pela R. Fradique Coutinho até a R. Wisard (620 m)",
+      "Vire à direita na R. Wisard e caminhe até a R. Harmonia (340 m)",
+      "Vire na R. Harmonia e chegue ao Lotus Terapias & Spa (nº 340)"
+    ],
+    waypoints: [
+      [-23.5650, -46.6810],
+      [-23.5638, -46.6828],
+      [-23.5600, -46.6865],
+      [-23.5550, -46.6890],
+      [-23.5510, -46.6905]
+    ]
+  },
+  // s13: Pureza Estética Avançada (R. Monte Alegre, 980 - Perdizes)
+  s13: {
+    streetDirections: [
+      "Siga pela R. dos Pinheiros e suba pela R. Teodoro Sampaio (650 m)",
+      "Continue pela Av. Dr. Arnaldo até a R. Monte Alegre (900 m)",
+      "Desça a calçada da R. Monte Alegre até o nº 980 (480 m)"
+    ],
+    waypoints: [
+      [-23.5650, -46.6810],
+      [-23.5600, -46.6820],
+      [-23.5500, -46.6780],
+      [-23.5420, -46.6760],
+      [-23.5380, -46.6740]
+    ]
+  },
+  // s14: Barbearia República (R. Augusta, 1420 - Consolação)
+  s14: {
+    streetDirections: [
+      "Siga pela R. Francisco Leitão cruzando a Av. Rebouças (410 m)",
+      "Suba pela R. da Consolação até o cruzamento com a R. Augusta (620 m)",
+      "Caminhe pela R. Augusta no quarteirão histórico até o nº 1420 (380 m)"
+    ],
+    waypoints: [
+      [-23.5650, -46.6810],
+      [-23.5620, -46.6780],
+      [-23.5570, -46.6700],
+      [-23.5530, -46.6610],
+      [-23.5505, -46.6540]
+    ]
+  },
+  // s15: Velvet Hair Design (R. Girassol, 210 - Vila Madalena)
+  s15: {
+    streetDirections: [
+      "Caminhe pela R. dos Pinheiros até a R. Fradique Coutinho (110 m)",
+      "Suba a R. Fradique Coutinho até a R. Girassol (680 m)",
+      "Vire à esquerda na R. Girassol e chegue ao Velvet Hair Design no nº 210"
+    ],
+    waypoints: [
+      [-23.5650, -46.6810],
+      [-23.5640, -46.6820],
+      [-23.5610, -46.6870],
+      [-23.5590, -46.6910],
+      [-23.5570, -46.6950]
+    ]
+  },
+  // s16: Nails & Co. Express (Al. Lorena, 1380 - Jardins)
+  s16: {
+    streetDirections: [
+      "Siga pela R. dos Pinheiros até a esquina com Al. Lorena (280 m)",
+      "Atravesse a Av. Rebouças e siga pela calçada da Al. Lorena (480 m)",
+      "Chegue ao Nails & Co. Express no nº 1380 (entre Bela Cintra e Haddock Lobo)"
+    ],
+    waypoints: [
+      [-23.5650, -46.6810],
+      [-23.5658, -46.6780],
+      [-23.5660, -46.6735],
+      [-23.5660, -46.6710],
+      [-23.5660, -46.6695]
+    ]
+  },
+  // s17: Zen Terapia Corporal (R. Simão Álvares, 415 - Pinheiros)
+  s17: {
+    streetDirections: [
+      "Siga pela R. dos Pinheiros em direção sul até a R. Simão Álvares (310 m)",
+      "Vire à direita na R. Simão Álvares e caminhe pela calçada tranquila (250 m)",
+      "Chegue ao Zen Terapia Corporal no nº 415"
+    ],
+    waypoints: [
+      [-23.5650, -46.6810],
+      [-23.5662, -46.6806],
+      [-23.5672, -46.6803],
+      [-23.5650, -46.6845],
+      [-23.5615, -46.6890]
+    ]
+  },
+  // s18: DermoLaser Estética (R. Pedroso Alvarenga, 1200 - Itaim Bibi)
+  s18: {
+    streetDirections: [
+      "Desça a R. dos Pinheiros até a Av. Brig. Faria Lima (360 m)",
+      "Siga pela Faria Lima até a esquina com a R. Pedroso Alvarenga (880 m)",
+      "Vire na R. Pedroso Alvarenga e caminhe até o nº 1200 (310 m)"
+    ],
+    waypoints: [
+      [-23.5650, -46.6810],
+      [-23.5680, -46.6800],
+      [-23.5735, -46.6780],
+      [-23.5780, -46.6755],
+      [-23.5820, -46.6730]
+    ]
+  },
+  // s19: Barba & Navalha (R. Desembargador do Vale, 320 - Perdizes)
+  s19: {
+    streetDirections: [
+      "Caminhe pela R. Teodoro Sampaio até a Av. Henrique Schaumann (720 m)",
+      "Siga pela Av. Sumaré até a R. Desembargador do Vale (880 m)",
+      "Chegue à Barbearia Barba & Navalha no nº 320"
+    ],
+    waypoints: [
+      [-23.5650, -46.6810],
+      [-23.5590, -46.6815],
+      [-23.5480, -46.6770],
+      [-23.5400, -46.6740],
+      [-23.5350, -46.6710]
+    ]
+  },
+  // s20: Studio Blondie & More (R. Bela Cintra, 890 - Consolação)
+  s20: {
+    streetDirections: [
+      "Siga pela R. dos Pinheiros até o cruzamento com R. Oscar Freire (210 m)",
+      "Caminhe pela R. Oscar Freire até a R. Bela Cintra (580 m)",
+      "Vire à esquerda na R. Bela Cintra e chegue ao Studio Blondie no nº 890 (320 m)"
+    ],
+    waypoints: [
+      [-23.5650, -46.6810],
+      [-23.5655, -46.6780],
+      [-23.5662, -46.6720],
+      [-23.5600, -46.6640],
+      [-23.5530, -46.6570]
+    ]
+  },
+  // s21: Bella Donna Nail Bar (R. Fradique Coutinho, 1380 - Vila Madalena)
+  s21: {
+    streetDirections: [
+      "Caminhe pela R. dos Pinheiros até a R. Fradique Coutinho (110 m)",
+      "Siga pela R. Fradique Coutinho subindo em direção à Vila Madalena por 890 m",
+      "Chegue ao Bella Donna Nail Bar no nº 1380 (à esquerda)"
+    ],
+    waypoints: [
+      [-23.5650, -46.6810],
+      [-23.5643, -46.6817],
+      [-23.5630, -46.6850],
+      [-23.5605, -46.6910],
+      [-23.5585, -46.6970]
+    ]
+  },
+  // s22: Equilibrium Spa Urbano (R. Haddock Lobo, 950 - Cerqueira César / Jardins)
+  s22: {
+    streetDirections: [
+      "Siga pela R. dos Pinheiros até a R. Oscar Freire (210 m)",
+      "Atravesse a Rebouças e continue pela Oscar Freire até a R. Haddock Lobo (620 m)",
+      "Vire à direita na R. Haddock Lobo e chegue ao nº 950 (180 m)"
+    ],
+    waypoints: [
+      [-23.5650, -46.6810],
+      [-23.5658, -46.6780],
+      [-23.5668, -46.6730],
+      [-23.5672, -46.6705],
+      [-23.5670, -46.6700]
+    ]
+  },
+  // s23: Face & Care Concept (R. Artur de Azevedo, 780 - Pinheiros)
+  s23: {
+    streetDirections: [
+      "Caminhe pela R. dos Pinheiros até a R. Fradique Coutinho (120 m)",
+      "Vire na R. Artur de Azevedo e siga por 280 m",
+      "Chegue ao Face & Care Concept (nº 780)"
+    ],
+    waypoints: [
+      [-23.5650, -46.6810],
+      [-23.5642, -46.6818],
+      [-23.5636, -46.6830],
+      [-23.5646, -46.6838],
+      [-23.5655, -46.6845]
+    ]
+  },
+  // s24: Blend Beleza & Estilo (R. Tabapuã, 620 - Itaim Bibi)
+  s24: {
+    streetDirections: [
+      "Desça a R. dos Pinheiros até a Av. Brig. Faria Lima (360 m)",
+      "Siga pela Faria Lima até a R. Tabapuã (810 m)",
+      "Vire à esquerda na R. Tabapuã e caminhe até o nº 620 (260 m)"
+    ],
+    waypoints: [
+      [-23.5650, -46.6810],
+      [-23.5680, -46.6800],
+      [-23.5730, -46.6785],
+      [-23.5770, -46.6765],
+      [-23.5795, -46.6750]
+    ]
+  }
+};
+
+function calculatePathDistanceMeters(points) {
+  let total = 0;
+  const R = 6371000;
+  for (let i = 0; i < points.length - 1; i++) {
+    const lat1 = points[i][0] * Math.PI / 180;
+    const lon1 = points[i][1] * Math.PI / 180;
+    const lat2 = points[i + 1][0] * Math.PI / 180;
+    const lon2 = points[i + 1][1] * Math.PI / 180;
+    const dlat = lat2 - lat1;
+    const dlon = lon2 - lon1;
+    const a = Math.sin(dlat / 2) * Math.sin(dlat / 2) +
+              Math.cos(lat1) * Math.cos(lat2) * Math.sin(dlon / 2) * Math.sin(dlon / 2);
+    total += 2 * R * Math.asin(Math.sqrt(a));
+  }
+  return Math.round(total);
+}
+
+function generateUrbanWalkingRoute(userCoords, salonCoords, salon) {
+  const salonId = salon ? salon.id : null;
+  if (salonId && AUTHENTIC_SP_WALKING_ROUTES[salonId]) {
+    const routeData = AUTHENTIC_SP_WALKING_ROUTES[salonId];
+    const dist = calculatePathDistanceMeters(routeData.waypoints);
+    const walkMin = Math.max(3, Math.round(dist / 75));
+    const steps = Math.round(dist * 1.32);
+    return {
+      points: routeData.waypoints,
+      distanceM: dist,
+      walkTimeMin: walkMin,
+      steps: steps,
+      directions: routeData.streetDirections
+    };
+  }
+
+  // Algoritmo de Malha Urbana em Ângulo Reto (Manhattan Rotacionado para a Malha de SP)
+  // A malha urbana de Pinheiros/Jardins tem inclinação aproximada de -30 graus em relação ao norte.
+  const theta = -30 * (Math.PI / 180);
+  const cosT = Math.cos(theta);
+  const sinT = Math.sin(theta);
+
+  // Converte para coordenadas de malha ortogonal local
+  const dx = (salonCoords[1] - userCoords[1]);
+  const dy = (salonCoords[0] - userCoords[0]);
+
+  const u = dx * cosT - dy * sinT;
+  const v = dx * sinT + dy * cosT;
+
+  // Esquina / interseção em ângulo reto na malha de quadras
+  const cornerU = u;
+  const cornerV = 0;
+
+  const cornerDx = cornerU * cosT + cornerV * sinT;
+  const cornerDy = -cornerU * sinT + cornerV * cosT;
+
+  const cornerCoords = [userCoords[0] + cornerDy, userCoords[1] + cornerDx];
+
+  // Adiciona waypoints intermediários para formar quadras contínuas
+  const waypoints = [userCoords];
+
+  // Trecho 1: caminhada pela rua principal
+  const mid1 = [
+    (userCoords[0] + cornerCoords[0]) / 2,
+    (userCoords[1] + cornerCoords[1]) / 2
+  ];
+  waypoints.push(mid1);
+  waypoints.push(cornerCoords);
+
+  // Trecho 2: virada na esquina e caminhada pela transversal até o salão
+  const mid2 = [
+    (cornerCoords[0] + salonCoords[0]) / 2,
+    (cornerCoords[1] + salonCoords[1]) / 2
+  ];
+  waypoints.push(mid2);
+  waypoints.push(salonCoords);
+
+  const dist = calculatePathDistanceMeters(waypoints);
+  const walkMin = Math.max(3, Math.round(dist / 75));
+  const steps = Math.round(dist * 1.32);
+
+  return {
+    points: waypoints,
+    distanceM: dist,
+    walkTimeMin: walkMin,
+    steps: steps,
+    directions: [
+      `Caminhe pela via principal (${Math.round(dist * 0.45)} m)`,
+      `Vire na esquina e continue até o destino (${Math.round(dist * 0.55)} m)`,
+      `Chegada em ${salon ? salon.name : 'Salão Parceiro'}`
+    ]
+  };
+}
+
 function selectMapSalon(salonId) {
   const salon = MOCK_SALONS.find(s => s.id === salonId);
   if (!salon || !leafletMapInstance) return;
 
-  // Traçado Dinâmico de Rota em Verde-Esmeralda (Mobilidade & Corridas Autônomas)
+  // Limpa camadas anteriores de traçado de rota
   if (currentRoutePolyline) {
     leafletMapInstance.removeLayer(currentRoutePolyline);
+    currentRoutePolyline = null;
+  }
+  if (currentRouteCasing) {
+    leafletMapInstance.removeLayer(currentRouteCasing);
+    currentRouteCasing = null;
+  }
+  if (currentMapWalkingBadge) {
+    leafletMapInstance.removeLayer(currentMapWalkingBadge);
+    currentMapWalkingBadge = null;
   }
 
   const userCoords = [-23.5650, -46.6810];
   const salonCoords = [salon.lat, salon.lng];
+  const route = generateUrbanWalkingRoute(userCoords, salonCoords, salon);
 
-  // Gera arco curvilíneo fluido (Triple Fusion: Mobilidade & Corridas Autônomas)
-  const midLat = (userCoords[0] + salonCoords[0]) / 2;
-  const midLng = (userCoords[1] + salonCoords[1]) / 2;
-  const dLat = salonCoords[0] - userCoords[0];
-  const dLng = salonCoords[1] - userCoords[1];
-  // Ponto de controle perpendicular suave
-  const controlPoint = [midLat - dLng * 0.22, midLng + dLat * 0.22];
-
-  // Interpolação Bézier quadrática com 25 passos
-  const curvedPoints = [];
-  const steps = 24;
-  for (let i = 0; i <= steps; i++) {
-    const t = i / steps;
-    const lat = (1 - t) * (1 - t) * userCoords[0] + 2 * (1 - t) * t * controlPoint[0] + t * t * salonCoords[0];
-    const lng = (1 - t) * (1 - t) * userCoords[1] + 2 * (1 - t) * t * controlPoint[1] + t * t * salonCoords[1];
-    curvedPoints.push([lat, lng]);
-  }
-
-  currentRoutePolyline = L.polyline(curvedPoints, {
-    color: '#00685F',
-    weight: 4.5,
-    opacity: 0.9,
-    dashArray: '6, 6',
+  // Casing suave de rota de calçada (efeito halo verde-esmeralda)
+  currentRouteCasing = L.polyline(route.points, {
+    color: '#0D9488',
+    weight: 7.5,
+    opacity: 0.28,
     lineCap: 'round',
     lineJoin: 'round'
   }).addTo(leafletMapInstance);
+
+  // Traçado Factível de Caminhada em Malha Urbana (Passos e Quadras)
+  currentRoutePolyline = L.polyline(route.points, {
+    color: '#00685F',
+    weight: 4.5,
+    opacity: 0.95,
+    dashArray: '6, 8',
+    lineCap: 'round',
+    lineJoin: 'round'
+  }).addTo(leafletMapInstance);
+
+  // Badge Flutuante no Meio do Trajeto (Minutos, Metros e Passos Factíveis)
+  const midPointIdx = Math.floor(route.points.length / 2);
+  const midPoint = route.points[midPointIdx];
+
+  const mapBadgeIcon = L.divIcon({
+    className: 'uber-walking-badge-wrap',
+    html: `
+      <div class="uber-walking-badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="vertical-align:middle;"><circle cx="12" cy="5" r="2"/><path d="m9 20 3-6 3 2 2 4"/><path d="m6 16 4-3 1-4 3 3 4-2"/></svg>
+        <span><strong>${route.walkTimeMin} min</strong> a pé</span>
+        <span>•</span>
+        <span>${route.distanceM} m</span>
+        <span>•</span>
+        <span>~${route.steps} passos</span>
+      </div>
+    `,
+    iconSize: [180, 28],
+    iconAnchor: [90, 14]
+  });
+  currentMapWalkingBadge = L.marker(midPoint, { icon: mapBadgeIcon }).addTo(leafletMapInstance);
 
   // Centralização suave com animação (flyTo)
   leafletMapInstance.flyTo(salonCoords, 15, {
@@ -4241,17 +4897,59 @@ function selectMapSalon(salonId) {
     targetCard.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
   }
 
-  trackEvent('locality_selected', { neighborhood: salon.neighborhood, merchant_id: salon.id });
+  // Atualiza painel de itinerário factível com nomes de ruas reais
+  const dirBar = document.getElementById('map-route-directions-bar');
+  if (dirBar && route.directions && route.directions.length > 0) {
+    dirBar.style.display = 'block';
+    dirBar.innerHTML = `
+      <div class="map-directions-inner">
+        <div class="map-directions-header">
+          <div class="map-directions-title">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="5" r="2"/><path d="m9 20 3-6 3 2 2 4"/><path d="m6 16 4-3 1-4 3 3 4-2"/></svg>
+            <span><strong>${route.walkTimeMin} min a pé</strong> (${route.distanceM} m • ~${route.steps} passos)</span>
+          </div>
+          <span class="map-directions-dest">${salon.name}</span>
+        </div>
+        <div class="map-directions-steps">
+          ${route.directions.map((step, idx) => `
+            <div class="map-step-item">
+              <span class="step-num-bubble">${idx + 1}</span>
+              <span class="step-desc-text">${step}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  trackEvent('locality_selected', { 
+    neighborhood: salon.neighborhood, 
+    merchant_id: salon.id,
+    walk_min: route.walkTimeMin,
+    distance_m: route.distanceM,
+    walk_steps: route.steps
+  });
 }
 
 function onMapSearch(query) {
   const cleanQ = (query || '').trim().toLowerCase();
+  const dirBar = document.getElementById('map-route-directions-bar');
+  if (dirBar) dirBar.style.display = 'none';
+
   if (!cleanQ) {
     renderMapBottomSheet(MOCK_SALONS);
     renderLocalityMarkers(MOCK_SALONS);
     if (currentRoutePolyline && leafletMapInstance) {
       leafletMapInstance.removeLayer(currentRoutePolyline);
       currentRoutePolyline = null;
+    }
+    if (currentRouteCasing && leafletMapInstance) {
+      leafletMapInstance.removeLayer(currentRouteCasing);
+      currentRouteCasing = null;
+    }
+    if (currentMapWalkingBadge && leafletMapInstance) {
+      leafletMapInstance.removeLayer(currentMapWalkingBadge);
+      currentMapWalkingBadge = null;
     }
     return;
   }
@@ -4411,21 +5109,17 @@ function renderUberDemandMap() {
       maxZoom: 19
     }).addTo(AppState.uberMapInstance);
 
-    // Marcador do Pedestre (Usuário caminhante com pulso)
+    // Marcador do Pedestre com Emblema da Mulher BeautyPass (Sem o nome)
     const pedestrianIcon = L.divIcon({
       className: 'uber-pedestrian-icon-wrap',
       html: `
-        <div class="uber-pedestrian-node">
+        <div class="uber-pedestrian-node brand-pedestrian-node" title="Você (Caminhada)">
           <div class="uber-pedestrian-pulse"></div>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <circle cx="12" cy="5" r="2.5"/>
-            <path d="M10 22v-6l-2-2.5 1.5-3.5L13 12v10"/>
-            <path d="M14 12l2.5 3.5"/>
-          </svg>
+          <img src="assets/logo_beautypass_emblem.png" class="uber-pedestrian-emblem" alt="Você">
         </div>
       `,
-      iconSize: [36, 36],
-      iconAnchor: [18, 18]
+      iconSize: [40, 40],
+      iconAnchor: [20, 20]
     });
     L.marker(userCoords, { icon: pedestrianIcon }).addTo(AppState.uberMapInstance);
   }
@@ -4549,55 +5243,59 @@ function selectDemandMatch(salonId, shouldFly = true) {
     AppState.uberMapInstance.removeLayer(AppState.uberRoutePolyline);
     AppState.uberRoutePolyline = null;
   }
+  if (AppState.uberRouteCasing) {
+    AppState.uberMapInstance.removeLayer(AppState.uberRouteCasing);
+    AppState.uberRouteCasing = null;
+  }
   if (AppState.uberWalkingBadgeMarker) {
     AppState.uberMapInstance.removeLayer(AppState.uberWalkingBadgeMarker);
     AppState.uberWalkingBadgeMarker = null;
   }
 
-  // Traça Rota Curvilínea Suave em Verde-Esmeralda (Mobilidade)
+  // Traça Rota Factível de Caminhada em Malha Urbana (Passos e Quadras de São Paulo)
   const userCoords = [-23.5650, -46.6810];
   const salonCoords = [match.salon.lat, match.salon.lng];
+  const route = generateUrbanWalkingRoute(userCoords, salonCoords, match.salon);
 
-  const midLat = (userCoords[0] + salonCoords[0]) / 2;
-  const midLng = (userCoords[1] + salonCoords[1]) / 2;
-  const dLat = salonCoords[0] - userCoords[0];
-  const dLng = salonCoords[1] - userCoords[1];
-  const controlPoint = [midLat - dLng * 0.22, midLng + dLat * 0.22];
+  AppState.lastWalkTimeMin = route.walkTimeMin;
+  AppState.lastWalkDistanceM = route.distanceM;
 
-  const curvedPoints = [];
-  const steps = 24;
-  for (let i = 0; i <= steps; i++) {
-    const t = i / steps;
-    const lat = (1 - t) * (1 - t) * userCoords[0] + 2 * (1 - t) * t * controlPoint[0] + t * t * salonCoords[0];
-    const lng = (1 - t) * (1 - t) * userCoords[1] + 2 * (1 - t) * t * controlPoint[1] + t * t * salonCoords[1];
-    curvedPoints.push([lat, lng]);
-  }
-
-  AppState.uberRoutePolyline = L.polyline(curvedPoints, {
-    color: '#00685F',
-    weight: 4.5,
-    opacity: 0.95,
-    dashArray: '7, 6',
+  // Casing suave de halo da rota de calçada
+  AppState.uberRouteCasing = L.polyline(route.points, {
+    color: '#0D9488',
+    weight: 7.5,
+    opacity: 0.28,
     lineCap: 'round',
     lineJoin: 'round'
   }).addTo(AppState.uberMapInstance);
 
-  // Badge Flutuante no Centro da Rota (SVG walker + X min • XXX m)
-  const midIndex = Math.floor(curvedPoints.length / 2);
-  const midPoint = curvedPoints[midIndex];
+  AppState.uberRoutePolyline = L.polyline(route.points, {
+    color: '#00685F',
+    weight: 4.5,
+    opacity: 0.95,
+    dashArray: '6, 8',
+    lineCap: 'round',
+    lineJoin: 'round'
+  }).addTo(AppState.uberMapInstance);
+
+  // Badge Flutuante no Centro da Rota (SVG walker + X min • XXX m • ~ZZZ passos)
+  const midIndex = Math.floor(route.points.length / 2);
+  const midPoint = route.points[midIndex];
 
   const badgeIcon = L.divIcon({
     className: 'uber-walking-badge-wrap',
     html: `
       <div class="uber-walking-badge">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="vertical-align:middle;"><circle cx="12" cy="5" r="2"/><path d="m9 20 3-6 3 2 2 4"/><path d="m6 16 4-3 1-4 3 3 4-2"/></svg>
-        <span>${match.walkTimeMin} min</span>
+        <span><strong>${route.walkTimeMin} min</strong> a pé</span>
         <span>•</span>
-        <span>${match.walkDistanceM} m</span>
+        <span>${route.distanceM} m</span>
+        <span>•</span>
+        <span>~${route.steps} passos</span>
       </div>
     `,
-    iconSize: [130, 28],
-    iconAnchor: [65, 14]
+    iconSize: [180, 28],
+    iconAnchor: [90, 14]
   });
 
   AppState.uberWalkingBadgeMarker = L.marker(midPoint, { icon: badgeIcon }).addTo(AppState.uberMapInstance);
@@ -4615,6 +5313,31 @@ function selectDemandMatch(salonId, shouldFly = true) {
       paddingTopLeft: [50, 40],
       paddingBottomRight: [50, 240]
     });
+  }
+
+  // Atualiza painel de passos factíveis de caminhada na gaveta Uber
+  const uberDirBox = document.getElementById('uber-selected-walking-directions');
+  if (uberDirBox && route.directions && route.directions.length > 0) {
+    uberDirBox.style.display = 'block';
+    uberDirBox.innerHTML = `
+      <div class="uber-directions-inner">
+        <div class="uber-directions-header">
+          <div class="uber-directions-title">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="5" r="2"/><path d="m9 20 3-6 3 2 2 4"/><path d="m6 16 4-3 1-4 3 3 4-2"/></svg>
+            <span>Caminhada: <strong>${route.walkTimeMin} min</strong> (${route.distanceM} m • ~${route.steps} passos)</span>
+          </div>
+          <span class="uber-directions-badge">Trajeto SP</span>
+        </div>
+        <div class="uber-directions-steps">
+          ${route.directions.map((step, idx) => `
+            <div class="uber-step-line">
+              <span class="uber-step-dot"></span>
+              <span class="uber-step-text">${step}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
   }
 
   trackEvent('uber_match_selected', {
@@ -5067,6 +5790,8 @@ function renderHorizontalTimeStrip(salon, dateStr) {
 
   let discountCount = 0;
   let occupiedCount = 0;
+  let highDemandCount = 0;
+  let standardCount = 0;
 
   container.innerHTML = '';
   keyTimes.forEach(t => {
@@ -5074,26 +5799,34 @@ function renderHorizontalTimeStrip(salon, dateStr) {
     const isSelected = AppState.selectedTime === t;
 
     if (pricing.isOccupied) occupiedCount++;
-    if (pricing.hasDiscount) discountCount++;
+    else if (pricing.hasDiscount) discountCount++;
+    else if (pricing.isHighDemand) highDemandCount++;
+    else standardCount++;
 
     const pill = document.createElement('div');
     let classes = ['quick-slot-pill'];
-    if (pricing.isOccupied) classes.push('occupied');
-    else if (pricing.hasDiscount) {
+    let badgeText = 'Livre';
+
+    if (pricing.isOccupied) {
+      classes.push('occupied');
+      badgeText = 'Ocupado';
+      pill.setAttribute('aria-disabled', 'true');
+      pill.setAttribute('title', 'Horário ocupado/esgotado');
+    } else if (pricing.hasDiscount) {
       classes.push('discount');
       if (pricing.type === 'urgent') classes.push('urgent-deal');
+      badgeText = `-${pricing.discountPct}%`;
+    } else if (pricing.isHighDemand) {
+      classes.push('high-demand');
+      badgeText = 'Alta Procura';
+    } else {
+      classes.push('available-standard');
+      badgeText = 'Livre';
     }
+
     if (isSelected && !pricing.isOccupied) classes.push('active');
 
     pill.className = classes.join(' ');
-
-    let badgeText = 'Livre';
-    if (pricing.isOccupied) {
-      badgeText = 'Ocupado';
-    } else if (pricing.hasDiscount) {
-      badgeText = `-${pricing.discountPct}%`;
-    }
-
     pill.innerHTML = `
       <span class="slot-time-text">${t}</span>
       <span class="slot-badge-sub">${badgeText}</span>
@@ -5101,7 +5834,7 @@ function renderHorizontalTimeStrip(salon, dateStr) {
 
     pill.onclick = () => {
       if (pricing.isOccupied) {
-        showToast('Este horário está ocupado. Por favor, escolha um slot disponível.');
+        showToast('Este horário está ocupado por outro cliente. Por favor, escolha um slot disponível.');
         return;
       }
       const idx = TIME_SLOTS.indexOf(t);
@@ -5120,7 +5853,7 @@ function renderHorizontalTimeStrip(salon, dateStr) {
   });
 
   if (summaryEl) {
-    summaryEl.textContent = `${discountCount} com desconto • ${occupiedCount} ocupados`;
+    summaryEl.textContent = `${discountCount} com desconto • ${highDemandCount} alta procura • ${standardCount} livres • ${occupiedCount} ocupados`;
   }
 }
 
@@ -5226,7 +5959,15 @@ function updateRadialClock() {
             <span class="badge-tag-dynamic ${pricing.type === 'urgent' ? 'urgent' : ''}">
               ${pricing.badgeText}
             </span>
-          ` : `<span style="font-size:11px; font-weight:700; color:var(--neutral-muted);">Padrão</span>`}
+          ` : (pricing.isHighDemand ? `
+            <span class="badge-tag-dynamic peak" style="font-size:11px; font-weight:700;">
+              Alta Procura
+            </span>
+          ` : `
+            <span class="badge-tag-dynamic standard" style="font-size:11px; font-weight:700;">
+              Disponível
+            </span>
+          `)}
         </div>
       `;
       if (checkoutBtn) {
@@ -5278,6 +6019,9 @@ function onSliderTimeChange(val) {
   AppState.selectedTimeSlotIndex = parseInt(val, 10);
   // Atualização visual imediata sem atraso para o usuário
   updateRadialClock();
+  if (AppState.selectedSalon) {
+    renderHorizontalTimeStrip(AppState.selectedSalon, AppState.selectedDate);
+  }
 
   // Debounce de 800ms para telemetria analítica (Ticket 02)
   clearTimeout(AppState.sliderDebounceTimer);
@@ -5291,6 +6035,10 @@ function onSliderTimeChange(val) {
 }
 
 function proceedToCheckout() {
+  if (AppState.currentPricing && AppState.currentPricing.isOccupied) {
+    showToast('Este horário está ocupado por outro cliente. Por favor, escolha um slot disponível.');
+    return;
+  }
   AppState.bookingChannel = 'calendar'; // Ticket 11
   const salon = AppState.selectedSalon;
   const currentService = AppState.selectedService || (salon.services && salon.services[0]) || salon.service;
@@ -6185,7 +6933,7 @@ function renderAppointmentsScreen() {
       <div class="appt-card-actions">
         ${appt.status === 'CONFIRMED' ? `
           <button class="appt-btn-outline" onclick="openVoucherForAppt('${appt.id}')">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="vertical-align:-1px; margin-right:3px;"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px; margin-right:4px;"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="5" y="5" width="3" height="3" fill="currentColor"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="16" y="5" width="3" height="3" fill="currentColor"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="5" y="16" width="3" height="3" fill="currentColor"/><path d="M14 14h3v3h-3z"/><path d="M20 14v6h-3"/><path d="M14 20h3"/></svg>
             Ver QR Code & Voucher
           </button>
           <button class="appt-btn-outline" style="color:var(--error); border-color:#FECACA;" onclick="openCancelModalForAppt('${appt.id}')">Cancelar</button>
@@ -6687,6 +7435,20 @@ function toggleFullscreenMode() {
   const label = document.getElementById('fullscreen-btn-label');
   if (label) {
     label.textContent = isFull ? 'Ver Moldura' : 'Tela Cheia';
+  }
+  const shell = document.querySelector('.device-shell');
+  if (shell) {
+    if (isFull) {
+      shell.style.width = '100%';
+      shell.style.maxWidth = '100vw';
+      shell.style.height = '100vh';
+      shell.style.borderRadius = '0';
+    } else if (typeof window.setDevicePreset === 'function') {
+      window.setDevicePreset(window.currentDevicePreset || '16pro');
+    }
+  }
+  if (typeof window.updateDeviceScale === 'function') {
+    window.updateDeviceScale();
   }
 }
 

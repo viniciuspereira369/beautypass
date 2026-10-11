@@ -32,18 +32,121 @@
 </head>
 <body>
   <script>
-    // Detecção de emulador e modo PWA instalado (Standalone / Fullscreen)
-    const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches ||
-                             window.matchMedia('(display-mode: fullscreen)').matches ||
-                             window.navigator.standalone === true ||
-                             window.location.search.includes('standalone=true');
+    // Detecção dinâmica de emulador, modo PWA e dispositivos móveis (Standalone / Fullscreen / Mobile)
+    function checkPwaDisplayMode() {
+      const isStandaloneMode = (window.matchMedia && (window.matchMedia('(display-mode: standalone)').matches || window.matchMedia('(display-mode: fullscreen)').matches)) ||
+                               window.navigator.standalone === true ||
+                               window.location.search.includes('standalone=true');
 
-    if (window.self !== window.top || window.location.search.includes('emulator=true')) {
-      document.body.classList.add('in-emulator');
+      const hasFinePointer = window.matchMedia && window.matchMedia('(pointer: fine)').matches;
+      const isCoarseTouch = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || (navigator.maxTouchPoints > 0);
+      const isTouchMobile = isCoarseTouch && (!hasFinePointer || /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent));
+
+      if (window.self !== window.top || window.location.search.includes('emulator=true')) {
+        document.body.classList.add('in-emulator');
+      }
+      if (isStandaloneMode) {
+        document.body.classList.add('in-pwa-standalone');
+      }
+      if (isTouchMobile) {
+        document.body.classList.add('in-mobile-device');
+      }
     }
-    if (isStandaloneMode) {
-      document.body.classList.add('in-pwa-standalone');
+    checkPwaDisplayMode();
+    if (window.matchMedia) {
+      window.matchMedia('(display-mode: standalone)').addEventListener('change', checkPwaDisplayMode);
+      window.matchMedia('(display-mode: fullscreen)').addEventListener('change', checkPwaDisplayMode);
     }
+
+    // Configurações de presets de dispositivos para teste no desktop
+    window.DEVICE_PRESETS = {
+      se: { id: 'se', name: 'iPhone SE (375px)', width: 375, height: 740, radius: '38px' },
+      '16pro': { id: '16pro', name: 'iPhone 16 Pro (393px)', width: 393, height: 852, radius: '44px' },
+      s24: { id: 's24', name: 'Galaxy S24 (412px)', width: 412, height: 892, radius: '40px' },
+      auto: { id: 'auto', name: 'Fluido / Auto', width: 'auto', maxWidth: '460px', height: '870px', radius: '40px' }
+    };
+    window.currentDevicePreset = '16pro';
+
+    // Motor de Escala Proporcional Dinâmica (Auto-Scale)
+    // Largura de referência base: 390px (padrão iPhone 14/15/16)
+    // scale = Math.min(Math.max(window.innerWidth / 390, 0.85), 1.15)
+    window.updateDeviceScale = function() {
+      const isMobileOrStandalone = window.innerWidth <= 520 ||
+        document.body.classList.contains('in-pwa-standalone') ||
+        document.body.classList.contains('in-emulator') ||
+        document.body.classList.contains('in-mobile-device') ||
+        document.body.classList.contains('fullscreen-mode');
+
+      let currentWidth;
+      if (isMobileOrStandalone) {
+        currentWidth = window.innerWidth;
+      } else {
+        const preset = window.DEVICE_PRESETS[window.currentDevicePreset] || window.DEVICE_PRESETS['16pro'];
+        if (preset.width === 'auto') {
+          const shell = document.querySelector('.device-shell');
+          currentWidth = shell ? shell.offsetWidth : Math.min(window.innerWidth, 460);
+        } else {
+          currentWidth = preset.width;
+        }
+      }
+
+      const baseWidth = 390;
+      const rawScale = currentWidth / baseWidth;
+      // Limites rígidos: de 0.85x (mínimo) até 1.15x (máximo)
+      const scale = Math.min(Math.max(rawScale, 0.85), 1.15);
+      document.documentElement.style.setProperty('--bp-scale', scale.toFixed(3));
+      return scale;
+    };
+
+    window.setDevicePreset = function(presetKey) {
+      if (!window.DEVICE_PRESETS[presetKey]) presetKey = '16pro';
+      window.currentDevicePreset = presetKey;
+      const preset = window.DEVICE_PRESETS[presetKey];
+
+      document.querySelectorAll('.device-preset-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-device') === presetKey);
+      });
+
+      const shell = document.querySelector('.device-shell');
+      const isMobileOrStandalone = window.innerWidth <= 520 ||
+        document.body.classList.contains('in-pwa-standalone') ||
+        document.body.classList.contains('in-emulator') ||
+        document.body.classList.contains('fullscreen-mode');
+
+      if (shell && !isMobileOrStandalone) {
+        if (preset.width === 'auto') {
+          shell.style.width = '100%';
+          shell.style.maxWidth = preset.maxWidth;
+          shell.style.height = preset.height;
+          shell.style.borderRadius = preset.radius;
+        } else {
+          shell.style.width = preset.width + 'px';
+          shell.style.maxWidth = preset.width + 'px';
+          shell.style.height = preset.height + 'px';
+          shell.style.borderRadius = preset.radius;
+        }
+        document.documentElement.style.setProperty('--app-height', typeof preset.height === 'number' ? preset.height + 'px' : preset.height);
+      }
+
+      window.updateDeviceScale();
+      if (window.bpMap && typeof window.bpMap.invalidateSize === 'function') {
+        window.bpMap.invalidateSize();
+      }
+      if (window.leafletMapInstance && typeof window.leafletMapInstance.invalidateSize === 'function') {
+        window.leafletMapInstance.invalidateSize();
+      }
+      if (window.AppState && AppState.uberMapInstance && typeof AppState.uberMapInstance.invalidateSize === 'function') {
+        AppState.uberMapInstance.invalidateSize();
+      }
+    };
+
+    // Aplicação imediata da escala
+    window.updateDeviceScale();
+    window.addEventListener('resize', window.updateDeviceScale);
+    window.addEventListener('orientationchange', window.updateDeviceScale);
+    document.addEventListener('DOMContentLoaded', function() {
+      window.setDevicePreset(window.currentDevicePreset);
+    });
   </script>
 
   <!-- Top Controller Bar (Ajuste de Teste e Visualizador) -->
@@ -52,6 +155,27 @@
       <span>BeautyPass</span>
       <span class="badge-tag">The Triple Fusion</span>
     </div>
+
+    <!-- Quick Device Preview Switcher (Desktop Inspection Mode) -->
+    <div class="device-switcher" role="radiogroup" aria-label="Seletor de Dispositivos de Teste">
+      <button type="button" class="controller-btn device-preset-btn" id="btn-device-se" data-device="se" onclick="setDevicePreset('se')" title="iPhone SE (375px)">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="5" y="2" width="14" height="20" rx="3"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        <span>iPhone SE (375px)</span>
+      </button>
+      <button type="button" class="controller-btn device-preset-btn active" id="btn-device-16pro" data-device="16pro" onclick="setDevicePreset('16pro')" title="iPhone 16 Pro (393px) [Padrão]">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="5" y="2" width="14" height="20" rx="3"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        <span>iPhone 16 Pro (393px)</span>
+      </button>
+      <button type="button" class="controller-btn device-preset-btn" id="btn-device-s24" data-device="s24" onclick="setDevicePreset('s24')" title="Galaxy S24 (412px)">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="5" y="2" width="14" height="20" rx="3"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        <span>Galaxy S24 (412px)</span>
+      </button>
+      <button type="button" class="controller-btn device-preset-btn" id="btn-device-auto" data-device="auto" onclick="setDevicePreset('auto')" title="Fluido / Auto">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M15 3v18"/></svg>
+        <span>Fluido / Auto</span>
+      </button>
+    </div>
+
     <div class="controller-actions">
       <button class="controller-btn" id="btn-toggle-fullscreen" onclick="toggleFullscreenMode()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
@@ -69,7 +193,7 @@
 
     <!-- Global Toast Notification -->
     <div id="app-toast" class="toast-notification">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
       <span id="toast-message">Notificação</span>
     </div>
 
@@ -80,8 +204,22 @@
         <div class="notch-camera"></div>
       </div>
       <div class="status-icons">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 18.25A9.95 9.95 0 0 1 2 12C2 6.48 6.48 2 12 2s10 4.48 10 10c0 2.3-.78 4.41-2.09 6.1l-.62-.62A8.96 8.96 0 0 0 21 12c0-4.97-4.03-9-9-9z"/></svg>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17 4h-3V2h-4v2H7v18h10V4z"/></svg>
+        <svg width="16" height="12" viewBox="0 0 17 12" fill="currentColor" aria-hidden="true">
+          <rect x="0" y="9" width="3" height="3" rx="0.8"/>
+          <rect x="4.5" y="6" width="3" height="6" rx="0.8"/>
+          <rect x="9" y="3" width="3" height="9" rx="0.8"/>
+          <rect x="13.5" y="0" width="3" height="12" rx="0.8"/>
+        </svg>
+        <svg width="15" height="12" viewBox="0 0 16 12" fill="currentColor" aria-hidden="true">
+          <circle cx="8" cy="10.5" r="1.5"/>
+          <path d="M4.24 7.67a5.5 5.5 0 0 1 7.52 0 .8.8 0 0 1-.56 1.36.8.8 0 0 1-.57-.24 3.9 3.9 0 0 0-5.26 0 .8.8 0 0 1-1.13-1.12z"/>
+          <path d="M1.41 4.84a9.5 9.5 0 0 1 13.18 0 .8.8 0 1 1-1.13 1.13 7.9 7.9 0 0 0-10.92 0 .8.8 0 0 1-1.13-1.13z"/>
+        </svg>
+        <svg width="22" height="11" viewBox="0 0 24 12" fill="none" aria-hidden="true">
+          <rect x="1" y="1" width="19" height="10" rx="3" stroke="currentColor" stroke-width="1.8"/>
+          <rect x="3" y="3" width="13" height="6" rx="1.5" fill="currentColor"/>
+          <path d="M21 4.5a1.5 1.5 0 0 1 1.5 1.5v0a1.5 1.5 0 0 1-1.5 1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
       </div>
     </div>
 
@@ -166,7 +304,9 @@
           </div>
           <div class="pwa-banner-actions">
             <button id="pwa-install-btn" class="btn-pwa-install" onclick="triggerPwaInstall()">Instalar</button>
-            <button id="pwa-dismiss-btn" class="btn-pwa-dismiss" onclick="dismissPwaBanner()" aria-label="Fechar">✕</button>
+            <button id="pwa-dismiss-btn" class="btn-pwa-dismiss" onclick="dismissPwaBanner()" aria-label="Fechar">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
           </div>
         </div>
 
@@ -177,8 +317,9 @@
             <span class="greeting-title">Olá, <span id="home-user-name">Participante</span>!</span>
           </div>
           <div class="location-pill" onclick="navigateTo('map')">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
             <span id="home-location-label">Localizando...</span>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.6;"><polyline points="9 18 15 12 9 6"/></svg>
           </div>
         </div>
 
@@ -204,62 +345,74 @@
         <!-- Search Bar em Pílula (DESIGN.md Level 1) -->
         <div class="search-wrapper">
           <div class="search-input-pill">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7.5"/><path d="M21 21l-4.5-4.5"/></svg>
             <input type="text" id="home-search-input" placeholder="Qual procedimento você quer hoje?" oninput="onHomeSearch(this.value)">
             <button class="search-map-btn" title="Explorar no Mapa" onclick="navigateTo('map')">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
             </button>
           </div>
         </div>
 
         <!-- Aviso de Localização Negada (Seção 6.4: fallback obrigatório) -->
         <div id="home-location-warning" class="home-location-fallback" style="display:none;" role="status">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r="0.75" fill="currentColor"/></svg>
           <span>Mostrando salões em São Paulo (centro) — ative a localização para ver perto de você</span>
         </div>
 
-        <!-- Categorias Visuais -->
-        <div class="categories-section">
+        <!-- Categorias Visuais & Story Bubbles Fotográficas -->
+        <div class="categories-section story-bubbles-section">
           <div class="section-header">
             <h2 class="section-title">Categorias Populares</h2>
             <a class="section-link" onclick="navigateTo('map')">Ver no mapa</a>
           </div>
-          <div class="categories-carousel">
-            <button class="category-chip active" onclick="selectHomeCategory('all', this)">
-              <div class="category-icon-box">
-                <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=160&h=160&q=80" alt="Todos" loading="lazy" onerror="this.onerror=null; this.src='salon_hair_boutique.jpg'">
+          <div class="categories-carousel story-bubbles-carousel" role="region" aria-label="Especialidades e Categorias">
+            <button class="category-chip story-bubble active" data-category="all" onclick="selectHomeCategory('all', this)" role="button" aria-pressed="true" aria-label="Todas as categorias">
+              <div class="story-ring">
+                <div class="story-photo-wrap category-icon-box">
+                  <img src="salon_hair_boutique.jpg" alt="Todos" loading="lazy" onerror="this.onerror=null; this.src='salon_hair_boutique.jpg'">
+                </div>
               </div>
-              <span class="category-label">Todos</span>
+              <span class="category-label story-label">Todos</span>
             </button>
-            <button class="category-chip" onclick="selectHomeCategory('hair', this)">
-              <div class="category-icon-box">
-                <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=160&h=160&q=80" alt="Cabelo" loading="lazy" onerror="this.onerror=null; this.src='salon_hair_boutique.jpg'">
+            <button class="category-chip story-bubble" data-category="hair" onclick="selectHomeCategory('hair', this)" role="button" aria-pressed="false" aria-label="Cabelo">
+              <div class="story-ring">
+                <div class="story-photo-wrap category-icon-box">
+                  <img src="treatment_hair_salon.jpg" alt="Cabelo" loading="lazy" onerror="this.onerror=null; this.src='salon_hair_boutique.jpg'">
+                </div>
               </div>
-              <span class="category-label">Cabelo</span>
+              <span class="category-label story-label">Cabelo</span>
             </button>
-            <button class="category-chip" onclick="selectHomeCategory('nails', this)">
-              <div class="category-icon-box">
-                <img src="https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?auto=format&fit=crop&w=160&h=160&q=80" alt="Unhas" loading="lazy" onerror="this.onerror=null; this.src='salon_nail_lounge.jpg'">
+            <button class="category-chip story-bubble" data-category="barber" onclick="selectHomeCategory('barber', this)" role="button" aria-pressed="false" aria-label="Barba">
+              <div class="story-ring">
+                <div class="story-photo-wrap category-icon-box">
+                  <img src="salon_barber_modern.jpg" alt="Barba" loading="lazy" onerror="this.onerror=null; this.src='salon_barber_modern.jpg'">
+                </div>
               </div>
-              <span class="category-label">Unhas</span>
+              <span class="category-label story-label">Barba</span>
             </button>
-            <button class="category-chip" onclick="selectHomeCategory('barber', this)">
-              <div class="category-icon-box">
-                <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=160&h=160&q=80" alt="Barbearia" loading="lazy" onerror="this.onerror=null; this.src='salon_barber_modern.jpg'">
+            <button class="category-chip story-bubble" data-category="nails" onclick="selectHomeCategory('nails', this)" role="button" aria-pressed="false" aria-label="Unhas">
+              <div class="story-ring">
+                <div class="story-photo-wrap category-icon-box">
+                  <img src="salon_nail_lounge.jpg" alt="Unhas" loading="lazy" onerror="this.onerror=null; this.src='salon_nail_lounge.jpg'">
+                </div>
               </div>
-              <span class="category-label">Barbearia</span>
+              <span class="category-label story-label">Unhas</span>
             </button>
-            <button class="category-chip" onclick="selectHomeCategory('massage', this)">
-              <div class="category-icon-box">
-                <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=160&h=160&q=80" alt="Massagem" loading="lazy" onerror="this.onerror=null; this.src='salon_spa_oasis.jpg'">
+            <button class="category-chip story-bubble" data-category="massage" onclick="selectHomeCategory('massage', this)" role="button" aria-pressed="false" aria-label="Massagem">
+              <div class="story-ring">
+                <div class="story-photo-wrap category-icon-box">
+                  <img src="treatment_massage_spa.jpg" alt="Massagem" loading="lazy" onerror="this.onerror=null; this.src='salon_spa_oasis.jpg'">
+                </div>
               </div>
-              <span class="category-label">Massagem</span>
+              <span class="category-label story-label">Massagem</span>
             </button>
-            <button class="category-chip" onclick="selectHomeCategory('esthetic', this)">
-              <div class="category-icon-box">
-                <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=160&h=160&q=80" alt="Estética" loading="lazy" onerror="this.onerror=null; this.src='salon_clinic_aesthetic.jpg'">
+            <button class="category-chip story-bubble" data-category="esthetic" onclick="selectHomeCategory('esthetic', this)" role="button" aria-pressed="false" aria-label="Estética">
+              <div class="story-ring">
+                <div class="story-photo-wrap category-icon-box">
+                  <img src="treatment_facial_spa.jpg" alt="Estética" loading="lazy" onerror="this.onerror=null; this.src='salon_clinic_aesthetic.jpg'">
+                </div>
               </div>
-              <span class="category-label">Estética</span>
+              <span class="category-label story-label">Estética</span>
             </button>
           </div>
         </div>
@@ -267,19 +420,19 @@
         <!-- Filtros Rápidos -->
         <div class="filter-chips-row">
           <button class="filter-chip active" data-filter="all" onclick="setQuickFilter('all', this)">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/></svg>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg>
             <span>Todos</span>
           </button>
           <button class="filter-chip" data-filter="economy" onclick="setQuickFilter('economy', this)">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1.5" fill="currentColor"/></svg>
             <span>Maior Economia (Até 35% OFF)</span>
           </button>
           <button class="filter-chip" data-filter="proximity" onclick="setQuickFilter('proximity', this)">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="currentColor"/></svg>
             <span>Mais Próximos (&lt; 2 km)</span>
           </button>
           <button class="filter-chip" data-filter="favorites" onclick="setQuickFilter('favorites', this)">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
             <span>Favoritos</span>
           </button>
         </div>
@@ -326,6 +479,8 @@
               <span class="sheet-header-title">Salões Próximos em São Paulo</span>
               <span style="font-size:11px; color:var(--primary); font-weight:700;">Raio 10 km</span>
             </div>
+            <!-- Painel de Itinerário Factível de Caminhada -->
+            <div id="map-route-directions-bar" class="map-directions-bar" style="display:none;"></div>
             <div id="sheet-salons-list" class="sheet-salons-horizontal">
               <!-- Injetado dinamicamente via app.js -->
             </div>
@@ -340,16 +495,16 @@
         <div class="detail-screen-wrap">
           <!-- Sticky Top Nav -->
           <div class="detail-top-nav">
-            <button class="back-circle-btn" onclick="navigateTo('home')">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            <button class="back-circle-btn" onclick="navigateTo('home')" aria-label="Voltar">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
-            <span style="font-size: 14px; font-weight: 700; color: var(--neutral-text);">Agendamento de Precisão</span>
+            <span style="font-size: 14px; font-weight: 700; color: var(--neutral-text); letter-spacing:-0.015em;">Agendamento de Precisão</span>
             <div style="display:flex; align-items:center; gap:6px;">
               <button class="back-circle-btn" id="detail-fav-btn" onclick="toggleFavoriteCurrentSalon()" title="Favoritar Estabelecimento">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
               </button>
               <button class="back-circle-btn" onclick="openPriceHelpModal()" title="Por que o preço varia?">
-                <span style="font-weight:800; font-size:14px; color:var(--primary);">?</span>
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.8" fill="var(--primary)"/></svg>
               </button>
             </div>
           </div>
@@ -437,8 +592,15 @@
               <span class="section-title" style="font-size:13px;">Horários Disponíveis</span>
               <span id="detail-slots-summary-label" style="font-size:11px; color:var(--neutral-muted);">Ocupação em tempo real</span>
             </div>
+            <!-- Legenda explicativa de estados de slots -->
+            <div class="slots-legend-bar">
+              <span class="legend-chip chip-avail"><span class="legend-dot"></span>Disponível</span>
+              <span class="legend-chip chip-peak"><span class="legend-dot"></span>Alta Procura</span>
+              <span class="legend-chip chip-promo"><span class="legend-dot"></span>Desconto</span>
+              <span class="legend-chip chip-busy"><span class="legend-dot"></span>Ocupado</span>
+            </div>
             <div id="detail-quick-slots-container" class="quick-slots-carousel">
-              <!-- Renderizado dinamicamente via app.js com slots livres e ocupados -->
+              <!-- Renderizado dinamicamente via app.js com slots livres, promocionais, alta procura e ocupados -->
             </div>
           </div>
 
@@ -451,7 +613,9 @@
           <div class="radial-clock-container">
             <div class="clock-header-row">
               <span class="clock-header-title">Seletor de Horário Inteligente</span>
-              <button class="tooltip-trigger-btn" onclick="openPriceHelpModal()" title="Por que o preço varia?">?</button>
+              <button class="tooltip-trigger-btn" onclick="openPriceHelpModal()" title="Por que o preço varia?">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.8" fill="currentColor"/></svg>
+              </button>
             </div>
 
             <!-- Gauge Semicircular SVG -->
@@ -572,11 +736,11 @@
           <!-- Seletor de Método de Pagamento (Zero Emojis, Ícones SVG Minimalistas) -->
           <div class="payment-methods-segmented">
             <button id="tab-payment-card" class="payment-tab-btn active" onclick="selectPaymentMethod('card')">
-              <svg viewBox="0 0 24 24" fill="none"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2.5"/><line x1="1" y1="10" x2="23" y2="10"/><circle cx="6" cy="15" r="1" fill="currentColor"/></svg>
               <span>Cartão de Crédito</span>
             </button>
             <button id="tab-payment-pix" class="payment-tab-btn" onclick="selectPaymentMethod('pix')">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m14.5 19.5-3.5-3.5-3.5 3.5a3.5 3.5 0 0 1-5-5l3.5-3.5-3.5-3.5a3.5 3.5 0 0 1 5-5l3.5 3.5 3.5-3.5a3.5 3.5 0 0 1 5 5l-3.5 3.5 3.5 3.5a3.5 3.5 0 0 1-5 5z"/></svg>
               <span>Pix Instantâneo</span>
             </button>
           </div>
@@ -764,18 +928,18 @@
           <!-- Card de Instalação PWA Nativa no Android -->
           <div class="profile-section-card" id="pwa-settings-card">
             <div class="profile-section-title">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2.5"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
               <span>Aplicativo Android (PWA)</span>
             </div>
             <p style="font-size:11.5px; color:var(--neutral-muted); line-height:16px; margin-bottom:12px;">
               Instale o BeautyPass na tela inicial do seu celular para acesso instantâneo em tela cheia imersiva e suporte offline.
             </p>
             <button id="settings-install-pwa-btn" class="profile-action-btn" style="border-color:var(--primary); color:white; background:var(--primary); font-weight:700;" onclick="triggerPwaInstall()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               <span>Instalar BeautyPass no Celular</span>
             </button>
             <div id="pwa-installed-badge" style="display:none; align-items:center; gap:8px; font-size:12px; color:var(--economy-green); font-weight:700; margin-top:10px;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
               <span>Aplicativo instalado com sucesso!</span>
             </div>
           </div>
@@ -783,7 +947,7 @@
           <!-- Card de Privacidade e LGPD -->
           <div class="profile-section-card">
             <div class="profile-section-title">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
               <span>Privacidade & Conformidade (LGPD)</span>
             </div>
             <div class="profile-info-row">
@@ -807,7 +971,7 @@
           <!-- Painel Visual de Validação de Hipóteses (H1 e H2) -->
           <div class="profile-section-card">
             <div class="profile-section-title">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
               <span>Painel de Validação das Hipóteses</span>
             </div>
             <p style="font-size:11px; color:var(--neutral-muted); line-height:16px; margin-bottom:12px;">
@@ -818,16 +982,16 @@
             </div>
             <div style="display:flex; gap:8px; margin-top:10px;">
               <button class="profile-action-btn" style="flex:1; margin-top:0; border-color:var(--primary); color:var(--primary);" onclick="openSessionFinishModal()">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                 <span>Avaliar Sessão (SUS)</span>
               </button>
               <button class="profile-action-btn" style="flex:1; margin-top:0; border-color:var(--amber-warm); color:#B45309;" onclick="simulateMerchantCancellation()" title="Injeta agendamento CANCELLED_BY_MERCHANT (Seção 8 e 12.10)">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                 <span>Simular Força Maior</span>
               </button>
             </div>
             <button class="profile-action-btn" style="margin-top:8px; border-color:var(--outline-variant); color:var(--neutral-dark);" onclick="resetValidationData()">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
               <span>Reset de Dados de Validação</span>
             </button>
           </div>
@@ -835,14 +999,14 @@
           <!-- Card de Ferramentas do Pesquisador / Métricas -->
           <div class="profile-section-card">
             <div class="profile-section-title">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
               <span>Exportação de Telemetria da Sessão</span>
             </div>
             <p style="font-size:11px; color:var(--neutral-muted); line-height:16px; margin-bottom:10px;">
               Exporta todos os eventos estruturados registrados no navegador (<code style="font-size:10px;">bp_analytics_events</code>) para análise aprofundada das hipóteses H1, H2 e H4.
             </p>
             <button class="profile-action-btn" onclick="exportAnalyticsData()">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               <span>Exportar Dados da Sessão (JSON)</span>
             </button>
           </div>
@@ -850,14 +1014,14 @@
           <!-- Card Destrutivo de Exclusão (Seção 13) -->
           <div class="profile-section-card">
             <div class="profile-section-title" style="color:var(--error);">
-              <svg viewBox="0 0 24 24" fill="none" stroke="var(--error)" stroke-width="2.2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--error)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
               <span>Direito ao Esquecimento</span>
             </div>
             <p style="font-size:11px; color:var(--neutral-muted); line-height:16px;">
               Exclui permanentemente sua conta, histórico de agendamentos e registros de navegação deste dispositivo, reiniciando o teste.
             </p>
             <button class="profile-danger-btn" onclick="openDeleteAccountModal()">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
               <span>Apagar Minha Conta e Dados (LGPD)</span>
             </button>
           </div>
@@ -905,8 +1069,8 @@
         <div class="demand-service-wrap">
           <!-- Top Nav -->
           <div class="demand-top-header">
-            <button class="back-circle-btn" onclick="navigateTo('home')">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            <button class="back-circle-btn" onclick="navigateTo('home')" aria-label="Voltar">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
             <div class="demand-header-badge">
               <span class="live-dot-pulse"></span>
@@ -924,14 +1088,12 @@
             <!-- 1. Cabelo & Escova -->
             <div class="demand-service-card active" data-category="hair" onclick="selectDemandService('hair', this)">
               <div class="demand-card-icon-box hair-box">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="6" cy="6" r="3"/>
                   <circle cx="6" cy="18" r="3"/>
                   <line x1="20" y1="4" x2="8.12" y2="15.88"/>
                   <line x1="14.47" y1="14.48" x2="20" y2="20"/>
                   <line x1="8.12" y1="8.12" x2="12" y2="12"/>
-                  <path d="M15 7c1.5-1 3.5-1 5 0"/>
-                  <path d="M14 10.5c1.8-.8 3.8-.8 5.5 0"/>
                 </svg>
               </div>
               <div class="demand-card-info">
@@ -943,19 +1105,17 @@
                 </div>
               </div>
               <div class="demand-check-circle">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
               </div>
             </div>
 
             <!-- 2. Unhas & Manicure -->
             <div class="demand-service-card" data-category="nails" onclick="selectDemandService('nails', this)">
               <div class="demand-card-icon-box nails-box">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M10 2h4v5h-4z"/>
-                  <path d="M7 10a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v-9z"/>
-                  <path d="M10 13h4"/>
-                  <path d="M10 16.5h2.5"/>
-                  <path d="M19 4v2m-1-1h2"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 3h6v4H9z"/>
+                  <path d="M7 9a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v9a3 3 0 0 1-3 3H10a3 3 0 0 1-3-3V9z"/>
+                  <line x1="12" y1="11" x2="12" y2="16"/>
                 </svg>
               </div>
               <div class="demand-card-info">
@@ -967,18 +1127,18 @@
                 </div>
               </div>
               <div class="demand-check-circle">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
               </div>
             </div>
 
             <!-- 3. Barba & Corte Masculino -->
             <div class="demand-service-card" data-category="barber" onclick="selectDemandService('barber', this)">
               <div class="demand-card-icon-box barber-box">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M3 6h11a1.5 1.5 0 0 1 1.5 1.5v1.5a1.5 1.5 0 0 1-1.5 1.5H3V6z"/>
-                  <line x1="3" y1="9" x2="13.5" y2="9"/>
-                  <circle cx="16" cy="9" r="1.5" fill="currentColor"/>
-                  <path d="M16 10.5c1.5 2.5 3 6 4 10a1.5 1.5 0 0 1-2 1.8c-2.5-1.5-5-4.5-6.5-7.5"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 19l4-4"/>
+                  <path d="M8 15l10-10a2.12 2.12 0 1 1 3 3L11 18"/>
+                  <path d="M8 15l-4 5a1.41 1.41 0 0 0 2 2l5-4"/>
+                  <circle cx="8" cy="15" r="1" fill="currentColor"/>
                 </svg>
               </div>
               <div class="demand-card-info">
@@ -990,18 +1150,17 @@
                 </div>
               </div>
               <div class="demand-check-circle">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
               </div>
             </div>
 
             <!-- 4. Massagem & Bem-Estar -->
             <div class="demand-service-card" data-category="massage" onclick="selectDemandService('massage', this)">
               <div class="demand-card-icon-box massage-box">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12 4c-1.8 3-3 6.5-3 9.5 0 2.5 1.3 4 3 4s3-1.5 3-4c0-3-1.2-6.5-3-9.5z"/>
-                  <path d="M9 13.5C6.5 11.5 4 12 3 13.5c-.5 1.8 1 4 4.5 4.5"/>
-                  <path d="M15 13.5c2.5-2 5-1.5 6 0 .5 1.8-1 4-4.5 4.5"/>
-                  <path d="M4 21c4-1 12-1 16 0"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <ellipse cx="12" cy="18" rx="8" ry="3.5"/>
+                  <ellipse cx="12" cy="12" rx="6" ry="3"/>
+                  <ellipse cx="12" cy="6.5" rx="3.5" ry="2"/>
                 </svg>
               </div>
               <div class="demand-card-info">
@@ -1013,18 +1172,17 @@
                 </div>
               </div>
               <div class="demand-check-circle">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
               </div>
             </div>
 
             <!-- 5. Estética Facial & Skincare -->
             <div class="demand-service-card" data-category="facial" onclick="selectDemandService('facial', this)">
               <div class="demand-card-icon-box facial-box">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M8 3c3 0 5.5 1.8 6 4.5l.8 3c.3 1 .1 2-.6 2.5l-.2.1c-.5.4-.7 1-.5 1.6l.3 1c.3.9-.2 1.8-1.1 2.1-1.2.4-2.7.7-4.7.7"/>
-                  <path d="M9 10.5c.8.5 1.7.5 2.5 0"/>
-                  <path d="M18 3v4m-2-2h4"/>
-                  <path d="M19 12v2m-1-1h2"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m12 3 2.2 5.3L19.5 10.5l-5.3 2.2L12 18l-2.2-5.3L4.5 10.5l5.3-2.2z"/>
+                  <path d="m19 16 1 2 2 1-2 1-1 2-1-2-2-1 2-1z"/>
+                  <path d="m5 4 .8 1.7 1.7.8-1.7.8L5 9l-.8-1.7L2.5 6.5l1.7-.8z"/>
                 </svg>
               </div>
               <div class="demand-card-info">
@@ -1036,7 +1194,7 @@
                 </div>
               </div>
               <div class="demand-check-circle">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
               </div>
             </div>
           </div>
@@ -1046,15 +1204,15 @@
             <span class="form-micro-label">Janela Desejada:</span>
             <div class="demand-window-row" id="demand-window-chips">
               <button type="button" class="window-chip active" data-window="now_2h" onclick="selectDemandWindow('now_2h', this)">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                 <span>Próximas 2h</span>
               </button>
               <button type="button" class="window-chip" data-window="today_afternoon" onclick="selectDemandWindow('today_afternoon', this)">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/></svg>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41m12.73-12.73l-1.41 1.41"/></svg>
                 <span>Hoje à Tarde</span>
               </button>
               <button type="button" class="window-chip" data-window="today_evening" onclick="selectDemandWindow('today_evening', this)">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
                 <span>Hoje à Noite</span>
               </button>
             </div>
@@ -1114,6 +1272,9 @@
               <!-- Injetado dinamicamente via app.js -->
             </div>
 
+            <!-- Painel de Rota e Passos de Caminhada Selecionada -->
+            <div id="uber-selected-walking-directions" class="uber-directions-box" style="display:none;"></div>
+
             <!-- Botão de Ação Imediata -->
             <div class="uber-sheet-footer">
               <button class="card-action-btn" id="btn-uber-confirm-checkout" onclick="confirmUberDemandBooking()">
@@ -1132,29 +1293,29 @@
          ========================================================= -->
     <nav class="floating-bottom-nav" id="app-bottom-nav">
       <button class="nav-item active" data-screen="home" onclick="navigateTo('home')">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9.5 9-7 9 7v10a1.5 1.5 0 0 1-1.5 1.5h-4.5a1 1 0 0 1-1-1v-4.5a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1V20a1 1 0 0 1-1 1H4.5A1.5 1.5 0 0 1 3 19.5z"/></svg>
         <span>Início</span>
       </button>
       <button class="nav-item" data-screen="map" onclick="navigateTo('map')">
-        <svg viewBox="0 0 24 24" fill="none"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
         <span>Mapa</span>
       </button>
 
-      <!-- BOTÃO CENTRAL ELEVADO ESTILO UBER (PEDIR AGORA) -->
+      <!-- BOTÃO CENTRAL ELEVADO DE MARCA (EMBLEMA SILHUETA FEMININA BEAUTYPASS) -->
       <button class="nav-center-elevated-btn" id="nav-btn-demand" onclick="openOnDemandFlow()" title="Pedir Procedimento com Tarifa Dinâmica">
         <div class="nav-center-inner">
           <div class="nav-center-pulse"></div>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 6a6 6 0 0 1 6 6"/><circle cx="12" cy="12" r="2"/></svg>
+          <img src="assets/logo_beautypass_emblem.png" class="nav-center-emblem-img" alt="BeautyPass">
         </div>
         <span class="nav-center-label">Pedir Agora</span>
       </button>
 
       <button class="nav-item" data-screen="appointments" onclick="navigateTo('appointments')">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2.5"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="m9 16 2 2 4-4"/></svg>
         <span>Reservas</span>
       </button>
       <button class="nav-item" data-screen="profile" onclick="navigateTo('profile')">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span>Ajustes</span>
       </button>
     </nav>

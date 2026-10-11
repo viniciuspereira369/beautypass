@@ -10,6 +10,7 @@ const PRECACHE_ASSETS = [
   './app.js',
   './manifest.webmanifest',
   './Logo BeautyPass.jfif',
+  './assets/logo_beautypass_emblem.png',
   './icons/icon-72.png',
   './icons/icon-96.png',
   './icons/icon-128.png',

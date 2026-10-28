@@ -11,21 +11,28 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bolt
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Spa
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Percent
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.beautypass.app.data.SalonRepository
 import com.beautypass.app.model.Salon
 import com.beautypass.app.theme.*
@@ -335,6 +342,14 @@ fun HomeScreen(
                 }
             }
 
+            // Seção 4B: Grade 4x2 Circular de Parceiros em Destaque (DESIGN_EXTRACT_SPEC.md S1)
+            item {
+                FeaturedPartnersGrid(
+                    salons = SalonRepository.salons,
+                    onSalonClick = onSalonClick
+                )
+            }
+
             // Seção 5: Barra de Status do Feed
             item {
                 Row(
@@ -396,6 +411,120 @@ fun HomeScreen(
                             onFavoriteClick = { SalonRepository.toggleFavorite(salon.id) },
                             onClick = { onSalonClick(salon.id) }
                         )
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Grade 4x2 Circular de Parceiros em Destaque (DESIGN_EXTRACT_SPEC.md S1)
+ * Renderiza 8 estabelecimentos emblemáticos com anéis gradientes Serene Mint,
+ * badges de verificação e notas em layout simétrico 4x2.
+ */
+@Composable
+fun FeaturedPartnersGrid(
+    salons: List<Salon>,
+    onSalonClick: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val featured = remember(salons) { salons.take(8) }
+    Column(modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Salões Parceiros em Destaque",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = OceanicCharcoal
+            )
+            Text(
+                text = "8 credenciados",
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Medium,
+                color = NeutralMuted
+            )
+        }
+
+        val rows = featured.chunked(4)
+        rows.forEach { rowItems ->
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                rowItems.forEach { salon ->
+                    Column(
+                        modifier = Modifier
+                            .width(80.dp)
+                            .clickable { onSalonClick(salon.id) }
+                            .padding(2.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Box(contentAlignment = Alignment.BottomEnd) {
+                            Box(
+                                modifier = Modifier
+                                    .size(54.dp)
+                                    .background(
+                                        brush = Brush.linearGradient(
+                                            listOf(SereneTeal, MintPrimary, MintLight)
+                                        ),
+                                        shape = CircleShape
+                                    )
+                                    .padding(2.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                AsyncImage(
+                                    model = salon.imageUrl,
+                                    contentDescription = salon.name,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .clip(CircleShape)
+                                        .border(1.dp, SurfaceWhite, CircleShape)
+                                )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .size(16.dp)
+                                    .background(SereneTeal, CircleShape)
+                                    .border(1.5.dp, SurfaceWhite, CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = "Verificado",
+                                    tint = SurfaceWhite,
+                                    modifier = Modifier.size(10.dp)
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = salon.name,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = OceanicCharcoal,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.Star,
+                                contentDescription = null,
+                                tint = StarAmber,
+                                modifier = Modifier.size(9.dp)
+                            )
+                            Spacer(modifier = Modifier.width(1.dp))
+                            Text(
+                                text = "${salon.rating} • ${salon.distanceKm} km",
+                                fontSize = 9.sp,
+                                color = NeutralMuted
+                            )
+                        }
                     }
                 }
             }

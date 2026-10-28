@@ -242,4 +242,47 @@ class PricingEngineTest {
         assertEquals(120.00, snapshot.priceFinal, 0.001)
         assertEquals(150.00, snapshot.priceBase, 0.001)
     }
+
+    // =========================================================================
+    // 5. TAXA DE DESLOCAMENTO A DOMICÍLIO (R$ 10 BASE ATÉ 2KM + R$ 5/KM)
+    // =========================================================================
+
+    @Test
+    fun testDisplacementFeeCalculation() {
+        // Até 2.0 km -> Base R$ 10.00 fixa
+        assertEquals(10.00, PricingEngine.calculateDisplacementFee(0.5), 0.001)
+        assertEquals(10.00, PricingEngine.calculateDisplacementFee(1.0), 0.001)
+        assertEquals(10.00, PricingEngine.calculateDisplacementFee(2.0), 0.001)
+
+        // Além de 2.0 km -> R$ 10.00 + (km - 2.0) * R$ 5.00
+        // 3.5 km -> 10 + 1.5 * 5 = 17.50
+        assertEquals(17.50, PricingEngine.calculateDisplacementFee(3.5), 0.001)
+
+        // 5.0 km -> 10 + 3.0 * 5 = 25.00
+        assertEquals(25.00, PricingEngine.calculateDisplacementFee(5.0), 0.001)
+
+        // 10.0 km -> 10 + 8.0 * 5 = 50.00
+        assertEquals(50.00, PricingEngine.calculateDisplacementFee(10.0), 0.001)
+    }
+
+    // =========================================================================
+    // 6. POLÍTICA DINÂMICA DE CANCELAMENTO (RETENÇÃO DE 30% SE < 24H)
+    // =========================================================================
+
+    @Test
+    fun testCancellationPolicyWithinAndBeyond24Hours() {
+        val price = 100.00
+
+        // Cancelamento dentro da janela crítica (< 24h ou horário imediato): Retém 30%
+        val policyCritical = PricingEngine.calculateCancellationPolicy(price, isSlotWithinNext3Hours = true)
+        assertEquals(30.00, policyCritical.fee, 0.001)
+        assertFalse(policyCritical.isFree)
+        assertTrue(policyCritical.reason.contains("30%"))
+
+        // Cancelamento com mais de 24h de antecedência: 100% gratuito
+        val policyFree = PricingEngine.calculateCancellationPolicy(price, isSlotWithinNext3Hours = false)
+        assertEquals(0.00, policyFree.fee, 0.001)
+        assertTrue(policyFree.isFree)
+        assertTrue(policyFree.reason.contains("gratuito"))
+    }
 }

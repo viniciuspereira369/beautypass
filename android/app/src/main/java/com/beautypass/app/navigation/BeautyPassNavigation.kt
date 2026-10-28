@@ -27,6 +27,7 @@ import com.beautypass.app.ui.screens.home.HomeScreen
 import com.beautypass.app.ui.screens.map.MapScreen
 import com.beautypass.app.ui.screens.onboarding.OnboardingScreen
 import com.beautypass.app.ui.screens.ondemand.OnDemandScreen
+import com.beautypass.app.ui.screens.partner.PartnerB2BScreen
 import com.beautypass.app.ui.screens.profile.ProfileScreen
 
 sealed class Screen(val route: String, val title: String, val icon: ImageVector? = null) {
@@ -41,14 +42,16 @@ sealed class Screen(val route: String, val title: String, val icon: ImageVector?
         fun createRoute(salonId: String) = "detail/$salonId"
     }
 
-    object Checkout : Screen("checkout/{salonId}/{serviceId}/{slotTime}", "Checkout") {
-        fun createRoute(salonId: String, serviceId: String, slotTime: String) =
-            "checkout/$salonId/$serviceId/$slotTime"
+    object Checkout : Screen("checkout/{salonId}/{serviceId}/{slotTime}?fulfillment={fulfillmentMode}", "Checkout") {
+        fun createRoute(salonId: String, serviceId: String, slotTime: String, fulfillmentMode: String = "salon") =
+            "checkout/$salonId/$serviceId/$slotTime?fulfillment=$fulfillmentMode"
     }
 
     object Confirm : Screen("confirm/{appointmentId}", "Confirmação") {
         fun createRoute(appointmentId: String) = "confirm/$appointmentId"
     }
+
+    object PartnerB2B : Screen("partner_b2b", "Salão Parceiro B2B")
 }
 
 /**
@@ -164,7 +167,7 @@ fun BeautyPassApp() {
                 OnDemandScreen(
                     onBackClick = { navController.popBackStack() },
                     onProceedToCheckout = { sId, servId, time ->
-                        navController.navigate(Screen.Checkout.createRoute(sId, servId, time))
+                        navController.navigate(Screen.Checkout.createRoute(sId, servId, time, "homecare"))
                     }
                 )
             }
@@ -190,7 +193,17 @@ fun BeautyPassApp() {
                         navController.navigate(Screen.Onboarding.route) {
                             popUpTo(0) { inclusive = true }
                         }
+                    },
+                    onOpenPartnerB2B = {
+                        navController.navigate(Screen.PartnerB2B.route)
                     }
+                )
+            }
+
+            // Tela B2B: Painel do Salão Parceiro & Validação H3
+            composable(Screen.PartnerB2B.route) {
+                PartnerB2BScreen(
+                    onBackClick = { navController.popBackStack() }
                 )
             }
 
@@ -203,8 +216,8 @@ fun BeautyPassApp() {
                 SalonDetailScreen(
                     salonId = salonId,
                     onBackClick = { navController.popBackStack() },
-                    onProceedToCheckout = { sId, servId, time ->
-                        navController.navigate(Screen.Checkout.createRoute(sId, servId, time))
+                    onProceedToCheckout = { sId, servId, time, fulfillmentMode ->
+                        navController.navigate(Screen.Checkout.createRoute(sId, servId, time, fulfillmentMode))
                     }
                 )
             }
@@ -215,16 +228,22 @@ fun BeautyPassApp() {
                 arguments = listOf(
                     navArgument("salonId") { type = NavType.StringType },
                     navArgument("serviceId") { type = NavType.StringType },
-                    navArgument("slotTime") { type = NavType.StringType }
+                    navArgument("slotTime") { type = NavType.StringType },
+                    navArgument("fulfillmentMode") {
+                        type = NavType.StringType
+                        defaultValue = "salon"
+                    }
                 )
             ) { backStackEntry ->
                 val salonId = backStackEntry.arguments?.getString("salonId") ?: "s1"
                 val serviceId = backStackEntry.arguments?.getString("serviceId") ?: "srv_s1_1"
                 val slotTime = backStackEntry.arguments?.getString("slotTime") ?: "14:00"
+                val fulfillmentMode = backStackEntry.arguments?.getString("fulfillmentMode") ?: "salon"
                 CheckoutScreen(
                     salonId = salonId,
                     serviceId = serviceId,
                     slotTime = slotTime,
+                    fulfillmentMode = fulfillmentMode,
                     onBackClick = { navController.popBackStack() },
                     onBookingConfirmed = { appointmentId ->
                         navController.navigate(Screen.Confirm.createRoute(appointmentId)) {

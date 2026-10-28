@@ -440,6 +440,17 @@
         <!-- Barra de Feedback Dinâmica do Filtro Ativo -->
         <div id="feed-status-bar" class="feed-status-bar" style="display: none;"></div>
 
+        <!-- Grade 4x2 Circular de Salões Parceiros em Destaque (DESIGN_EXTRACT_SPEC.md S1) -->
+        <div class="partner-circles-section">
+          <div class="section-header" style="margin-bottom: 8px;">
+            <h2 class="section-title">Salões Parceiros em Destaque</h2>
+            <a class="section-link" onclick="navigateTo('map')">Ver no mapa</a>
+          </div>
+          <div id="partner-circles-grid" class="partner-circles-grid" role="region" aria-label="Salões parceiros em destaque">
+            <!-- 8 salões em grade 4x2 injetados dinamicamente via app.js -->
+          </div>
+        </div>
+
         <!-- Feed Social ("Amigas estão agendando" — Social Food Delivery) -->
         <div class="section-header" style="margin-bottom: 6px;">
           <h2 class="section-title">Amigas estão agendando</h2>
@@ -525,7 +536,10 @@
               <p id="detail-salon-address" class="hero-address">R. Fradique Coutinho, 980 - Pinheiros, SP</p>
               
               <div style="padding-top:8px; border-top:1px solid var(--outline-variant);">
-                <div style="font-size:11px; font-weight:700; color:var(--primary); text-transform:uppercase;">Serviço Selecionado</div>
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                  <div id="detail-service-header-label" style="font-size:11px; font-weight:700; color:var(--primary); text-transform:uppercase;">Serviço Selecionado</div>
+                  <span id="detail-service-package-badge" class="multi-service-pill" style="display:none;">1 serviço</span>
+                </div>
                 <div id="detail-service-title" style="font-size:14px; font-weight:700; margin-top:2px;">Escova Modeladora & Nutrição</div>
                 <p id="detail-service-desc" style="font-size:12px; color:var(--neutral-muted); margin-top:3px;">Lavagem e escova modeladora.</p>
               </div>
@@ -540,6 +554,34 @@
             </div>
             <div id="detail-photo-gallery" class="detail-thumbnails-strip">
               <!-- Injetado dinamicamente via app.js -->
+            </div>
+          </div>
+
+          <!-- Dual Fulfillment Switch ("No Salão" vs "A Domicílio" — DESIGN_EXTRACT_SPEC.md S2) -->
+          <div class="fulfillment-switch-container">
+            <div class="fulfillment-switch-header">
+              <span class="fulfillment-switch-title">Onde deseja ser atendido(a)?</span>
+              <span id="fulfillment-badge-current" class="fulfillment-badge-pill">No Salão</span>
+            </div>
+            <div class="fulfillment-segmented-toggle" role="tablist" aria-label="Modalidade de atendimento">
+              <button type="button" id="btn-fulfillment-salon" class="fulfillment-toggle-btn active" role="tab" aria-selected="true" onclick="setFulfillmentMode('salon')">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                  <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                <span>No Salão (Presencial)</span>
+              </button>
+              <button type="button" id="btn-fulfillment-homecare" class="fulfillment-toggle-btn" role="tab" aria-selected="false" onclick="setFulfillmentMode('homecare')">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                </svg>
+                <span>A Domicílio (Home Care)</span>
+              </button>
+            </div>
+            <div id="fulfillment-notice-box" class="fulfillment-notice-box" style="display:none;" role="status">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              <span id="fulfillment-notice-text">Profissional leva produtos e materiais esterilizados ao seu endereço. Deslocamento calculado no checkout.</span>
             </div>
           </div>
 
@@ -675,6 +717,19 @@
             <span>Horário reservado por <strong id="checkout-timer-countdown">10:00</strong> min</span>
           </div>
 
+          <!-- Endereço para Atendimento a Domicílio (DESIGN_EXTRACT_SPEC.md S2 — se modalidade = homecare) -->
+          <div id="checkout-homecare-section" class="checkout-card" style="display:none;">
+            <div class="checkout-card-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+              <span>Endereço de Atendimento (A Domicílio)</span>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Endereço completo da cliente (com número e complemento)</label>
+              <input type="text" id="checkout-homecare-address" class="form-input" placeholder="Rua Oscar Freire, 1050, Apto 42 - Jardins, São Paulo" value="Rua Oscar Freire, 1050, Apto 42 - Jardins, São Paulo">
+              <span style="font-size:10.5px; color:var(--neutral-muted); margin-top:4px; display:block;">O profissional credenciado levará equipamentos esterilizados até o endereço indicado.</span>
+            </div>
+          </div>
+
           <!-- Resumo do Agendamento -->
           <div class="checkout-card">
             <div class="checkout-card-title">
@@ -684,6 +739,10 @@
             <div class="summary-row">
               <span>Estabelecimento</span>
               <strong id="checkout-salon-name" style="color:var(--neutral-text);">Ateliê Belle Époque</strong>
+            </div>
+            <div class="summary-row">
+              <span>Modalidade</span>
+              <span id="checkout-fulfillment-mode-label" style="font-weight:700; color:var(--neutral-text);">No Salão (Presencial)</span>
             </div>
             <div class="summary-row">
               <span>Procedimento</span>
@@ -705,9 +764,24 @@
               <span>Desconto de Horário</span>
               <span id="checkout-discount-val">- R$ 36,00 (30%)</span>
             </div>
+            <div id="checkout-displacement-row" class="summary-row" style="display:none; color:var(--primary); font-weight:700;">
+              <span id="checkout-displacement-label">Taxa de Deslocamento</span>
+              <span id="checkout-displacement-val">+ R$ 10,00</span>
+            </div>
             <div class="summary-row total-row">
               <span>Total a pagar</span>
               <span id="checkout-final-total" style="color:var(--primary);">R$ 84,00</span>
+            </div>
+          </div>
+
+          <!-- Observações para o Profissional / Add note (DESIGN_EXTRACT_SPEC.md S2) -->
+          <div class="checkout-card">
+            <div class="checkout-card-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              <span>Observações para o Profissional (Add note)</span>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <textarea id="checkout-customer-notes" class="form-input" rows="2" style="resize:vertical; min-height:58px; font-size:12px; line-height:1.45;" placeholder="Ex.: preferências de produtos, tom desejado, volume do cabelo, instruções de portaria/interfone..."></textarea>
             </div>
           </div>
 
@@ -851,8 +925,11 @@
 
           <!-- Card de Itinerário (Route Stepper Card) -->
           <div class="itinerary-card">
-            <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
-              <span style="font-size:11px; font-weight:700; color:var(--neutral-muted);">VOUCHER DIGITAL</span>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <div style="display:flex; align-items:center; gap:6px;">
+                <span style="font-size:11px; font-weight:700; color:var(--neutral-muted);">VOUCHER DIGITAL</span>
+                <span id="confirm-fulfillment-badge" class="badge-tag" style="background:var(--surface-tint); color:var(--primary); font-size:10px; font-weight:800; border:1px solid var(--outline);">No Salão</span>
+              </div>
               <span id="confirm-voucher-code" style="font-size:12px; font-weight:800; color:var(--primary);">BP-892145</span>
             </div>
 
@@ -893,6 +970,15 @@
               <div id="confirm-total-paid" style="font-size:16px; font-weight:800; color:var(--primary);">
                 R$ 84,00
               </div>
+            </div>
+
+            <!-- Box de Observações do Cliente / Add note no Voucher -->
+            <div id="confirm-notes-box" style="display:none; margin-top:12px; padding:10px 12px; background:var(--surface-tint); border-radius:10px; font-size:11.5px; color:var(--neutral-text); border:1px solid var(--outline);">
+              <div style="display:flex; align-items:center; gap:5px; font-weight:800; color:var(--primary); margin-bottom:2px;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                <span>Observações para o Profissional:</span>
+              </div>
+              <span id="confirm-notes-text" style="line-height:1.4;"></span>
             </div>
           </div>
 
@@ -990,6 +1076,10 @@
                 <span>Simular Força Maior</span>
               </button>
             </div>
+            <button id="btn-open-partner-b2b" class="card-action-btn" style="margin-top:8px; height:42px; font-size:12px;" onclick="openPartnerB2BPanel()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              <span>Abrir Painel do Salão Parceiro (B2B — H3)</span>
+            </button>
             <button class="profile-action-btn" style="margin-top:8px; border-color:var(--outline-variant); color:var(--neutral-dark);" onclick="resetValidationData()">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
               <span>Reset de Dados de Validação</span>
@@ -1286,6 +1376,231 @@
         </div>
       </section>
 
+      <!-- =========================================================
+           SCREEN 10: PAINEL DO SALÃO PARCEIRO B2B (PROTOCOLO H3 — SEÇÃO 5.4)
+           3 Telas Integradas: 1. Agenda & Ociosidade | 2. Regras de Desconto | 3. Recebidos & Carta LOI
+           ========================================================= -->
+      <section id="screen-partner-b2b" class="screen">
+        <div class="b2b-screen-wrap">
+          <!-- Cabeçalho B2B -->
+          <div class="detail-top-nav">
+            <button class="back-circle-btn" onclick="navigateTo('profile')" aria-label="Voltar para Ajustes">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <div style="text-align:center;">
+              <div style="font-size:13.5px; font-weight:800; color:var(--neutral-text); letter-spacing:-0.015em;">Painel do Salão Parceiro</div>
+              <div style="font-size:10px; color:var(--primary); font-weight:700;">Protocolo B2B • Hipótese H3 (Seção 5.4)</div>
+            </div>
+            <button class="back-circle-btn" onclick="openB2BSalonInClientView()" title="Ver salão na visão do cliente">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+
+          <!-- Seletor de Estabelecimento Parceiro -->
+          <div class="b2b-salon-picker-bar">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+              <label for="b2b-salon-selector" style="font-size:11px; font-weight:700; color:var(--neutral-muted);">Estabelecimento em Gestão:</label>
+              <span id="b2b-loi-counter-badge" class="badge-tag" style="background:var(--surface-tint); color:var(--primary); border:1px solid rgba(13,148,136,0.25);">0/5 LOIs</span>
+            </div>
+            <select id="b2b-salon-selector" class="form-input" style="margin-top:6px; height:40px; font-weight:700; font-size:12.5px;" onchange="onChangeB2BSalon(this.value)">
+              <!-- Preenchido dinamicamente via app.js -->
+            </select>
+          </div>
+
+          <!-- Navegação entre as 3 Telas da Seção 5.4 -->
+          <div class="b2b-tabs-bar" role="tablist">
+            <button type="button" id="b2b-tab-btn-agenda" class="b2b-tab-btn active" onclick="switchB2BTab('agenda')" role="tab" aria-selected="true">
+              <span>1. Agenda & Ociosidade</span>
+            </button>
+            <button type="button" id="b2b-tab-btn-rules" class="b2b-tab-btn" onclick="switchB2BTab('rules')" role="tab" aria-selected="false">
+              <span>2. Regras (15–35%)</span>
+            </button>
+            <button type="button" id="b2b-tab-btn-loi" class="b2b-tab-btn" onclick="switchB2BTab('loi')" role="tab" aria-selected="false">
+              <span>3. Recebidos & H3</span>
+            </button>
+          </div>
+
+          <!-- =====================================================
+               TELA B2B 1: AGENDA COM SLOTS OCIOSOS DESTACADOS
+               ===================================================== -->
+          <div id="b2b-pane-agenda" class="b2b-tab-pane active">
+            <div class="b2b-kpi-strip" id="b2b-agenda-kpis">
+              <!-- Renderizado via renderPartnerB2BPanel() -->
+            </div>
+
+            <div class="profile-section-card" style="margin-top:12px;">
+              <div class="profile-section-title" style="justify-content:space-between;">
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <span>Mapa de Cadeiras Hoje (Slots Ociosos)</span>
+                </div>
+                <span style="font-size:10px; font-weight:700; color:var(--primary);">Toque p/ ativar desconto</span>
+              </div>
+              <p style="font-size:11px; color:var(--neutral-muted); margin-bottom:10px;">
+                Janelas com baixa ocupação histórica são destacadas automaticamente. Ative um desconto de 15% a 35% para atrair clientes próximos e cobrir seu custo fixo.
+              </p>
+              <div id="b2b-agenda-slots-grid" class="b2b-agenda-grid">
+                <!-- Preenchido via app.js -->
+              </div>
+            </div>
+          </div>
+
+          <!-- =====================================================
+               TELA B2B 2: CONFIGURAÇÃO SIMPLES DE REGRA DE DESCONTO
+               ===================================================== -->
+          <div id="b2b-pane-rules" class="b2b-tab-pane" style="display:none;">
+            <div class="profile-section-card">
+              <div class="profile-section-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1.5" fill="currentColor"/></svg>
+                <span>Nova Regra de Janela Ociosa (Tempo Real)</span>
+              </div>
+
+              <div class="form-group" style="margin-top:8px;">
+                <label class="form-label" for="b2b-rule-time">Horário da Janela Ociosa</label>
+                <select id="b2b-rule-time" class="form-input" style="height:40px; font-weight:700;" onchange="updateB2BRuleSimulator()">
+                  <option value="09:30">09:30 — Manhã Inicial</option>
+                  <option value="10:00">10:00 — Manhã</option>
+                  <option value="10:30">10:30 — Manhã</option>
+                  <option value="11:00">11:00 — Pré-Almoço</option>
+                  <option value="13:00">13:00 — Início da Tarde</option>
+                  <option value="13:30">13:30 — Vale da Tarde</option>
+                  <option value="14:00" selected>14:00 — Tarde Ociosa</option>
+                  <option value="14:30">14:30 — Tarde Ociosa</option>
+                  <option value="15:00">15:00 — Meio da Tarde</option>
+                  <option value="15:30">15:30 — Meio da Tarde</option>
+                  <option value="16:00">16:00 — Fim de Tarde</option>
+                  <option value="16:30">16:30 — Última Hora</option>
+                  <option value="17:30">17:30 — Última Hora</option>
+                </select>
+              </div>
+
+              <div class="form-group" style="margin-top:10px;">
+                <label class="form-label">Desconto Oferecido na Janela (15% a 35%)</label>
+                <div class="b2b-discount-pills-row" id="b2b-discount-pills">
+                  <button type="button" class="b2b-disc-pill" data-disc="15" onclick="selectB2BDiscountPct(15)">-15%</button>
+                  <button type="button" class="b2b-disc-pill" data-disc="20" onclick="selectB2BDiscountPct(20)">-20%</button>
+                  <button type="button" class="b2b-disc-pill" data-disc="25" onclick="selectB2BDiscountPct(25)">-25%</button>
+                  <button type="button" class="b2b-disc-pill active" data-disc="30" onclick="selectB2BDiscountPct(30)">-30%</button>
+                  <button type="button" class="b2b-disc-pill" data-disc="35" onclick="selectB2BDiscountPct(35)">-35%</button>
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-top:10px;">
+                <label class="form-label" for="b2b-rule-type">Modalidade do Selo para o Cliente</label>
+                <select id="b2b-rule-type" class="form-input" style="height:38px;" onchange="updateB2BRuleSimulator()">
+                  <option value="economy" selected>Horário Econômico (qualquer janela futura)</option>
+                  <option value="urgent">Última Hora (desconto urgente para hoje &le; 3h)</option>
+                </select>
+              </div>
+
+              <!-- Simulador Financeiro Líquido (Repasse ao Salão) -->
+              <div id="b2b-payout-simulator-box" class="b2b-simulator-card">
+                <!-- Preenchido via updateB2BRuleSimulator() -->
+              </div>
+
+              <button type="button" id="btn-save-b2b-rule" class="card-action-btn" style="margin-top:12px;" onclick="saveB2BDiscountRule()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Publicar Regra na Agenda do Salão</span>
+              </button>
+            </div>
+
+            <div class="profile-section-card" style="margin-top:12px;">
+              <div class="profile-section-title" style="justify-content:space-between;">
+                <span>Regras Ativas neste Estabelecimento</span>
+                <button type="button" class="section-link" style="background:none; border:none; font-size:11px;" onclick="openB2BSalonInClientView()">Testar como Cliente &rarr;</button>
+              </div>
+              <div id="b2b-active-rules-list" class="b2b-rules-list">
+                <!-- Preenchido via renderPartnerB2BPanel() -->
+              </div>
+            </div>
+          </div>
+
+          <!-- =====================================================
+               TELA B2B 3: RESUMO DE AGENDAMENTOS RECEBIDOS, CHECK-IN & CARTA H3
+               ===================================================== -->
+          <div id="b2b-pane-loi" class="b2b-tab-pane" style="display:none;">
+            <!-- Bloco 1: Validador de Voucher QR / Check-in em Tempo Real -->
+            <div class="profile-section-card">
+              <div class="profile-section-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3z"/><path d="M20 14v6h-3"/></svg>
+                <span>Check-in de Voucher Digital (Tempo Real)</span>
+              </div>
+              <p style="font-size:11px; color:var(--neutral-muted); margin-bottom:8px;">
+                Valide o código do voucher apresentado pelo cliente para liberar o repasse e mudar o status para <strong>COMPLETED</strong>.
+              </p>
+              <div style="display:flex; gap:8px;">
+                <input type="text" id="b2b-voucher-input" class="form-input" placeholder="Ex.: BP-108420" style="flex:1; height:40px; font-weight:800; text-transform:uppercase;">
+                <button type="button" id="btn-validate-b2b-voucher" class="card-action-btn" style="width:auto; height:40px; padding:0 14px;" onclick="validateB2BVoucherCheckin()">
+                  Validar Check-in
+                </button>
+              </div>
+
+              <div style="font-size:11px; font-weight:700; color:var(--neutral-muted); margin:12px 0 6px;">Reservas Recebidas pelo Estabelecimento:</div>
+              <div id="b2b-received-bookings-list" class="b2b-bookings-list">
+                <!-- Preenchido via renderPartnerB2BPanel() -->
+              </div>
+            </div>
+
+            <!-- Bloco 2: Entrevista & Carta de Intenção Não-Vinculante (Protocolo H3 — Seção 5.4) -->
+            <div class="profile-section-card" style="margin-top:12px;">
+              <div class="profile-section-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                <span>Carta de Intenção Não-Vinculante (Hipótese H3)</span>
+              </div>
+              <p style="font-size:11px; color:var(--neutral-muted); margin-bottom:10px;">
+                Critério GO (Seção 2 e 5.4): <strong>&ge; 3 de 5 salões entrevistados</strong> assinam carta de intenção aceitando oferecer 15–35% de desconto em horários ociosos.
+              </p>
+
+              <div class="form-group">
+                <label class="form-label" for="h3-owner-name">Nome do Proprietário(a) / Gestor(a)</label>
+                <input type="text" id="h3-owner-name" class="form-input" placeholder="Ex.: Juliana Paes" style="height:38px;">
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;">
+                <div class="form-group">
+                  <label class="form-label" for="h3-max-discount">Desconto Aceito (Ocioso)</label>
+                  <select id="h3-max-discount" class="form-input" style="height:38px; font-weight:700;">
+                    <option value="15">Até 15% OFF</option>
+                    <option value="20">Até 20% OFF</option>
+                    <option value="25">Até 25% OFF</option>
+                    <option value="30" selected>Até 30% OFF</option>
+                    <option value="35">Até 35% OFF</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="h3-acceptable-commission">Comissão Aceitável</label>
+                  <select id="h3-acceptable-commission" class="form-input" style="height:38px; font-weight:700;">
+                    <option value="10">10% por reserva</option>
+                    <option value="12" selected>12% por reserva</option>
+                    <option value="15">15% por reserva</option>
+                    <option value="18">18% por reserva</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-top:8px;">
+                <label class="form-label" for="h3-objections">Objeções Operacionais / Condições</label>
+                <input type="text" id="h3-objections" class="form-input" placeholder="Ex.: Exige retenção de 30% em no-show e repasse D+1" style="height:38px;">
+              </div>
+
+              <label class="consent-checkbox-label" style="margin-top:10px; background:var(--surface-tint); padding:8px 10px; border-radius:8px; border:1px solid rgba(13,148,136,0.2);">
+                <input type="checkbox" id="h3-loi-signed-check" checked>
+                <span style="font-size:11px; font-weight:600; color:var(--neutral-dark);">Assino a Carta de Intenção Não-Vinculante para participar do piloto BeautyPass em janelas ociosas.</span>
+              </label>
+
+              <button type="button" id="btn-submit-h3-loi" class="card-action-btn" style="margin-top:10px;" onclick="submitH3LetterOfIntent()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                <span>Registrar Carta de Intenção (H3)</span>
+              </button>
+
+              <div id="h3-signed-lois-list" style="margin-top:12px;">
+                <!-- Lista de LOIs registradas -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </div><!-- End app-viewport -->
 
     <!-- =========================================================
@@ -1349,9 +1664,11 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
-        <p class="modal-body-text" style="font-size:12px;">
+        <p id="cancel-policy-text" class="modal-body-text" style="font-size:12px; margin-bottom:8px;">
           "Cancele gratuitamente até 24h antes do horário. Após isso, será retida uma taxa de 30% do valor (simulada neste teste)."
         </p>
+        <!-- Resumo Dinâmico da Política (<24h 30% vs >24h Grátis — Seção 7.5) -->
+        <div id="cancel-fee-breakdown-box" class="cancel-fee-box" style="margin-bottom:12px;"></div>
         <div style="font-size:12px; font-weight:700; margin-bottom:8px;">Qual o motivo do cancelamento?</div>
         
         <button class="reason-option-btn selected" onclick="selectCancelReason(this, 'Mudei de planos')">Mudei de planos</button>

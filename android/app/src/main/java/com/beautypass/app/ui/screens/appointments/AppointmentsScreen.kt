@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.beautypass.app.data.BookingEngine
+import com.beautypass.app.data.PricingEngine
 import com.beautypass.app.data.SalonRepository
 import com.beautypass.app.model.Appointment
 import com.beautypass.app.model.AppointmentStatus
@@ -235,16 +236,49 @@ fun AppointmentsScreen(
                                         AppointmentStatus.EXPIRED -> "Expirado"
                                     }
 
+                                    Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                        Box(
+                                            modifier = Modifier
+                                                .background(statusColor.copy(alpha = 0.12f), RoundedCornerShape(6.dp))
+                                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                                        ) {
+                                            Text(
+                                                text = statusLabel,
+                                                fontSize = 10.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                color = statusColor
+                                            )
+                                        }
+
+                                        val isHomeCare = appt.fulfillmentMode == "homecare"
+                                        Box(
+                                            modifier = Modifier
+                                                .background(if (isHomeCare) CoralPromoBg else MintSurface, RoundedCornerShape(6.dp))
+                                                .padding(horizontal = 6.dp, vertical = 2.dp)
+                                        ) {
+                                            Text(
+                                                text = if (isHomeCare) "A Domicílio" else "No Salão",
+                                                fontSize = 9.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                color = if (isHomeCare) CoralPromoText else SereneTealDark
+                                            )
+                                        }
+                                    }
+                                }
+
+                                if (!appt.customerNotes.isNullOrBlank()) {
+                                    Spacer(modifier = Modifier.height(8.dp))
                                     Box(
                                         modifier = Modifier
-                                            .background(statusColor.copy(alpha = 0.12f), RoundedCornerShape(6.dp))
-                                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                                            .fillMaxWidth()
+                                            .background(MintSurface, RoundedCornerShape(8.dp))
+                                            .padding(horizontal = 10.dp, vertical = 6.dp)
                                     ) {
                                         Text(
-                                            text = statusLabel,
-                                            fontSize = 10.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = statusColor
+                                            text = "Obs: ${appt.customerNotes}",
+                                            fontSize = 11.sp,
+                                            color = OceanicCharcoal,
+                                            maxLines = 2
                                         )
                                     }
                                 }
@@ -328,10 +362,11 @@ fun AppointmentsScreen(
         }
     }
 
-    // Modal de Cancelamento com Retenção Simulada de 30%
+    // Modal de Cancelamento com Política Dinâmica e Retenção Simulada (30% se < 24h)
     if (appointmentToCancel != null) {
         val appt = appointmentToCancel!!
-        val retentionFee = BookingEngine.calculateCancellationRetentionFee(appt.finalPrice, isUnder24Hours = true)
+        val cancelPolicy = PricingEngine.calculateCancellationPolicy(appt.finalPrice, isSlotWithinNext3Hours = true)
+        val retentionFee = cancelPolicy.fee
         val reasons = listOf(
             "Mudei de planos",
             "Encontrei opção melhor",

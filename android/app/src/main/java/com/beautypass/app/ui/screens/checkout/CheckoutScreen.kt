@@ -18,6 +18,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.QrCode
@@ -59,6 +61,7 @@ fun CheckoutScreen(
     salonId: String,
     serviceId: String,
     slotTime: String,
+    fulfillmentMode: String = "salon",
     onBackClick: () -> Unit,
     onBookingConfirmed: (appointmentId: String) -> Unit,
     modifier: Modifier = Modifier
@@ -74,6 +77,22 @@ fun CheckoutScreen(
     val frozenSnapshot = remember(slotTime, service) {
         val calculated = SalonRepository.calculatePricing(salon, slotTime, service)
         PricingEngine.freezeSnapshot(calculated, salon.id, service.id)
+    }
+
+    var customerNotes by remember { mutableStateOf("") }
+    var clientAddress by remember { mutableStateOf("Rua Oscar Freire, 1000 - Jardins, São Paulo") }
+    var distanceKm by remember { mutableStateOf(3.5) }
+
+    val displacementFee = remember(fulfillmentMode, distanceKm) {
+        if (fulfillmentMode == "homecare") {
+            PricingEngine.calculateDisplacementFee(distanceKm)
+        } else {
+            0.0
+        }
+    }
+
+    val totalFinalPrice = remember(frozenSnapshot.priceFinal, displacementFee) {
+        frozenSnapshot.priceFinal + displacementFee
     }
 
     var paymentMethod by remember { mutableStateOf("card") } // "card" ou "pix"
@@ -194,12 +213,16 @@ fun CheckoutScreen(
                                     staff = salon.staff.firstOrNull(),
                                     dateDisplay = "Hoje",
                                     timeSlot = slotTime,
-                                    finalPrice = frozenSnapshot.priceFinal,
+                                    finalPrice = totalFinalPrice,
                                     status = AppointmentStatus.CONFIRMED,
                                     bookedAtIso = nowIso,
                                     voucherQrCode = generatedId,
                                     walkingTimeMin = salon.walkTimeMinutes,
-                                    pricingSnapshot = frozenSnapshot
+                                    pricingSnapshot = frozenSnapshot,
+                                    fulfillmentMode = fulfillmentMode,
+                                    customerNotes = customerNotes.trim().ifEmpty { null },
+                                    clientAddress = if (fulfillmentMode == "homecare") clientAddress.trim().ifEmpty { null } else null,
+                                    displacementFee = if (fulfillmentMode == "homecare") displacementFee else null
                                 )
 
                                 SalonRepository.addAppointment(appointment)
@@ -225,7 +248,7 @@ fun CheckoutScreen(
                             Icon(Icons.Default.Lock, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Confirmar Reserva • R$ ${String.format("%.2f", frozenSnapshot.priceFinal)}",
+                                text = "Confirmar Reserva • R$ ${String.format("%.2f", totalFinalPrice)}",
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -313,17 +336,40 @@ fun CheckoutScreen(
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    Text(
-                        text = salon.name,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = OceanicCharcoal
-                    )
-                    Text(
-                        text = "${salon.address} • ${salon.neighborhood}",
-                        fontSize = 11.sp,
-                        color = NeutralMuted
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = salon.name,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = OceanicCharcoal
+                            )
+                            Text(
+                                text = "${salon.address} • ${salon.neighborhood}",
+                                fontSize = 11.sp,
+                                color = NeutralMuted
+                            )
+                        }
+
+                        // Badge da Modalidade
+                        Box(
+                            modifier = Modifier
+                                .background(if (fulfillmentMode == "homecare") CoralPromoBg else MintSurface, RoundedCornerShape(8.dp))
+                                .border(1.dp, if (fulfillmentMode == "homecare") CoralPromo else SereneTeal, RoundedCornerShape(8.dp))
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = if (fulfillmentMode == "homecare") "A Domicílio" else "No Salão",
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (fulfillmentMode == "homecare") CoralPromoText else SereneTealDark
+                            )
+                        }
+                    }
 
                     Divider(
                         color = OutlineVariant,
@@ -367,6 +413,48 @@ fun CheckoutScreen(
                         }
                     }
 
+                    if (fulfillmentMode == "homecare") {
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "Taxa de Deslocamento (${String.format(Locale.US, "%.1f", distanceKm)} km)",
+                                fontSize = 12.sp,
+                                color = NeutralMuted
+                            )
+                            Text(
+                                text = "+ R$ ${String.format("%.2f", displacementFee)}",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = OceanicCharcoal
+                            )
+                        }
+                        Divider(
+                            color = OutlineVariant,
+                            thickness = 0.8.dp,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "Total Final a Pagar",
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = OceanicCharcoal
+                            )
+                            Text(
+                                text = "R$ ${String.format("%.2f", totalFinalPrice)}",
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = SereneTeal
+                            )
+                        }
+                    }
+
                     if (frozenSnapshot.discountPct > 0) {
                         Spacer(modifier = Modifier.height(8.dp))
                         Box(
@@ -382,6 +470,90 @@ fun CheckoutScreen(
                             )
                         }
                     }
+                }
+            }
+
+            // Card Condicional: Endereço para Atendimento A Domicílio (Home Care)
+            if (fulfillmentMode == "homecare") {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = SurfaceWhite),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, OutlineVariant)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.Home, contentDescription = null, tint = SereneTeal, modifier = Modifier.size(18.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Endereço para Atendimento A Domicílio",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = OceanicCharcoal
+                            )
+                        }
+
+                        OutlinedTextField(
+                            value = clientAddress,
+                            onValueChange = { clientAddress = it },
+                            label = { Text("Endereço completo (Rua, Número, Bairro, CEP)") },
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = SereneTeal,
+                                unfocusedBorderColor = OutlineVariant
+                            )
+                        )
+
+                        Text(
+                            text = "Taxa de deslocamento calculada: R$ 10,00 base (até 2 km) + R$ 5,00 por km adicional.",
+                            fontSize = 11.sp,
+                            color = NeutralMuted
+                        )
+                    }
+                }
+            }
+
+            // Card: Observações para o Profissional (Add note)
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = SurfaceWhite),
+                border = androidx.compose.foundation.BorderStroke(1.dp, OutlineVariant)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "Observações para o Profissional",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = OceanicCharcoal
+                    )
+
+                    OutlinedTextField(
+                        value = customerNotes,
+                        onValueChange = { customerNotes = it },
+                        placeholder = { Text("Ex: Prefiro atendimento silencioso, unhas frágeis, produtos hipoalergênicos...") },
+                        modifier = Modifier.fillMaxWidth(),
+                        maxLines = 3,
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = SereneTeal,
+                            unfocusedBorderColor = OutlineVariant
+                        )
+                    )
+
+                    Text(
+                        text = "Suas notas serão enviadas ao profissional e constarão no voucher digital e no painel do salão.",
+                        fontSize = 11.sp,
+                        color = NeutralMuted
+                    )
                 }
             }
 
@@ -500,9 +672,9 @@ fun CheckoutScreen(
                                 supportingText = {
                                     if (rawCardNumber.isNotEmpty()) {
                                         if (isCardValid) {
-                                            Text("✓ Cartão válido (Algoritmo de Luhn OK)", color = SuccessGreen, fontSize = 11.sp)
+                                            Text("Cartão válido (Algoritmo de Luhn OK)", color = SuccessGreen, fontSize = 11.sp)
                                         } else {
-                                            Text("✗ Cartão inválido pelo Algoritmo de Luhn", color = ErrorRed, fontSize = 11.sp)
+                                            Text("Número de cartão inválido (Luhn)", color = ErrorRed, fontSize = 11.sp)
                                         }
                                     }
                                 },

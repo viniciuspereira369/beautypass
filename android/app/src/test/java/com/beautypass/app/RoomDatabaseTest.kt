@@ -8,6 +8,8 @@ import com.beautypass.app.data.local.entity.SusEvaluationEntity
 import com.beautypass.app.data.local.entity.UserProfileEntity
 import com.beautypass.app.model.Appointment
 import com.beautypass.app.model.AppointmentStatus
+import com.beautypass.app.model.B2BDiscountRule
+import com.beautypass.app.model.H3LoiRecord
 import com.beautypass.app.model.SUSEvaluation
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -293,5 +295,94 @@ class RoomDatabaseTest {
         assertTrue("Agendamentos devem estar vazios após LGPD Hard Delete", SalonRepository.appointments.value.isEmpty())
         assertNull("Perfil deve ser nulo após LGPD Hard Delete", SalonRepository.userProfile.value)
         assertNull("Avaliação SUS deve ser nula após LGPD Hard Delete", SalonRepository.latestSusEvaluation.value)
+    }
+
+    // =========================================================================
+    // 5. TESTES DE MAPEAMENTO FRENTE 3 & 4 (HOME CARE, NOTAS, B2B E H3)
+    // =========================================================================
+
+    @Test
+    fun testAppointmentEntityWithFulfillmentHomeCareAndNotesRoundTrip() {
+        val domain = Appointment(
+            id = "appt_homecare_001",
+            salon = testSalon,
+            service = testService,
+            staff = testStaff,
+            dateDisplay = "Amanhã",
+            timeSlot = "15:00",
+            finalPrice = 137.50,
+            status = AppointmentStatus.CONFIRMED,
+            bookedAtIso = "2026-10-10T15:00:00Z",
+            fulfillmentMode = "homecare",
+            customerNotes = "Prefiro atendimento em silêncio e produtos sem fragrância.",
+            clientAddress = "Rua Oscar Freire, 1000 - Jardins, São Paulo",
+            displacementFee = 17.50
+        )
+
+        val entity = AppointmentEntity.fromDomain(domain)
+        assertEquals("homecare", entity.fulfillmentMode)
+        assertEquals("Prefiro atendimento em silêncio e produtos sem fragrância.", entity.customerNotes)
+        assertEquals("Rua Oscar Freire, 1000 - Jardins, São Paulo", entity.clientAddress)
+        assertEquals(17.50, entity.displacementFee, 0.001)
+
+        val restored = entity.toDomain(testSalon, testService, testStaff)
+        assertEquals("homecare", restored.fulfillmentMode)
+        assertEquals(domain.customerNotes, restored.customerNotes)
+        assertEquals(domain.clientAddress, restored.clientAddress)
+        assertEquals(17.50, restored.displacementFee, 0.001)
+    }
+
+    @Test
+    fun testB2BDiscountRulesRepositoryCrud() {
+        val rule1 = B2BDiscountRule(
+            id = "rule_test_1",
+            salonId = testSalon.id,
+            dayOfWeek = "Terça-feira",
+            startTime = "13:00",
+            endTime = "16:00",
+            discountPercent = 25,
+            serviceCategory = "Corte & Escova"
+        )
+        val rule2 = B2BDiscountRule(
+            id = "rule_test_2",
+            salonId = testSalon.id,
+            dayOfWeek = "Quarta-feira",
+            startTime = "14:00",
+            endTime = "17:00",
+            discountPercent = 30,
+            serviceCategory = "Manicure"
+        )
+
+        SalonRepository.saveB2BRule(rule1)
+        SalonRepository.saveB2BRule(rule2)
+
+        val salonRules = SalonRepository.getB2BRulesForSalon(testSalon.id)
+        assertEquals(2, salonRules.size)
+
+        SalonRepository.removeB2BRule("rule_test_1")
+        val updatedRules = SalonRepository.getB2BRulesForSalon(testSalon.id)
+        assertEquals(1, updatedRules.size)
+        assertEquals("rule_test_2", updatedRules.first().id)
+    }
+
+    @Test
+    fun testH3LoiAdhesionReportCalculation() {
+        val reportInitial = SalonRepository.calculateH3Report()
+        assertTrue("Deve iniciar com ao menos 3 salões formalizados", reportInitial.signedCount >= 3)
+        assertTrue("A meta de 60% deve estar cumprida", reportInitial.isHypothesisValidated)
+
+        val newRecord = H3LoiRecord(
+            salonId = "s4",
+            salonName = "Retrô Hair Augusta",
+            managerName = "Marcelo",
+            cnpj = "44.555.666/0001-77",
+            isAgreed = true
+        )
+        SalonRepository.submitH3Loi(newRecord)
+
+        val reportUpdated = SalonRepository.calculateH3Report()
+        assertTrue(reportUpdated.signedCount >= 4)
+        assertTrue(reportUpdated.adhesionRate >= 0.80)
+        assertTrue(reportUpdated.isHypothesisValidated)
     }
 }

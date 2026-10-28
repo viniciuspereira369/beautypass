@@ -47,12 +47,14 @@ fun ProfileScreen(
     participantCode: String = "P01",
     participantName: String = "Participante do Teste",
     onResetToOnboarding: () -> Unit,
+    onOpenPartnerB2B: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val appointments by SalonRepository.appointments.collectAsState()
     val favoriteIds by SalonRepository.favoriteIds.collectAsState()
     val userProfile by SalonRepository.userProfile.collectAsState()
     val latestSusEvaluation by SalonRepository.latestSusEvaluation.collectAsState()
+    val h3Report by SalonRepository.h3Report.collectAsState()
 
     val effectiveParticipantCode = remember(userProfile, participantCode) {
         userProfile?.participantId?.takeIf { it.isNotBlank() } ?: participantCode
@@ -333,6 +335,96 @@ fun ProfileScreen(
                             fontWeight = FontWeight.Bold,
                             color = SurfaceWhite
                         )
+                    }
+                }
+            }
+
+            // Seção: Portal B2B do Salão Parceiro & Validação da Hipótese H3
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(18.dp),
+                colors = CardDefaults.cardColors(containerColor = SurfaceWhite),
+                border = androidx.compose.foundation.BorderStroke(1.dp, OutlineVariant)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.CheckCircle, contentDescription = null, tint = SereneTeal, modifier = Modifier.size(20.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Salão Parceiro B2B & Hipótese H3",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = OceanicCharcoal
+                            )
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .background(if (h3Report.isHypothesisValidated) MintSurface else CoralPromoBg, RoundedCornerShape(6.dp))
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = if (h3Report.isHypothesisValidated) "H3 Validada (≥60%)" else "H3 Em Validação",
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (h3Report.isHypothesisValidated) SereneTealDark else CoralPromoText
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Text(
+                        text = "Validação de adesão B2B aos descontos dinâmicos em horários ociosos (meta: ≥ 3 de 5 salões parceiros formalizados via Carta de Intenção / LOI).",
+                        fontSize = 12.sp,
+                        color = NeutralMuted,
+                        lineHeight = 16.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // Indicador de Progresso H3
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MintSurface, RoundedCornerShape(10.dp))
+                            .padding(12.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            Text(
+                                text = "Adesão Formalizada (LOI)",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = NeutralMuted
+                            )
+                            Text(
+                                text = "${h3Report.signedCount} de ${h3Report.targetCount} Salões (${(h3Report.adhesionRate * 100).toInt()}%)",
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = SereneTeal
+                            )
+                        }
+
+                        Button(
+                            onClick = onOpenPartnerB2B,
+                            shape = RoundedCornerShape(10.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = SereneTeal),
+                            contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
+                        ) {
+                            Text(
+                                text = "Abrir Painel B2B",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = SurfaceWhite
+                            )
+                        }
                     }
                 }
             }

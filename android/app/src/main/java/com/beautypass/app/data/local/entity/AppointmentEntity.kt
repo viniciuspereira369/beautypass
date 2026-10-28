@@ -47,7 +47,19 @@ data class AppointmentEntity(
     val cancellationReason: String? = null,
 
     @ColumnInfo(name = "cancellation_fee")
-    val cancellationFee: Double? = null
+    val cancellationFee: Double? = null,
+
+    @ColumnInfo(name = "fulfillment_mode")
+    val fulfillmentMode: String = "salon",
+
+    @ColumnInfo(name = "customer_notes")
+    val customerNotes: String? = null,
+
+    @ColumnInfo(name = "client_address")
+    val clientAddress: String? = null,
+
+    @ColumnInfo(name = "displacement_fee")
+    val displacementFee: Double = 0.0
 ) {
     /**
      * Mapeador para o modelo de domínio Appointment resolvendo referências do catálogo determinístico.
@@ -66,7 +78,11 @@ data class AppointmentEntity(
             voucherQrCode = id,
             walkingTimeMin = salon.walkTimeMinutes,
             cancellationReason = cancellationReason,
-            cancellationFee = cancellationFee
+            cancellationFee = cancellationFee,
+            fulfillmentMode = fulfillmentMode,
+            customerNotes = customerNotes,
+            clientAddress = clientAddress,
+            displacementFee = displacementFee
         )
     }
 
@@ -83,7 +99,11 @@ data class AppointmentEntity(
                 status = appointment.status,
                 bookedAtIso = appointment.bookedAtIso,
                 cancellationReason = appointment.cancellationReason,
-                cancellationFee = appointment.cancellationFee
+                cancellationFee = appointment.cancellationFee,
+                fulfillmentMode = appointment.fulfillmentMode,
+                customerNotes = appointment.customerNotes,
+                clientAddress = appointment.clientAddress,
+                displacementFee = appointment.displacementFee
             )
         }
     }

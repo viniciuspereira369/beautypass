@@ -15,6 +15,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.AccessTime
@@ -58,7 +60,7 @@ data class DatePill(val dayOfWeek: String, val dayNumber: String, val fullDispla
 fun SalonDetailScreen(
     salonId: String,
     onBackClick: () -> Unit,
-    onProceedToCheckout: (salonId: String, serviceId: String, slotTime: String) -> Unit,
+    onProceedToCheckout: (salonId: String, serviceId: String, slotTime: String, fulfillmentMode: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val salon = remember(salonId) {
@@ -78,6 +80,7 @@ fun SalonDetailScreen(
     }
 
     var selectedHeroImage by remember { mutableStateOf(salon.imageUrl) }
+    var fulfillmentMode by remember { mutableStateOf("salon") } // "salon" ou "homecare"
     var selectedService by remember { mutableStateOf(salon.services.first()) }
     var selectedStaffId by remember { mutableStateOf("any") } // "any" ou id do staff
     var selectedSlotTime by remember {
@@ -182,7 +185,7 @@ fun SalonDetailScreen(
 
                     Button(
                         onClick = {
-                            onProceedToCheckout(salon.id, selectedService.id, selectedSlotTime)
+                            onProceedToCheckout(salon.id, selectedService.id, selectedSlotTime, fulfillmentMode)
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = SereneTeal),
                         shape = RoundedCornerShape(12.dp),
@@ -373,6 +376,105 @@ fun SalonDetailScreen(
 
             Spacer(modifier = Modifier.height(10.dp))
 
+            // Seção 3.5: Modalidade de Atendimento (Fulfillment Switch: No Salão vs A Domicílio)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(SurfaceWhite)
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = "Modalidade de Atendimento",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = OceanicCharcoal
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(CanvasBase, RoundedCornerShape(12.dp))
+                        .padding(4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    // Botão No Salão
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(if (fulfillmentMode == "salon") SereneTeal else Color.Transparent)
+                            .clickable { fulfillmentMode = "salon" }
+                            .padding(vertical = 10.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = null,
+                                tint = if (fulfillmentMode == "salon") SurfaceWhite else OceanicCharcoal,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "No Salão",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (fulfillmentMode == "salon") SurfaceWhite else OceanicCharcoal
+                            )
+                        }
+                    }
+
+                    // Botão A Domicílio
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(if (fulfillmentMode == "homecare") SereneTeal else Color.Transparent)
+                            .clickable { fulfillmentMode = "homecare" }
+                            .padding(vertical = 10.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.Home,
+                                contentDescription = null,
+                                tint = if (fulfillmentMode == "homecare") SurfaceWhite else OceanicCharcoal,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "A Domicílio",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (fulfillmentMode == "homecare") SurfaceWhite else OceanicCharcoal
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MintSurface, RoundedCornerShape(8.dp))
+                        .padding(horizontal = 10.dp, vertical = 6.dp)
+                ) {
+                    Text(
+                        text = if (fulfillmentMode == "salon")
+                            "Atendimento presencial no salão parceiro com toda a infraestrutura e produtos profissionais."
+                        else
+                            "O profissional vai até você! Taxa de deslocamento calculada no checkout (R$ 10,00 base até 2 km + R$ 5,00/km adicional).",
+                        fontSize = 11.sp,
+                        color = OceanicCharcoal,
+                        lineHeight = 15.sp
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
             // Seção 4: Catálogo de Serviços do Salão
             Column(
                 modifier = Modifier
@@ -509,11 +611,21 @@ fun SalonDetailScreen(
                                         fontWeight = FontWeight.Bold,
                                         color = OceanicCharcoal
                                     )
-                                    Text(
-                                        text = "★ ${st.rating}",
-                                        fontSize = 10.sp,
-                                        color = NeutralMuted
-                                    )
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(
+                                            imageVector = Icons.Default.Star,
+                                            contentDescription = null,
+                                            tint = StarAmber,
+                                            modifier = Modifier.size(11.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(3.dp))
+                                        Text(
+                                            text = "${st.rating}",
+                                            fontSize = 10.sp,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = NeutralMuted
+                                        )
+                                    }
                                 }
                             }
                         }

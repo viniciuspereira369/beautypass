@@ -139,4 +139,81 @@ object PricingEngine {
             snapshotFrozenAt = System.currentTimeMillis()
         )
     }
+
+    /**
+     * Regra dinâmica das 3 horas: promove automaticamente slots promocionais
+     * para 'Última Hora' se o horário iniciar nas próximas 3 horas de hoje.
+     */
+    fun isSlotWithinNext3Hours(slotTime: String, isToday: Boolean = true): Boolean {
+        if (!isToday) return false
+        val parts = slotTime.split(":")
+        if (parts.size < 2) return false
+        val slotHour = parts[0].toIntOrNull() ?: return false
+        val slotMinute = parts[1].toIntOrNull() ?: 0
+
+        val cal = java.util.Calendar.getInstance()
+        val currentMinutes = cal.get(java.util.Calendar.HOUR_OF_DAY) * 60 + cal.get(java.util.Calendar.MINUTE)
+        val slotMinutes = slotHour * 60 + slotMinute
+        val diffMinutes = slotMinutes - currentMinutes
+
+        return diffMinutes in 0..180
+    }
+
+    data class CancellationPolicyResult(
+        val fee: Double,
+        val refund: Double,
+        val isFree: Boolean,
+        val reason: String
+    )
+
+    /**
+     * Cálculo de taxa de deslocamento para atendimento a domicílio:
+     * Base de R$ 10,00 nos primeiros 2 km, + R$ 5,00 por km adicional além de 2 km.
+     */
+    fun calculateDisplacementFee(distanceKm: Double): Double {
+        val dist = if (distanceKm <= 0.0) 1.2 else distanceKm
+        val baseFee = 10.0
+        if (dist <= 2.0) {
+            return baseFee
+        }
+        val extraKm = kotlin.math.round((dist - 2.0) * 10.0) / 10.0
+        val extraFee = kotlin.math.round(extraKm * 5.0 * 100.0) / 100.0
+        return kotlin.math.round((baseFee + extraFee) * 100.0) / 100.0
+    }
+
+    fun calculateDisplacementBreakdown(distanceKm: Double): Pair<Double, Double> {
+        val dist = if (distanceKm <= 0.0) 1.2 else distanceKm
+        val baseFee = 10.0
+        if (dist <= 2.0) {
+            return Pair(baseFee, 0.0)
+        }
+        val extraKm = kotlin.math.round((dist - 2.0) * 10.0) / 10.0
+        val totalFee = calculateDisplacementFee(distanceKm)
+        return Pair(totalFee, extraKm)
+    }
+
+    /**
+     * Política dinâmica de cancelamento:
+     * - Menos de 24h: 30% retido pelo salão parceiro e 70% estornado.
+     * - 24h ou mais: 0% de taxa (cancelamento gratuito e 100% estornado).
+     */
+    fun calculateCancellationPolicy(finalPrice: Double, isSlotWithinNext3Hours: Boolean = true): CancellationPolicyResult {
+        return if (isSlotWithinNext3Hours) {
+            val fee = kotlin.math.round(finalPrice * 0.30 * 100.0) / 100.0
+            val refund = kotlin.math.round((finalPrice - fee) * 100.0) / 100.0
+            CancellationPolicyResult(
+                fee = fee,
+                refund = refund,
+                isFree = false,
+                reason = "Cancelamento com menos de 24h: retenção de 30% (R$ ${String.format(java.util.Locale.US, "%.2f", fee)}) para cobrir custos operacionais do salão."
+            )
+        } else {
+            CancellationPolicyResult(
+                fee = 0.0,
+                refund = finalPrice,
+                isFree = true,
+                reason = "Cancelamento gratuito com mais de 24h de antecedência. Reembolso integral de 100%."
+            )
+        }
+    }
 }

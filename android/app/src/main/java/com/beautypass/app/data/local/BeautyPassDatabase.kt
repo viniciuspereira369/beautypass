@@ -25,7 +25,7 @@ import com.beautypass.app.data.local.entity.UserProfileEntity
         UserProfileEntity::class,
         SusEvaluationEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

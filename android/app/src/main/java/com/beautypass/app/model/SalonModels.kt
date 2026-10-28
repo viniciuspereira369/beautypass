@@ -125,7 +125,38 @@ data class Appointment(
     val walkingTimeMin: Int? = null,
     val pricingSnapshot: PricingSnapshot? = null,
     val cancellationReason: String? = null,
-    val cancellationFee: Double? = null
+    val cancellationFee: Double? = null,
+    val fulfillmentMode: String = "salon", // "salon" ou "homecare"
+    val customerNotes: String? = null,
+    val clientAddress: String? = null,
+    val displacementFee: Double = 0.0
+)
+
+data class B2BDiscountRule(
+    val time: String,
+    val discountPct: Int,
+    val type: String = "economy" // "economy" ou "urgent"
+)
+
+data class H3LoiRecord(
+    val id: String,
+    val salonId: String,
+    val salonName: String,
+    val ownerName: String,
+    val maxDiscount: Int,
+    val acceptableCommission: Int,
+    val objections: String,
+    val signed: Boolean,
+    val recordedAtIso: String
+)
+
+data class H3Report(
+    val totalInterviews: Int,
+    val signedCount: Int,
+    val targetCount: Int = 5,
+    val avgDiscount: Int,
+    val avgCommission: Int,
+    val isValidated: Boolean
 )
 
 data class BookingValidationResult(

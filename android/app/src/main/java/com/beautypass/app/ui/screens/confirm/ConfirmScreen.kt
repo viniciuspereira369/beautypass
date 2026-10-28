@@ -10,6 +10,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DirectionsWalk
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.*
@@ -103,13 +104,42 @@ fun ConfirmScreen(
                     modifier = Modifier.padding(18.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
+                    // Modalidade de Atendimento Badge
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Detalhes do Atendimento",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = OceanicCharcoal
+                        )
+
+                        val isHomeCare = appointment.fulfillmentMode == "homecare"
+                        Box(
+                            modifier = Modifier
+                                .background(if (isHomeCare) CoralPromoBg else MintSurface, RoundedCornerShape(8.dp))
+                                .border(1.dp, if (isHomeCare) CoralPromo else SereneTeal, RoundedCornerShape(8.dp))
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = if (isHomeCare) "A Domicílio" else "No Salão",
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (isHomeCare) CoralPromoText else SereneTealDark
+                            )
+                        }
+                    }
+
                     // Salão e Endereço
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.Top
                     ) {
                         Icon(
-                            imageVector = Icons.Default.LocationOn,
+                            imageVector = if (appointment.fulfillmentMode == "homecare") Icons.Default.Home else Icons.Default.LocationOn,
                             contentDescription = null,
                             tint = SereneTeal,
                             modifier = Modifier
@@ -124,34 +154,50 @@ fun ConfirmScreen(
                                 fontWeight = FontWeight.Bold,
                                 color = OceanicCharcoal
                             )
-                            Text(
-                                text = appointment.salon.address,
-                                fontSize = 12.sp,
-                                color = NeutralMuted
-                            )
+                            if (appointment.fulfillmentMode == "homecare" && appointment.clientAddress != null) {
+                                Text(
+                                    text = "Endereço do Cliente: ${appointment.clientAddress}",
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = OceanicCharcoal
+                                )
+                                Text(
+                                    text = "Origem: ${appointment.salon.address}",
+                                    fontSize = 11.sp,
+                                    color = NeutralMuted
+                                )
+                            } else {
+                                Text(
+                                    text = appointment.salon.address,
+                                    fontSize = 12.sp,
+                                    color = NeutralMuted
+                                )
+                            }
                         }
                     }
 
-                    // Estimativa de Caminhada a Pé
-                    Box(
-                        modifier = Modifier
-                            .background(MintSurface, CapsuleShape)
-                            .padding(horizontal = 10.dp, vertical = 4.dp)
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = Icons.Default.DirectionsWalk,
-                                contentDescription = null,
-                                tint = SereneTeal,
-                                modifier = Modifier.size(14.dp)
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = "${appointment.walkingTimeMin ?: appointment.salon.walkTimeMinutes} min a pé (${appointment.salon.walkDistanceMeters} m)",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = SereneTealDark
-                            )
+                    // Estimativa de Caminhada a Pé (se no salão)
+                    if (appointment.fulfillmentMode != "homecare") {
+                        Box(
+                            modifier = Modifier
+                                .background(MintSurface, CapsuleShape)
+                                .padding(horizontal = 10.dp, vertical = 4.dp)
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Default.DirectionsWalk,
+                                    contentDescription = null,
+                                    tint = SereneTeal,
+                                    modifier = Modifier.size(14.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "${appointment.walkingTimeMin ?: appointment.salon.walkTimeMinutes} min a pé (${appointment.salon.walkDistanceMeters} m)",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = SereneTealDark
+                                )
+                            }
                         }
                     }
 
@@ -186,6 +232,53 @@ fun ConfirmScreen(
                             fontSize = 16.sp,
                             fontWeight = FontWeight.ExtraBold,
                             color = SereneTeal
+                        )
+                    }
+
+                    if (appointment.displacementFee != null && appointment.displacementFee > 0) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "Inclui taxa de deslocamento a domicílio:",
+                                fontSize = 11.sp,
+                                color = NeutralMuted
+                            )
+                            Text(
+                                text = "R$ ${String.format("%.2f", appointment.displacementFee)}",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = OceanicCharcoal
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Card Especial: Observações Registradas pelo Cliente (se houver)
+            if (!appointment.customerNotes.isNullOrBlank()) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = MintSurface),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, MintLight)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(14.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            text = "Observações para o Profissional:",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = SereneTealDark
+                        )
+                        Text(
+                            text = appointment.customerNotes,
+                            fontSize = 12.sp,
+                            color = OceanicCharcoal,
+                            lineHeight = 16.sp
                         )
                     }
                 }

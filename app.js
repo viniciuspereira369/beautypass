@@ -2959,6 +2959,102 @@ const MOCK_SALONS = [
   }
 ];
 
+// ===================================================================
+// 1.1 ENRIQUECIMENTO DETERMINÍSTICO DE EQUIPE (+0.3 DESTAQUE) E AVALIAÇÕES (Seção 12.3, 12.9 & Ticket 10)
+// Garante que todos os 24 salões possuam 4 profissionais (1 em destaque +0.3) e 8+ avaliações
+// ===================================================================
+const STAFF_ENRICHMENT_POOL = {
+  hair: [
+    { name: "Camila Queiroz", role: "Especialista em Mechas & Nutrição", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" },
+    { name: "Lucas Mendes", role: "Visagista & Hair Stylist", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80" },
+    { name: "Helena Rizzo", role: "Terapeuta Capilar Sênior", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80" },
+    { name: "Bruno Gagliasso", role: "Stylist & Finalização", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&q=80" }
+  ],
+  nails: [
+    { name: "Bianca Andrade", role: "Nail Designer & Alongamento", avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=120&q=80" },
+    { name: "Priscila Alcantara", role: "Especialista em Blindagem Gel", avatar: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=120&q=80" },
+    { name: "Tatiane Souza", role: "Podologia & Spa dos Pés", avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=100&q=80" },
+    { name: "Larissa Manoela", role: "Manicure Artística", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" }
+  ],
+  barber: [
+    { name: "Mateus Solano", role: "Mestre Barbeiro & Navalha", avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=120&q=80" },
+    { name: "Rafael Cardoso", role: "Especialista em Degradê & Fade", avatar: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=120&q=80" },
+    { name: "Thiago Lacerda", role: "Visagista de Barba & Toalha Quente", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&q=80" },
+    { name: "Diego Ribeiro", role: "Barber Stylist", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80" }
+  ],
+  massage: [
+    { name: "Clara Castanho", role: "Massoterapeuta & Shiatsu", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80" },
+    { name: "Renata Vasconcellos", role: "Especialista em Drenagem Linfática", avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&q=80" },
+    { name: "Henrique Fogaça", role: "Terapeuta de Pedras Quentes & Liberação", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=120&q=80" },
+    { name: "Sofia Carson", role: "Aromaterapeuta & Reflexologia", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" }
+  ],
+  esthetic: [
+    { name: "Dra. Isabela Fiorentino", role: "Biomédica Esteta & Peeling", avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=120&q=80" },
+    { name: "Aline Moraes", role: "Dermaticista & Limpeza Profunda", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" },
+    { name: "Giovanna Ewbank", role: "Especialista em Design & Brow Lamination", avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=120&q=80" },
+    { name: "Natália Dill", role: "Esteticista Facial & LED Terapia", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80" }
+  ]
+};
+
+const REVIEWS_ENRICHMENT_POOL = [
+  { author: "Mariana L.", rating: 5, comment: "Agendei pelo horário econômico e fui super bem atendida! Sem fila e resultado impecável.", date: "Set 2026" },
+  { author: "Gabriela F.", rating: 5, comment: "O profissional em destaque realmente faz diferença. Muito atencioso e pontual.", date: "Set 2026" },
+  { author: "Carolina M.", rating: 5, comment: "Ambiente impecável, produtos de altíssima qualidade e ótimo custo-benefício no app.", date: "Ago 2026" },
+  { author: "Rafaela P.", rating: 4, comment: "Gostei bastante da experiência e da facilidade do voucher QR Code na recepção.", date: "Ago 2026" },
+  { author: "Letícia K.", rating: 5, comment: "Combinei dois serviços na mesma visita e o encaixe de horário funcionou perfeitamente.", date: "Jul 2026" },
+  { author: "Vanessa C.", rating: 5, comment: "Melhor descoberta do bairro! Já salvei nos meus favoritos para voltar todo mês.", date: "Jul 2026" },
+  { author: "Amanda B.", rating: 4, comment: "Atendimento nota 10, espaço super bem localizado e fácil de chegar caminhando.", date: "Jun 2026" },
+  { author: "Daniela R.", rating: 5, comment: "Desconto de horário ocioso valeu muito a pena, mesmo padrão premium do horário cheio.", date: "Jun 2026" }
+];
+
+(function enrichSalonsSeedData() {
+  MOCK_SALONS.forEach((salon, sIdx) => {
+    const baseHouseRating = Number(salon.rating) || 4.7;
+    const catPool = STAFF_ENRICHMENT_POOL[salon.category] || STAFF_ENRICHMENT_POOL.hair;
+
+    if (!Array.isArray(salon.staff)) salon.staff = [];
+
+    // Garante entre 4 e 6 profissionais por salão (Seção 12.3)
+    let poolIdx = 0;
+    while (salon.staff.length < 4 && poolIdx < catPool.length) {
+      const candidate = catPool[(sIdx + poolIdx) % catPool.length];
+      if (!salon.staff.some(existing => existing.name === candidate.name)) {
+        const offset = [0.02, -0.04, -0.09, -0.14][salon.staff.length] || -0.05;
+        salon.staff.push({
+          id: `st_${salon.id}_${salon.staff.length + 1}`,
+          name: candidate.name,
+          role: candidate.role,
+          rating: Number(Math.max(4.4, Math.min(4.95, baseHouseRating + offset)).toFixed(2)),
+          avatar: candidate.avatar
+        });
+      }
+      poolIdx++;
+    }
+
+    // Regra Seção 12.3 & Ticket 10: O 1º profissional é o destaque com nota +0.3 acima da média da casa
+    if (salon.staff.length > 0) {
+      const featured = salon.staff[0];
+      featured.isFeatured = true;
+      featured.highlightBadge = featured.highlightBadge || "Destaque da Casa";
+      featured.ratingDelta = "+0.3";
+      // Se a casa tem 4.7 -> 5.00; se 4.9 -> 4.99/5.00 (sempre visivelmente superior à média da casa)
+      const targetFeaturedRating = Math.min(5.0, Number((baseHouseRating + 0.3).toFixed(2)));
+      featured.rating = Math.max(Number(featured.rating) || 4.9, targetFeaturedRating);
+    }
+
+    // Garante pelo menos 8 avaliações por salão (Seção 12.9 & Ticket 10)
+    if (!Array.isArray(salon.reviews)) salon.reviews = [];
+    let revIdx = 0;
+    while (salon.reviews.length < 8 && revIdx < REVIEWS_ENRICHMENT_POOL.length) {
+      const template = REVIEWS_ENRICHMENT_POOL[(sIdx + revIdx) % REVIEWS_ENRICHMENT_POOL.length];
+      if (!salon.reviews.some(r => r.comment === template.comment)) {
+        salon.reviews.push({ ...template });
+      }
+      revIdx++;
+    }
+  });
+})();
+
 // Horários do dia (de 09:00 até 19:00 em passos de 15 min)
 const TIME_SLOTS = [];
 for (let h = 9; h <= 18; h++) {
@@ -2978,6 +3074,10 @@ const AppState = {
   userSession: null, // { name, phone, code, acceptedAt, sessionId }
   selectedSalon: MOCK_SALONS[0],
   selectedService: MOCK_SALONS[0].services ? MOCK_SALONS[0].services[0] : MOCK_SALONS[0].service,
+  selectedServices: [MOCK_SALONS[0].services ? MOCK_SALONS[0].services[0] : MOCK_SALONS[0].service],
+  showAllReviews: false,
+  homeGeoChecked: false,
+  userCoords: null,
   selectedStaff: { id: 'any', name: 'Qualquer Profissional', role: 'Primeiro disponível', isAny: true },
   selectedDate: '2026-09-26',
   selectedTimeSlotIndex: 20, // default ~14:00
@@ -3410,15 +3510,49 @@ const PROMO_PRESETS = [
   ]
 ];
 
+function getTodayDateStr() {
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+// Regra Seção 6.2 & Seção 9: Verifica se o slot começa nas próximas 3 horas de hoje
+function isSlotWithinNext3Hours(timeStr, dateStr) {
+  if (!timeStr) return false;
+  const todayStr = getTodayDateStr();
+  if (dateStr && dateStr !== todayStr) return false;
+
+  const parts = String(timeStr).split(':');
+  if (parts.length !== 2) return false;
+  const now = new Date();
+  const slotDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), Number(parts[0]), Number(parts[1]), 0);
+  const diffHours = (slotDate.getTime() - now.getTime()) / 3600000;
+  return diffHours > 0 && diffHours <= 3.0;
+}
+
+function getCustomB2BRulesForSalon(salonId) {
+  try {
+    const allCustom = JSON.parse(localStorage.getItem('bp_b2b_custom_rules') || '{}');
+    return Array.isArray(allCustom[salonId]) ? allCustom[salonId] : null;
+  } catch (e) {
+    return null;
+  }
+}
+
 function getSalonPromoRules(salon, dateStr) {
   const dow = getDayOfWeek(dateStr);
 
   // Domingo (0): Salões fechados ou sem descontos
   if (dow === 0) return [];
 
+  // Se o proprietário do salão configurou regras personalizadas no Painel B2B (Seção 5.4), aplica em tempo real!
+  const customRules = salon ? getCustomB2BRulesForSalon(salon.id) : null;
+
   // Sábado (6): Sábado de manhã NENHUM desconto (alta procura absoluta).
   // Apenas 1 a 2 slots de "Última Hora" (urgente) no final da tarde (16:30, 17:30).
-  if (dow === 6) {
+  if (dow === 6 && !customRules) {
     return [
       { time: '16:30', discountPct: 20, type: 'urgent' },
       { time: '17:30', discountPct: 20, type: 'urgent' }
@@ -3428,9 +3562,19 @@ function getSalonPromoRules(salon, dateStr) {
   // Dias de semana: distribuição determinística baseada no ID do estabelecimento e DOW (Ticket 09)
   const idNum = parseInt(String(salon.id).replace(/\D/g, ''), 10) || 1;
   const presetIndex = (idNum + dow) % PROMO_PRESETS.length;
-  const basePreset = PROMO_PRESETS[presetIndex];
+  const basePreset = (customRules && customRules.length > 0 ? customRules : PROMO_PRESETS[presetIndex]).map(r => ({ ...r }));
 
-  if (dow === 4 || dow === 5) {
+  // Se a data selecionada for hoje, promove automaticamente qualquer regra nas próximas 3h para 'urgent'
+  const isToday = !dateStr || dateStr === getTodayDateStr();
+  if (isToday) {
+    basePreset.forEach(rule => {
+      if (isSlotWithinNext3Hours(rule.time, dateStr)) {
+        rule.type = 'urgent';
+      }
+    });
+  }
+
+  if ((dow === 4 || dow === 5) && !customRules) {
     // Quinta e Sexta: descontos moderados (15% a 25%)
     return basePreset.map(rule => ({
       ...rule,
@@ -3527,17 +3671,20 @@ function calculateSlotPrice(salon, time, service = null, dateStr = null) {
     const discountPct = promoRule.discountPct;
     const discountFactor = (100 - discountPct) / 100;
     const finalPrice = Math.max(25.00, Math.round(basePrice * discountFactor * 100) / 100);
+    // Seção 6.2 & 9: Se o slot começa nas próximas 3h de hoje E está sob regra ativa, muda para 'Última Hora'
+    const isUrgentNow = promoRule.type === 'urgent' || isSlotWithinNext3Hours(time, targetDate);
+    const effectiveType = isUrgentNow ? 'urgent' : 'economy';
     return {
       hasDiscount: true,
       isOccupied: false,
       isHighDemand: false,
-      type: promoRule.type, // 'economy' | 'urgent'
+      type: effectiveType, // 'economy' | 'urgent'
       discountPct: discountPct,
       basePrice: basePrice,
       finalPrice: finalPrice,
-      badgeText: promoRule.type === 'urgent' ? 'Última Hora' : 'Horário Econômico',
+      badgeText: effectiveType === 'urgent' ? 'Última Hora' : 'Horário Econômico',
       // Conformidade literal com a Seção 6.2 da Spec de Validação (Ticket 12)
-      subtext: promoRule.type === 'urgent' ? 'desconto para hoje' : 'preço menor em horário de menor procura'
+      subtext: effectiveType === 'urgent' ? 'desconto para hoje' : 'preço menor em horário de menor procura'
     };
   }
 
@@ -3587,6 +3734,7 @@ function backFromCheckout() {
 }
 
 function navigateTo(screenId) {
+  if (screenId === 'partner') screenId = 'partner-b2b';
   // Se estiver saindo da tela de checkout sem confirmar, registra abandono voluntário
   if (AppState.currentScreen === 'checkout' && screenId !== 'checkout' && screenId !== 'confirm') {
     trackEvent('checkout_abandoned', { 
@@ -3632,6 +3780,7 @@ function navigateTo(screenId) {
 
   // Gatilhos de renderização específicos
   if (screenId === 'home') {
+    initHomeGeolocation();
     renderHomeFeed();
     trackEvent('app_opened', { view: 'home' });
   } else if (screenId === 'demand-service') {
@@ -3678,6 +3827,12 @@ function navigateTo(screenId) {
   } else if (screenId === 'profile') {
     updateUserUI();
     renderValidationMetrics();
+  } else if (screenId === 'partner-b2b') {
+    renderPartnerB2BPanel();
+    trackEvent('partner_b2b_panel_opened', {
+      salon_id: AppState.b2bSelectedSalonId || 's1',
+      tab: AppState.b2bActiveTab || 'agenda'
+    });
   }
 }
 
@@ -3962,7 +4117,81 @@ function getFilteredSalons() {
   return list;
 }
 
+// ===================================================================
+// DUAL FULFILLMENT SWITCH & TAXA DE DESLOCAMENTO (DESIGN_EXTRACT_SPEC.md S2)
+// ===================================================================
+AppState.fulfillmentMode = 'salon'; // 'salon' (Presencial) | 'homecare' (A Domicílio)
+
+function setFulfillmentMode(mode) {
+  AppState.fulfillmentMode = mode === 'homecare' ? 'homecare' : 'salon';
+  
+  const btnSalon = document.getElementById('btn-fulfillment-salon');
+  const btnHomecare = document.getElementById('btn-fulfillment-homecare');
+  const badgeCurrent = document.getElementById('fulfillment-badge-current');
+  const noticeBox = document.getElementById('fulfillment-notice-box');
+
+  if (btnSalon) {
+    btnSalon.classList.toggle('active', AppState.fulfillmentMode === 'salon');
+    btnSalon.setAttribute('aria-selected', AppState.fulfillmentMode === 'salon' ? 'true' : 'false');
+  }
+  if (btnHomecare) {
+    btnHomecare.classList.toggle('active', AppState.fulfillmentMode === 'homecare');
+    btnHomecare.setAttribute('aria-selected', AppState.fulfillmentMode === 'homecare' ? 'true' : 'false');
+  }
+  if (badgeCurrent) {
+    badgeCurrent.textContent = AppState.fulfillmentMode === 'homecare' ? 'A Domicílio' : 'No Salão';
+    badgeCurrent.style.background = AppState.fulfillmentMode === 'homecare' ? '#FEF3C7' : '#CCFBF1';
+    badgeCurrent.style.color = AppState.fulfillmentMode === 'homecare' ? '#B45309' : '#0F766E';
+  }
+  if (noticeBox) {
+    noticeBox.style.display = AppState.fulfillmentMode === 'homecare' ? 'flex' : 'none';
+  }
+
+  trackEvent('fulfillment_mode_changed', {
+    mode: AppState.fulfillmentMode,
+    salon_id: AppState.selectedSalon?.id
+  });
+}
+
+function calculateDisplacementFee(distanceKm) {
+  const dist = Number(distanceKm) || 1.0;
+  const baseFee = 10.0; // Base para os primeiros 2 km
+  if (dist <= 2.0) {
+    return { fee: baseFee, distanceKm: dist, extraKm: 0 };
+  }
+  const extraKm = Math.round((dist - 2.0) * 10) / 10;
+  const extraFee = Math.round(extraKm * 5.0 * 100) / 100; // R$ 5,00 por km adicional além de 2 km
+  return { fee: Math.round((baseFee + extraFee) * 100) / 100, distanceKm: dist, extraKm };
+}
+
+// Grade 4x2 Circular de Parceiros em Destaque (DESIGN_EXTRACT_SPEC.md S1)
+function renderPartnerCirclesGrid() {
+  const container = document.getElementById('partner-circles-grid');
+  if (!container) return;
+
+  const featured = MOCK_SALONS.slice(0, 8);
+  container.innerHTML = featured.map(s => {
+    const displayName = s.name.length > 14 ? s.name.substring(0, 13) + '…' : s.name;
+    const imgUrl = s.image || 'salon_hair_boutique.jpg';
+    return `
+      <div class="partner-circle-card" onclick="openSalonDetail('${s.id}')" role="button" tabindex="0" aria-label="${s.name}, nota ${s.rating.toFixed(1)}, a ${s.distanceKm} km" onkeydown="if(event.key==='Enter'||event.key===' ')openSalonDetail('${s.id}')">
+        <div class="partner-circle-ring-wrap">
+          <div class="partner-circle-ring">
+            <img class="partner-circle-img" src="${imgUrl}" alt="${s.name}" loading="lazy" onerror="this.onerror=null; this.src='salon_hair_boutique.jpg';">
+          </div>
+          <div class="partner-circle-badge" title="Parceiro Verificado">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
+        <span class="partner-circle-name" title="${s.name}">${displayName}</span>
+        <span class="partner-circle-meta"><svg width="9" height="9" viewBox="0 0 24 24" fill="var(--star-gold)" stroke="var(--star-gold)" style="vertical-align:-1px; margin-right:2px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>${s.rating.toFixed(1)} • ${s.distanceKm} km</span>
+      </div>
+    `;
+  }).join('');
+}
+
 function renderHomeFeed() {
+  renderPartnerCirclesGrid();
   const feedContainer = document.getElementById('social-feed-container');
   if (!feedContainer) return;
 
@@ -4194,17 +4423,67 @@ function renderHomeFeed() {
   });
 }
 
+// Geolocation e Fallback na Home (Seção 6.4 da Spec)
+function applyHomeLocationState(granted, coords = null) {
+  const labelEl = document.getElementById('home-location-label');
+  const homeWarningEl = document.getElementById('home-location-warning');
+  const mapWarningEl = document.getElementById('map-location-warning');
+
+  if (granted) {
+    AppState.userCoords = coords || { lat: -23.5650, lng: -46.6810, granted: true };
+    if (labelEl) labelEl.textContent = 'Pinheiros, SP';
+    if (homeWarningEl) homeWarningEl.style.display = 'none';
+    if (mapWarningEl) mapWarningEl.style.display = 'none';
+  } else {
+    // Fallback para o centro de São Paulo com aviso explícito (Seção 6.4)
+    AppState.userCoords = { lat: -23.5505, lng: -46.6333, granted: false };
+    if (labelEl) labelEl.textContent = 'São Paulo (Centro)';
+    if (homeWarningEl) homeWarningEl.style.display = 'flex';
+    if (mapWarningEl) mapWarningEl.style.display = 'flex';
+  }
+}
+
+function initHomeGeolocation() {
+  if (AppState.homeGeoChecked) return;
+  AppState.homeGeoChecked = true;
+
+  if (navigator.geolocation && typeof navigator.geolocation.getCurrentPosition === 'function') {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        applyHomeLocationState(true, {
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          granted: true
+        });
+        trackEvent('location_permission', { granted: true, screen: 'home' });
+      },
+      () => {
+        applyHomeLocationState(false);
+        trackEvent('location_permission', { granted: false, screen: 'home' });
+      },
+      { timeout: 2500, enableHighAccuracy: false }
+    );
+  } else {
+    applyHomeLocationState(false);
+  }
+}
+
 function openSalonDetail(salonId, serviceId = null) {
   const salon = MOCK_SALONS.find(s => s.id === salonId);
   if (salon) {
     AppState.selectedSalon = salon;
+    let initialSrv = null;
     if (serviceId && salon.services) {
       const matched = salon.services.find(s => s.id === serviceId);
-      AppState.selectedService = matched || salon.services[0];
+      initialSrv = matched || salon.services[0];
     } else {
-      AppState.selectedService = (salon.services && salon.services.length > 0) ? salon.services[0] : salon.service;
+      initialSrv = (salon.services && salon.services.length > 0) ? salon.services[0] : salon.service;
     }
+    AppState.selectedServices = [initialSrv];
+    AppState.selectedService = initialSrv;
+    AppState.showAllReviews = false;
     AppState.selectedStaff = { id: 'any', name: 'Qualquer Profissional', role: 'Primeiro disponível', isAny: true };
+    setFulfillmentMode('salon');
     navigateTo('detail');
   }
 }
@@ -5414,14 +5693,82 @@ function renderStars(rating) {
 
 let currentDetailServiceFilter = 'all';
 
+// Sincroniza AppState.selectedServices[] em um objeto composto em AppState.selectedService (Seção 6.1 e 7.2)
+function syncSelectedServicesComposite(salon) {
+  if (!Array.isArray(AppState.selectedServices) || AppState.selectedServices.length === 0) {
+    const fallback = (salon && salon.services && salon.services[0]) || (salon && salon.service);
+    AppState.selectedServices = fallback ? [fallback] : [];
+  }
+
+  if (AppState.selectedServices.length === 1) {
+    AppState.selectedService = AppState.selectedServices[0];
+  } else {
+    const totalBasePrice = AppState.selectedServices.reduce((sum, s) => sum + (Number(s.basePrice) || 0), 0);
+    const totalDuration = AppState.selectedServices.reduce((sum, s) => sum + (Number(s.durationMinutes) || 0), 0);
+    const combinedNames = AppState.selectedServices.map(s => s.name).join(' + ');
+    const combinedIds = AppState.selectedServices.map(s => s.id).join(',');
+
+    AppState.selectedService = {
+      id: combinedIds,
+      name: combinedNames,
+      durationMinutes: totalDuration,
+      basePrice: totalBasePrice,
+      category: AppState.selectedServices[0].category,
+      description: `${AppState.selectedServices.length} serviços combinados em sequência contígua na mesma visita`,
+      isMultiService: true,
+      items: [...AppState.selectedServices]
+    };
+  }
+  return AppState.selectedService;
+}
+
+function updateHeroServiceSummary() {
+  const activeService = AppState.selectedService;
+  if (!activeService) return;
+
+  const titleEl = document.getElementById('detail-service-title');
+  const descEl = document.getElementById('detail-service-desc');
+  const headerLabelEl = document.getElementById('detail-service-header-label');
+  const badgeEl = document.getElementById('detail-service-package-badge');
+
+  const selectedCount = Array.isArray(AppState.selectedServices) ? AppState.selectedServices.length : 1;
+
+  if (titleEl) titleEl.textContent = activeService.name;
+  if (descEl) {
+    descEl.textContent = `${activeService.durationMinutes} min • R$ ${activeService.basePrice.toFixed(2)} base • ${activeService.description}`;
+  }
+  if (headerLabelEl) {
+    headerLabelEl.textContent = selectedCount > 1 ? 'Pacote de Serviços (Mesma Visita)' : 'Serviço Selecionado';
+  }
+  if (badgeEl) {
+    if (selectedCount > 1) {
+      badgeEl.style.display = 'inline-flex';
+      badgeEl.textContent = `${selectedCount} serviços • ${activeService.durationMinutes} min`;
+    } else {
+      badgeEl.style.display = 'none';
+    }
+  }
+}
+
 function renderDetailServices(salon) {
   const container = document.getElementById('detail-services-list');
   const countEl = document.getElementById('detail-service-count');
   const chipsContainer = document.getElementById('service-category-chips');
   if (!container || !salon.services) return;
 
+  // Garante que os serviços selecionados pertencem a este salão
+  if (!Array.isArray(AppState.selectedServices) || AppState.selectedServices.length === 0 ||
+      !salon.services.some(s => s.id === AppState.selectedServices[0]?.id)) {
+    const initial = (AppState.selectedService && salon.services.find(s => s.id === AppState.selectedService.id)) || salon.services[0];
+    AppState.selectedServices = [initial];
+    syncSelectedServicesComposite(salon);
+  }
+
+  const selectedCount = AppState.selectedServices.length;
   if (countEl) {
-    countEl.textContent = `${salon.services.length} opções disponíveis`;
+    countEl.textContent = selectedCount > 1
+      ? `${selectedCount} combinados (${AppState.selectedService.durationMinutes} min)`
+      : `${salon.services.length} opções • toque para combinar`;
   }
 
   // Mapa de nomes legíveis de categorias
@@ -5466,7 +5813,7 @@ function renderDetailServices(salon) {
 
   container.innerHTML = '';
   filteredServices.forEach(srv => {
-    const isSelected = AppState.selectedService && AppState.selectedService.id === srv.id;
+    const isSelected = AppState.selectedServices.some(s => s.id === srv.id);
     const card = document.createElement('div');
     card.className = `service-item-card ${isSelected ? 'active' : ''}`;
     card.id = `service-card-${srv.id}`;
@@ -5486,7 +5833,7 @@ function renderDetailServices(salon) {
       </div>
       <div class="service-info-right">
         <span class="service-item-price">R$ ${srv.basePrice.toFixed(2)}</span>
-        <div class="service-item-radio">
+        <div class="service-item-radio" title="${isSelected ? 'Selecionado (toque para remover se houver outro)' : 'Toque para combinar na mesma visita'}">
           <div class="service-item-radio-inner"></div>
         </div>
       </div>
@@ -5501,22 +5848,33 @@ function selectService(serviceId) {
   const srv = salon.services.find(s => s.id === serviceId);
   if (!srv) return;
 
-  AppState.selectedService = srv;
+  if (!Array.isArray(AppState.selectedServices)) {
+    AppState.selectedServices = AppState.selectedService ? [AppState.selectedService] : [];
+  }
 
-  // Atualiza Hero Card
-  const titleEl = document.getElementById('detail-service-title');
-  const descEl = document.getElementById('detail-service-desc');
-  if (titleEl) titleEl.textContent = srv.name;
-  if (descEl) descEl.textContent = `${srv.durationMinutes} min • ${srv.description}`;
+  const existingIndex = AppState.selectedServices.findIndex(s => s.id === srv.id);
+  if (existingIndex >= 0) {
+    // Se houver mais de 1 serviço selecionado, permite remover no toggle; mantém ao menos 1 ativo
+    if (AppState.selectedServices.length > 1) {
+      AppState.selectedServices.splice(existingIndex, 1);
+      showToast(`Serviço removido (${AppState.selectedServices.length} selecionado${AppState.selectedServices.length > 1 ? 's' : ''})`);
+    }
+  } else {
+    AppState.selectedServices.push(srv);
+    if (AppState.selectedServices.length > 1) {
+      showToast(`Pacote atualizado: ${AppState.selectedServices.length} serviços combinados na visita!`);
+    }
+  }
 
-  // Atualiza destaque visual dos cards
-  document.querySelectorAll('.service-item-card').forEach(c => c.classList.remove('active'));
-  const activeCard = document.getElementById(`service-card-${srv.id}`);
-  if (activeCard) activeCard.classList.add('active');
+  const compositeService = syncSelectedServicesComposite(salon);
 
-  // Recalcula limites do slider (duração + buffer 10 min)
+  // Atualiza Hero Card e lista visual de cards
+  updateHeroServiceSummary();
+  renderDetailServices(salon);
+
+  // Recalcula limites do slider (soma das durações + buffer 10 min — Seção 7.1 e 7.2)
   const bufferMinutes = 10;
-  const totalServiceTime = srv.durationMinutes + bufferMinutes;
+  const totalServiceTime = compositeService.durationMinutes + bufferMinutes;
   const slotsUsed = Math.ceil(totalServiceTime / 15);
   const maxSlotIndex = Math.max(0, TIME_SLOTS.length - 1 - slotsUsed);
 
@@ -5529,7 +5887,8 @@ function selectService(serviceId) {
     slider.value = AppState.selectedTimeSlotIndex;
   }
 
-  // Atualiza Mostrador Radial e preço recalculado
+  // Atualiza tira de horários e Mostrador Radial com o preço composto
+  renderHorizontalTimeStrip(salon, AppState.selectedDate);
   updateRadialClock();
 }
 
@@ -5586,21 +5945,22 @@ function selectGalleryImage(imgUrl, thumbEl) {
   if (thumbEl) thumbEl.classList.add('active');
 }
 
+function toggleShowAllReviews() {
+  AppState.showAllReviews = !AppState.showAllReviews;
+  renderDetailScreen();
+}
+
 function renderDetailScreen() {
   const salon = AppState.selectedSalon;
   if (!salon) return;
 
-  const activeService = AppState.selectedService || (salon.services && salon.services[0]) || salon.service;
-  if (!AppState.selectedService) {
-    AppState.selectedService = activeService;
-  }
+  const activeService = syncSelectedServicesComposite(salon);
 
   document.getElementById('detail-hero-img').src = salon.image;
   document.getElementById('detail-salon-name').textContent = salon.name;
   document.getElementById('detail-salon-address').textContent = salon.address;
   document.getElementById('detail-salon-rating').textContent = `${salon.rating} (${salon.reviewsCount} avaliações)`;
-  document.getElementById('detail-service-title').textContent = activeService.name;
-  document.getElementById('detail-service-desc').textContent = `${activeService.durationMinutes} min • ${activeService.description}`;
+  updateHeroServiceSummary();
 
   // Atualiza estado do botão de favorito no cabeçalho de detalhes
   const isFav = AppState.favoriteSalonIds.has(salon.id);
@@ -5631,7 +5991,7 @@ function renderDetailScreen() {
   // Renderiza Catálogo de Serviços do Salão (Seção 6.1 e 6.3)
   renderDetailServices(salon);
 
-  // Renderiza Equipe (com opção de Profissional Neutro / Qualquer Profissional)
+  // Renderiza Equipe (com opção de Profissional Neutro / Qualquer Profissional e Destaque +0.3 — Seção 12.3)
   const staffCarousel = document.getElementById('staff-carousel-container');
   staffCarousel.innerHTML = '';
 
@@ -5652,24 +6012,32 @@ function renderDetailScreen() {
   `;
   staffCarousel.appendChild(anyCard);
 
-  // 2. Membros da equipe do salão
+  // 2. Membros da equipe do salão (Exibe nota individual e selo Destaque +0.3 na Tarefa T2)
   salon.staff.forEach((st, idx) => {
     const isSelected = AppState.selectedStaff && AppState.selectedStaff.id === st.id;
+    const isFeatured = Boolean(st.highlightBadge || st.isFeatured || idx === 0);
+    const staffRatingVal = st.rating ? Number(st.rating).toFixed(2) : Number(salon.rating).toFixed(2);
     const staffCard = document.createElement('div');
-    staffCard.className = `staff-card ${isSelected ? 'active' : ''}`;
+    staffCard.className = `staff-card ${isFeatured ? 'staff-card-featured' : ''} ${isSelected ? 'active' : ''}`;
     staffCard.onclick = () => {
       AppState.selectedStaff = st;
       renderDetailScreen();
     };
     staffCard.innerHTML = `
-      <img class="staff-avatar" src="${st.avatar}" alt="${st.name}">
+      ${isFeatured ? `<span class="staff-highlight-badge">${st.highlightBadge || 'Destaque'}</span>` : ''}
+      <img class="staff-avatar" src="${st.avatar}" alt="${st.name}" onerror="this.onerror=null; this.src='profile_owner_juliana.jpg'">
       <span class="staff-name">${st.name}</span>
       <span class="staff-role">${st.role}</span>
+      <span class="staff-rating-pill" title="Avaliação individual do profissional">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="var(--star-gold)" stroke="var(--star-gold)" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <span>${staffRatingVal}</span>
+        ${isFeatured ? `<span class="staff-rating-delta">+0.3</span>` : ''}
+      </span>
     `;
     staffCarousel.appendChild(staffCard);
   });
 
-  // Renderiza Avaliações Recentes (Seção 12.9 — leitura de seed)
+  // Renderiza Avaliações Recentes (Seção 12.9 — leitura de seed com botão Ver Todas)
   const reviewsContainer = document.getElementById('detail-reviews-container');
   if (reviewsContainer) {
     reviewsContainer.innerHTML = '';
@@ -5679,10 +6047,11 @@ function renderDetailScreen() {
       header.style.cssText = 'padding:0 0 8px;';
       header.innerHTML = `
         <span class="section-title" style="font-size:13px;">Avaliações</span>
-        <span style="font-size:11px; font-weight:700; color:var(--neutral-muted);">${salon.reviewsCount} avaliações</span>
+        <span style="font-size:11px; font-weight:700; color:var(--neutral-muted);">${salon.reviewsCount} avaliações (${salon.reviews.length} recentes)</span>
       `;
       reviewsContainer.appendChild(header);
-      salon.reviews.slice(0, 3).forEach(review => {
+      const visibleReviews = AppState.showAllReviews ? salon.reviews : salon.reviews.slice(0, 3);
+      visibleReviews.forEach(review => {
         const reviewEl = document.createElement('div');
         reviewEl.className = 'review-card';
         reviewEl.innerHTML = `
@@ -5695,6 +6064,18 @@ function renderDetailScreen() {
         `;
         reviewsContainer.appendChild(reviewEl);
       });
+
+      if (salon.reviews.length > 3) {
+        const toggleBtn = document.createElement('button');
+        toggleBtn.type = 'button';
+        toggleBtn.id = 'btn-toggle-reviews';
+        toggleBtn.className = 'btn-toggle-reviews';
+        toggleBtn.onclick = toggleShowAllReviews;
+        toggleBtn.innerHTML = AppState.showAllReviews
+          ? `<span>Mostrar menos avaliações</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="18 15 12 9 6 15"/></svg>`
+          : `<span>Ver todas as ${salon.reviews.length} avaliações verificadas</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>`;
+        reviewsContainer.appendChild(toggleBtn);
+      }
     }
   }
 
@@ -6074,7 +6455,38 @@ function renderCheckoutScreen() {
   document.getElementById('checkout-base-price').textContent = `R$ ${pricing.basePrice.toFixed(2)}`;
   document.getElementById('checkout-discount-row').style.display = pricing.hasDiscount ? 'flex' : 'none';
   document.getElementById('checkout-discount-val').textContent = `- R$ ${(pricing.basePrice - pricing.finalPrice).toFixed(2)} (${pricing.discountPct}%)`;
-  document.getElementById('checkout-final-total').textContent = `R$ ${pricing.finalPrice.toFixed(2)}`;
+
+  // Frente 3: Modalidade e Taxa de Deslocamento
+  const isHomecare = AppState.fulfillmentMode === 'homecare';
+  const homecareSec = document.getElementById('checkout-homecare-section');
+  if (homecareSec) homecareSec.style.display = isHomecare ? 'block' : 'none';
+
+  const modeLabel = document.getElementById('checkout-fulfillment-mode-label');
+  if (modeLabel) {
+    modeLabel.textContent = isHomecare ? 'A Domicílio (Home Care)' : 'No Salão (Presencial)';
+    modeLabel.style.color = isHomecare ? '#B45309' : 'var(--neutral-text)';
+  }
+
+  const dispRow = document.getElementById('checkout-displacement-row');
+  const dispLabel = document.getElementById('checkout-displacement-label');
+  const dispVal = document.getElementById('checkout-displacement-val');
+
+  let finalPayable = pricing.finalPrice;
+  if (isHomecare) {
+    const disp = calculateDisplacementFee(salon.distanceKm || 1.2);
+    if (dispRow) dispRow.style.display = 'flex';
+    if (dispLabel) dispLabel.textContent = `Taxa de Deslocamento (${disp.distanceKm} km)`;
+    if (dispVal) dispVal.textContent = `+ R$ ${disp.fee.toFixed(2)}`;
+    finalPayable = Math.round((pricing.finalPrice + disp.fee) * 100) / 100;
+    pricing.displacementFee = disp.fee;
+    pricing.totalWithDisplacement = finalPayable;
+  } else {
+    if (dispRow) dispRow.style.display = 'none';
+    pricing.displacementFee = 0;
+    pricing.totalWithDisplacement = pricing.finalPrice;
+  }
+
+  document.getElementById('checkout-final-total').textContent = `R$ ${finalPayable.toFixed(2)}`;
 }
 
 // Algoritmo de Luhn Local (Não envia dados, apenas valida)
@@ -6242,6 +6654,11 @@ async function confirmBooking() {
 
     const canonicalAppointmentId = AppState._pendingCheckoutApptId || ('BP-' + Math.floor(100000 + Math.random() * 900000));
 
+    const isHomecare = AppState.fulfillmentMode === 'homecare';
+    const customerNotes = (document.getElementById('checkout-customer-notes')?.value || '').trim();
+    const clientAddress = isHomecare ? ((document.getElementById('checkout-homecare-address')?.value || '').trim() || 'Endereço informado no agendamento') : null;
+    const finalPayable = AppState.currentPricing.totalWithDisplacement || AppState.currentPricing.finalPrice;
+
     // Congela Snapshot de Preço e Reserva
     const newAppointment = {
       id: canonicalAppointmentId,
@@ -6251,13 +6668,21 @@ async function confirmBooking() {
       time: AppState.selectedTime,
       date: formatAppointmentDisplayDate(AppState.selectedDate),
       rawDate: AppState.selectedDate,
-      pricing: AppState.currentPricing,
+      pricing: {
+        ...AppState.currentPricing,
+        finalPrice: finalPayable
+      },
       paymentMethod: AppState.selectedPaymentMethod,
       status: 'CONFIRMED',
       bookingChannel: AppState.bookingChannel || 'calendar', // Ticket 11
       bookedAt: new Date().toISOString(),
       walkingTimeMin: AppState.lastWalkTimeMin || (AppState.selectedSalon.distanceKm ? Math.round(AppState.selectedSalon.distanceKm * 12) : null),
-      walkingDistanceM: AppState.lastWalkDistanceM || (AppState.selectedSalon.distanceKm ? Math.round(AppState.selectedSalon.distanceKm * 1000) : null)
+      walkingDistanceM: AppState.lastWalkDistanceM || (AppState.selectedSalon.distanceKm ? Math.round(AppState.selectedSalon.distanceKm * 1000) : null),
+      // Frente 3: Modalidade e Observações do Cliente
+      fulfillmentMode: AppState.fulfillmentMode || 'salon',
+      customerNotes: customerNotes,
+      clientAddress: clientAddress,
+      displacementFee: isHomecare ? (AppState.currentPricing.displacementFee || 0) : 0
     };
 
     AppState.confirmedAppointment = newAppointment;
@@ -6337,12 +6762,33 @@ function renderConfirmScreen() {
   const appt = AppState.confirmedAppointment;
   if (!appt) return;
 
+  const isHomecare = appt.fulfillmentMode === 'homecare';
+  const badgeEl = document.getElementById('confirm-fulfillment-badge');
+  if (badgeEl) {
+    badgeEl.textContent = isHomecare ? 'A Domicílio (Home Care)' : 'No Salão (Presencial)';
+    badgeEl.style.background = isHomecare ? '#FEF3C7' : 'var(--surface-tint)';
+    badgeEl.style.color = isHomecare ? '#B45309' : 'var(--primary)';
+  }
+
+  const notesBox = document.getElementById('confirm-notes-box');
+  const notesText = document.getElementById('confirm-notes-text');
+  if (notesBox && notesText) {
+    if (appt.customerNotes) {
+      notesBox.style.display = 'block';
+      notesText.textContent = `"${appt.customerNotes}"`;
+    } else {
+      notesBox.style.display = 'none';
+    }
+  }
+
   document.getElementById('confirm-voucher-code').textContent = appt.id;
   document.getElementById('confirm-salon-name').textContent = appt.salon.name;
   
   const addressEl = document.getElementById('confirm-address');
   if (addressEl) {
-    if (appt.walkingTimeMin) {
+    if (isHomecare && appt.clientAddress) {
+      addressEl.innerHTML = `<strong>Endereço de Atendimento (Seu Local):</strong><br>${appt.clientAddress}<br><span style="display:inline-flex; align-items:center; gap:5px; margin-top:5px; color:#B45309; font-weight:800; font-size:11px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg> Atendimento em Domicílio • Profissional irá até você</span>`;
+    } else if (appt.walkingTimeMin) {
       addressEl.innerHTML = `${appt.salon.address}<br><span style="display:inline-flex; align-items:center; gap:5px; margin-top:5px; color:var(--primary); font-weight:800; font-size:11px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="5" r="2"/><path d="m9 20 3-6 3 2 2 4"/><path d="m6 16 4-3 1-4 3 3 4-2"/></svg> Trajeto a pé: ${appt.walkingTimeMin} min (${appt.walkingDistanceM} m)</span>`;
     } else {
       addressEl.textContent = appt.salon.address;
@@ -6361,8 +6807,101 @@ function renderConfirmScreen() {
   if (qrCodeTextEl) qrCodeTextEl.textContent = `Código: ${appt.id}`;
 }
 
-// --- MODAL DE CANCELAMENTO (T4 da Spec) ---
+// --- MODAL DE CANCELAMENTO E POLÍTICA DINÂMICA <24H (30%) VS >24H (GRÁTIS) — Seção 7.5 e T4 da Spec ---
+function calculateCancellationPolicy(appt) {
+  const finalPrice = Number(appt?.pricing?.finalPrice || appt?.service?.basePrice || 84.00);
+  let hoursUntil = 4.0; // Default para agendamentos do próprio dia ('Hoje')
+
+  const todayStr = getTodayDateStr();
+  if (appt && appt.rawDate) {
+    const dateParts = String(appt.rawDate).split('-').map(Number);
+    const timeParts = String(appt.time || '14:00').split(':').map(Number);
+    if (dateParts.length === 3 && timeParts.length === 2) {
+      const apptDateObj = new Date(dateParts[0], dateParts[1] - 1, dateParts[2], timeParts[0], timeParts[1], 0);
+      const diffHours = (apptDateObj.getTime() - Date.now()) / 3600000;
+      // Se a data do agendamento for hoje, considera < 24h; se for data futura distante (>24h), calcula real
+      if (appt.rawDate === todayStr) {
+        hoursUntil = Math.max(1.0, Math.min(23.5, diffHours > 0 ? diffHours : 3.0));
+      } else {
+        hoursUntil = diffHours;
+      }
+    }
+  } else if (appt && String(appt.date || '').toLowerCase().includes('hoje')) {
+    hoursUntil = 3.5;
+  }
+
+  const isUnder24h = hoursUntil < 24;
+  const retentionPct = isUnder24h ? 30 : 0;
+  const feeAmount = isUnder24h ? Math.round(finalPrice * 0.30 * 100) / 100 : 0;
+  const refundAmount = Math.max(0, Math.round((finalPrice - feeAmount) * 100) / 100);
+
+  return {
+    isUnder24h,
+    hoursUntil: Math.round(hoursUntil * 10) / 10,
+    retentionPct,
+    finalPrice,
+    feeAmount,
+    refundAmount
+  };
+}
+
+function getTargetCancellationAppointment() {
+  let targetAppt = AppState.confirmedAppointment;
+  if (cancelingApptId) {
+    const found = AppState.appointmentsList.find(a => a.id === cancelingApptId);
+    if (found) targetAppt = found;
+  }
+  if (!targetAppt && AppState.appointmentsList.length > 0) {
+    targetAppt = AppState.appointmentsList.find(a => a.status === 'CONFIRMED') || AppState.appointmentsList[0];
+  }
+  return targetAppt;
+}
+
 function openCancelModal() {
+  const targetAppt = getTargetCancellationAppointment();
+  const policy = calculateCancellationPolicy(targetAppt);
+  const feeBox = document.getElementById('cancel-fee-breakdown-box');
+
+  if (feeBox) {
+    if (policy.isUnder24h) {
+      feeBox.className = 'cancel-fee-box fee-active';
+      feeBox.innerHTML = `
+        <div style="font-weight:800; display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+          <span>Cancelamento em menos de 24h</span>
+          <span style="background:#FFE4E6; color:#BE123C; padding:1px 6px; border-radius:99px; font-size:10px;">Taxa 30%</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:11px;">
+          <span>Valor do agendamento:</span>
+          <strong>R$ ${policy.finalPrice.toFixed(2)}</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:11px; margin-top:2px;">
+          <span>Retenção simulada (30%):</span>
+          <strong style="color:#BE123C;">R$ ${policy.feeAmount.toFixed(2)}</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:11px; margin-top:2px; padding-top:3px; border-top:1px dashed #FECDD3;">
+          <span>Estorno simulado ao cliente:</span>
+          <strong>R$ ${policy.refundAmount.toFixed(2)}</strong>
+        </div>
+      `;
+    } else {
+      feeBox.className = 'cancel-fee-box fee-free';
+      feeBox.innerHTML = `
+        <div style="font-weight:800; display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+          <span>Mais de 24h de antecedência</span>
+          <span style="background:#CCFBF1; color:#0F766E; padding:1px 6px; border-radius:99px; font-size:10px;">Gratuito</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:11px;">
+          <span>Taxa de cancelamento:</span>
+          <strong>R$ 0,00 (Isento)</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:11px; margin-top:2px;">
+          <span>Reembolso integral simulado:</span>
+          <strong>R$ ${policy.finalPrice.toFixed(2)}</strong>
+        </div>
+      `;
+    }
+  }
+
   document.getElementById('cancel-modal-overlay').classList.add('active');
 }
 
@@ -6391,22 +6930,27 @@ function executeCancellation() {
   }
 
   // Identifica qual agendamento está sendo cancelado
-  let targetAppt = AppState.confirmedAppointment;
-  if (cancelingApptId) {
-    const found = AppState.appointmentsList.find(a => a.id === cancelingApptId);
-    if (found) targetAppt = found;
-  }
+  const targetAppt = getTargetCancellationAppointment();
 
   if (targetAppt) {
+    const policy = calculateCancellationPolicy(targetAppt);
     const prevStatus = targetAppt.status;
     targetAppt.status = 'CANCELLED_BY_USER';
     targetAppt.cancellationReason = finalReason;
+    targetAppt.cancellationFee = policy.feeAmount;
+    targetAppt.isUnder24h = policy.isUnder24h;
 
-    emitAppointmentStatusChanged(targetAppt.id, prevStatus, 'CANCELLED_BY_USER', { reason: finalReason });
+    emitAppointmentStatusChanged(targetAppt.id, prevStatus, 'CANCELLED_BY_USER', {
+      reason: finalReason,
+      under_24h: policy.isUnder24h,
+      fee_simulated: policy.feeAmount
+    });
 
     trackEvent('cancellation_completed', {
       appointment_id: targetAppt.id,
-      reason: finalReason
+      reason: finalReason,
+      under_24h: policy.isUnder24h,
+      fee_simulated: policy.feeAmount
     });
     persistAppointments();
   }
@@ -6908,9 +7452,15 @@ function renderAppointmentsScreen() {
       statusLabel = 'Cancelado pelo Salão (Força Maior)';
     }
 
+    const isHomecare = appt.fulfillmentMode === 'homecare';
+    const modeBadge = `<span style="font-size:9.5px; font-weight:800; padding:2px 7px; border-radius:99px; background:${isHomecare ? '#FEF3C7' : '#CCFBF1'}; color:${isHomecare ? '#B45309' : '#0F766E'};">${isHomecare ? 'A Domicílio' : 'No Salão'}</span>`;
+
     card.innerHTML = `
       <div class="appt-card-top">
-        <span class="appt-status-badge ${statusClass}">${statusLabel}</span>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <span class="appt-status-badge ${statusClass}">${statusLabel}</span>
+          ${modeBadge}
+        </div>
         <span style="font-size:11px; font-weight:800; color:var(--primary);">${appt.id}</span>
       </div>
 
@@ -6926,6 +7476,7 @@ function renderAppointmentsScreen() {
             R$ ${(appt.pricing?.finalPrice || appt.service.basePrice).toFixed(2)}
             ${appt.pricing?.hasDiscount ? `<span style="font-size:10px; color:var(--promo-coral); font-weight:700;">(-${appt.pricing.discountPct}%)</span>` : ''}
           </div>
+          ${appt.customerNotes ? `<div style="font-size:10.5px; color:var(--neutral-text); background:var(--surface-tint); padding:4px 7px; border-radius:6px; margin-top:5px; border-left:2px solid var(--primary);"><strong>Obs:</strong> "${appt.customerNotes}"</div>` : ''}
           ${appt.cancellationReason ? `<div style="font-size:10px; color:#C2410C; margin-top:4px; font-style:italic;">Motivo: ${appt.cancellationReason}</div>` : ''}
         </div>
       </div>
@@ -7121,12 +7672,37 @@ function calculateSUSReport() {
   };
 }
 
+function calculateH3Report() {
+  const records = JSON.parse(localStorage.getItem('bp_h3_loi_records') || '[]');
+  const signedList = records.filter(r => r.signed);
+  const signedCount = signedList.length;
+  const totalInterviews = records.length;
+
+  const avgDiscount = signedCount > 0
+    ? Math.round(signedList.reduce((acc, r) => acc + (Number(r.maxDiscount) || 25), 0) / signedCount)
+    : 0;
+  const avgCommission = signedCount > 0
+    ? Math.round(signedList.reduce((acc, r) => acc + (Number(r.acceptableCommission) || 12), 0) / signedCount)
+    : 0;
+
+  return {
+    totalInterviews,
+    signedCount,
+    targetCount: 5,
+    avgDiscount,
+    avgCommission,
+    // H3 validada se >= 3 de 5 salões assinarem a Carta de Intenção (Critério GO Seção 2 e 5.4)
+    isValidated: signedCount >= 3
+  };
+}
+
 function renderValidationMetrics() {
   const container = document.getElementById('validation-dashboard-metrics');
   if (!container) return;
 
   const h1 = calculateH1Report();
   const h2 = calculateH2Report();
+  const h3 = calculateH3Report();
   const sus = calculateSUSReport();
 
   container.innerHTML = `
@@ -7163,7 +7739,30 @@ function renderValidationMetrics() {
         </div>
       </div>
 
-      <!-- KPI 3: SUS SCORE GLOBAL -->
+      <!-- KPI 3: H3 SALÕES PARCEIROS (B2B) -->
+      <div class="metric-card-kpi full-width ${h3.isValidated ? 'validated' : ''}">
+        <div class="metric-kpi-header">
+          <span class="metric-kpi-title">H3: Adesão Salões Parceiros (B2B)</span>
+          <span class="metric-kpi-badge ${h3.isValidated ? 'badge-validated' : 'badge-tracking'}">
+            ${h3.isValidated ? 'Validada (GO)' : 'Em Coleta'}
+          </span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div class="metric-kpi-number">${h3.signedCount}/${h3.targetCount} <span style="font-size:12px; font-weight:600; color:var(--neutral-muted);">Cartas de Intenção (LOI)</span></div>
+            <div class="metric-kpi-desc" style="margin-bottom:2px;">Meta GO Seção 2 e 5.4: &ge; 3 de 5 salões assinam LOI (15–35% OFF)</div>
+            <div class="metric-kpi-sub">
+              <span>Desc. médio aceito: ${h3.avgDiscount || 30}%</span>
+              <span>Comissão aceita: ${h3.avgCommission || 12}%</span>
+            </div>
+          </div>
+          <button class="profile-action-btn" style="width:auto; height:34px; padding:0 12px; font-size:11px; margin-top:0;" onclick="openPartnerB2BPanel('loi')">
+            Coletar LOI
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI 4: SUS SCORE GLOBAL -->
       <div class="metric-card-kpi ${sus.isSUSValidated ? 'validated' : ''}">
         <div class="metric-kpi-header">
           <span class="metric-kpi-title">SUS: Usabilidade</span>
@@ -7179,7 +7778,7 @@ function renderValidationMetrics() {
         </div>
       </div>
 
-      <!-- KPI 4: SUCESSO DAS TAREFAS T1-T4 -->
+      <!-- KPI 5: SUCESSO DAS TAREFAS T1-T4 -->
       <div class="metric-card-kpi ${sus.isTaskSuccessValidated ? 'validated' : ''}">
         <div class="metric-kpi-header">
           <span class="metric-kpi-title">Tarefas T1–T4</span>
@@ -7195,7 +7794,7 @@ function renderValidationMetrics() {
         </div>
       </div>
 
-      <!-- KPI 5: INTENÇÃO DE RETENÇÃO (USARIA DE NOVO) -->
+      <!-- KPI 6: INTENÇÃO DE RETENÇÃO (USARIA DE NOVO) -->
       <div class="metric-card-kpi full-width ${sus.isRetentionValidated ? 'validated' : ''}">
         <div class="metric-kpi-header">
           <span class="metric-kpi-title">Intenção de Uso: "Você usaria este app de novo?"</span>
@@ -7412,14 +8011,455 @@ function submitSessionEvaluation() {
 }
 
 function resetValidationData() {
-  if (confirm('Deseja realmente limpar todos os eventos de teste, avaliações SUS e métricas acumuladas?')) {
+  if (confirm('Deseja realmente limpar todos os eventos de teste, avaliações SUS, LOIs H3 e métricas acumuladas?')) {
     localStorage.removeItem('bp_analytics_events');
     localStorage.removeItem('bp_sus_evaluations');
     localStorage.removeItem('bp_user_appointments');
+    localStorage.removeItem('bp_h3_loi_records');
+    localStorage.removeItem('bp_b2b_custom_rules');
     AppState.analyticsEvents = [];
     AppState.appointmentsList = [];
-    showToast('Métricas e avaliações reiniciadas com sucesso!');
+    showToast('Métricas, avaliações e regras B2B reiniciadas com sucesso!');
     renderValidationMetrics();
+  }
+}
+
+// ===================================================================
+// CONTROLADOR DO PAINEL DO SALÃO PARCEIRO B2B (PROTOCOLO H3 — SEÇÃO 5.4)
+// 3 Telas: 1. Agenda & Ociosidade | 2. Regras de Desconto | 3. Recebidos & Carta LOI
+// ===================================================================
+AppState.b2bSelectedSalonId = 's1';
+AppState.b2bActiveTab = 'agenda';
+AppState.b2bSelectedDiscountPct = 30;
+
+function getB2BSelectedSalon() {
+  return MOCK_SALONS.find(s => s.id === AppState.b2bSelectedSalonId) || MOCK_SALONS[0];
+}
+
+function openPartnerB2BPanel(initialTab = 'agenda') {
+  navigateTo('partner-b2b');
+  switchB2BTab(initialTab || 'agenda');
+}
+
+function switchB2BTab(tabKey) {
+  AppState.b2bActiveTab = tabKey;
+  ['agenda', 'rules', 'loi'].forEach(k => {
+    const btn = document.getElementById(`b2b-tab-btn-${k}`);
+    const pane = document.getElementById(`b2b-pane-${k}`);
+    if (btn) {
+      btn.classList.toggle('active', k === tabKey);
+      btn.setAttribute('aria-selected', k === tabKey ? 'true' : 'false');
+    }
+    if (pane) {
+      pane.style.display = k === tabKey ? 'block' : 'none';
+      pane.classList.toggle('active', k === tabKey);
+    }
+  });
+  renderPartnerB2BPanel();
+}
+
+function onChangeB2BSalon(salonId) {
+  AppState.b2bSelectedSalonId = salonId;
+  const salon = getB2BSelectedSalon();
+  const ownerInput = document.getElementById('h3-owner-name');
+  if (ownerInput && salon) {
+    ownerInput.value = (salon.leadStaff && salon.leadStaff.name) || (salon.staff && salon.staff[0]?.name) || 'Proprietário(a)';
+  }
+  renderPartnerB2BPanel();
+}
+
+function openB2BSalonInClientView() {
+  const salon = getB2BSelectedSalon();
+  if (salon) {
+    openSalonDetail(salon.id);
+  }
+}
+
+function selectB2BDiscountPct(pct) {
+  AppState.b2bSelectedDiscountPct = Number(pct) || 30;
+  document.querySelectorAll('#b2b-discount-pills .b2b-disc-pill').forEach(btn => {
+    btn.classList.toggle('active', Number(btn.getAttribute('data-disc')) === AppState.b2bSelectedDiscountPct);
+  });
+  updateB2BRuleSimulator();
+}
+
+function updateB2BRuleSimulator() {
+  const salon = getB2BSelectedSalon();
+  const box = document.getElementById('b2b-payout-simulator-box');
+  if (!salon || !box) return;
+
+  const baseService = (salon.services && salon.services[0]) || salon.service;
+  const basePrice = Number(baseService?.basePrice) || 120;
+  const discPct = AppState.b2bSelectedDiscountPct || 30;
+  const clientPrice = Math.max(25, Math.round(basePrice * (1 - discPct / 100) * 100) / 100);
+  const commissionPct = 12; // Faixa padrão testada (10–18% da Seção 5.4)
+  const netPayout = Math.round(clientPrice * (1 - commissionPct / 100) * 100) / 100;
+  const timeVal = document.getElementById('b2b-rule-time')?.value || '14:00';
+
+  box.innerHTML = `
+    <div style="font-weight:800; color:#0F766E; margin-bottom:4px;">
+      Simulação de Repasse (${baseService.name} às ${timeVal})
+    </div>
+    <div style="display:flex; justify-content:space-between;">
+      <span>Preço de tabela (cheio):</span>
+      <span>R$ ${basePrice.toFixed(2)}</span>
+    </div>
+    <div style="display:flex; justify-content:space-between; margin-top:2px;">
+      <span>Preço ao cliente (-${discPct}% OFF):</span>
+      <strong>R$ ${clientPrice.toFixed(2)}</strong>
+    </div>
+    <div style="display:flex; justify-content:space-between; margin-top:2px;">
+      <span>Taxa plataforma (${commissionPct}%):</span>
+      <span>- R$ ${(clientPrice - netPayout).toFixed(2)}</span>
+    </div>
+    <div style="display:flex; justify-content:space-between; margin-top:4px; padding-top:4px; border-top:1px dashed #5EEAD4; font-size:12px;">
+      <strong>Repasse líquido vs cadeira vazia (R$ 0):</strong>
+      <strong style="color:#0F766E;">+ R$ ${netPayout.toFixed(2)}</strong>
+    </div>
+  `;
+}
+
+function getEffectiveEditableB2BRules(salon) {
+  const custom = getCustomB2BRulesForSalon(salon.id);
+  if (custom && custom.length > 0) return [...custom];
+  const dateStr = AppState.selectedDate || getTodayDateStr();
+  const current = getSalonPromoRules(salon, dateStr);
+  return current.length > 0 ? current.map(r => ({ ...r })) : [
+    { time: '10:00', discountPct: 25, type: 'economy' },
+    { time: '14:00', discountPct: 30, type: 'economy' }
+  ];
+}
+
+function persistB2BRulesForSalon(salonId, rulesArray) {
+  try {
+    const allCustom = JSON.parse(localStorage.getItem('bp_b2b_custom_rules') || '{}');
+    allCustom[salonId] = rulesArray;
+    localStorage.setItem('bp_b2b_custom_rules', JSON.stringify(allCustom));
+  } catch (e) {
+    console.warn('Erro ao salvar regras B2B:', e);
+  }
+}
+
+function saveB2BDiscountRule() {
+  const salon = getB2BSelectedSalon();
+  if (!salon) return;
+
+  const timeVal = document.getElementById('b2b-rule-time')?.value || '14:00';
+  const typeVal = document.getElementById('b2b-rule-type')?.value || 'economy';
+  const discPct = AppState.b2bSelectedDiscountPct || 30;
+
+  const rules = getEffectiveEditableB2BRules(salon);
+  const existingIdx = rules.findIndex(r => r.time === timeVal);
+  if (existingIdx >= 0) {
+    rules[existingIdx] = { time: timeVal, discountPct: discPct, type: typeVal };
+  } else {
+    rules.push({ time: timeVal, discountPct: discPct, type: typeVal });
+    rules.sort((a, b) => a.time.localeCompare(b.time));
+  }
+
+  persistB2BRulesForSalon(salon.id, rules);
+  trackEvent('b2b_discount_rule_saved', {
+    salon_id: salon.id,
+    time: timeVal,
+    discount_pct: discPct,
+    type: typeVal
+  });
+  showToast(`Regra publicada! ${timeVal} agora tem -${discPct}% OFF em ${salon.name}.`);
+  renderPartnerB2BPanel();
+}
+
+function removeB2BDiscountRule(timeVal) {
+  const salon = getB2BSelectedSalon();
+  if (!salon) return;
+  const rules = getEffectiveEditableB2BRules(salon).filter(r => r.time !== timeVal);
+  persistB2BRulesForSalon(salon.id, rules);
+  showToast(`Regra das ${timeVal} removida.`);
+  renderPartnerB2BPanel();
+}
+
+function quickActivateIdleSlotB2B(timeVal) {
+  const timeSelect = document.getElementById('b2b-rule-time');
+  if (timeSelect) {
+    // Garante que o horário exista no select
+    if (![...timeSelect.options].some(o => o.value === timeVal)) {
+      const opt = document.createElement('option');
+      opt.value = timeVal;
+      opt.textContent = `${timeVal} — Janela Ociosa`;
+      timeSelect.appendChild(opt);
+    }
+    timeSelect.value = timeVal;
+  }
+  selectB2BDiscountPct(25);
+  saveB2BDiscountRule();
+}
+
+function checkinBookingByIdB2B(apptId) {
+  const appt = AppState.appointmentsList.find(a => a.id.toUpperCase() === String(apptId).trim().toUpperCase());
+  if (!appt) {
+    showToast('Código de voucher não encontrado nas reservas ativas.');
+    return false;
+  }
+  if (appt.status === 'COMPLETED') {
+    showToast(`O voucher ${appt.id} já foi concluído anteriormente.`);
+    return true;
+  }
+
+  const prevStatus = appt.status;
+  appt.status = 'COMPLETED';
+  appt.checkedInAt = new Date().toISOString();
+  emitAppointmentStatusChanged(appt.id, prevStatus, 'COMPLETED', { channel: 'b2b_voucher_checkin' });
+  persistAppointments();
+
+  trackEvent('b2b_voucher_checked_in', {
+    appointment_id: appt.id,
+    salon_id: appt.salon?.id || 's1',
+    amount: appt.pricing?.finalPrice || 84
+  });
+
+  showToast(`Check-in confirmado! Voucher ${appt.id} alterado para COMPLETED.`);
+  renderPartnerB2BPanel();
+  return true;
+}
+
+function validateB2BVoucherCheckin() {
+  const input = document.getElementById('b2b-voucher-input');
+  const code = (input?.value || '').trim().toUpperCase();
+  if (!code) {
+    showToast('Informe o código do voucher (ex.: BP-108420).');
+    return;
+  }
+  if (checkinBookingByIdB2B(code) && input) {
+    input.value = '';
+  }
+}
+
+function submitH3LetterOfIntent() {
+  const salon = getB2BSelectedSalon();
+  const ownerName = (document.getElementById('h3-owner-name')?.value || '').trim() || salon.leadStaff?.name || 'Gestor(a) Parceiro(a)';
+  const maxDiscount = Number(document.getElementById('h3-max-discount')?.value) || 30;
+  const acceptableCommission = Number(document.getElementById('h3-acceptable-commission')?.value) || 12;
+  const objections = (document.getElementById('h3-objections')?.value || '').trim() || 'Sem objeções impeditivas';
+  const signed = Boolean(document.getElementById('h3-loi-signed-check')?.checked);
+
+  const records = JSON.parse(localStorage.getItem('bp_h3_loi_records') || '[]');
+  const payload = {
+    id: 'loi_' + Math.random().toString(36).substring(2, 8),
+    salonId: salon.id,
+    salonName: salon.name,
+    neighborhood: salon.neighborhood,
+    ownerName,
+    maxDiscount,
+    acceptableCommission,
+    objections,
+    signed,
+    recordedAt: new Date().toISOString()
+  };
+
+  // Atualiza se já houver LOI deste salão ou adiciona novo
+  const existingIdx = records.findIndex(r => r.salonId === salon.id);
+  if (existingIdx >= 0) {
+    records[existingIdx] = payload;
+  } else {
+    records.push(payload);
+  }
+  localStorage.setItem('bp_h3_loi_records', JSON.stringify(records));
+
+  trackEvent('h3_loi_submitted', {
+    salon_id: salon.id,
+    salon_name: salon.name,
+    owner_name: ownerName,
+    max_discount_pct: maxDiscount,
+    acceptable_commission_pct: acceptableCommission,
+    signed_loi: signed
+  });
+
+  const h3 = calculateH3Report();
+  showToast(`Carta de Intenção registrada para ${salon.name}! (${h3.signedCount}/5 LOIs assinadas)`);
+  renderPartnerB2BPanel();
+}
+
+function renderPartnerB2BPanel() {
+  const salon = getB2BSelectedSalon();
+  if (!salon) return;
+
+  // 1. Popula seletor de salões
+  const selector = document.getElementById('b2b-salon-selector');
+  if (selector && selector.options.length === 0) {
+    MOCK_SALONS.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.id;
+      opt.textContent = `${s.name} (${s.neighborhood})`;
+      selector.appendChild(opt);
+    });
+  }
+  if (selector) selector.value = salon.id;
+
+  // Preenche nome do proprietário padrão se estiver vazio
+  const ownerInput = document.getElementById('h3-owner-name');
+  if (ownerInput && !ownerInput.value) {
+    ownerInput.value = (salon.leadStaff && salon.leadStaff.name) || (salon.staff && salon.staff[0]?.name) || 'Juliana Paes';
+  }
+
+  // Atualiza contador H3 no topo
+  const h3 = calculateH3Report();
+  const loiBadge = document.getElementById('b2b-loi-counter-badge');
+  if (loiBadge) {
+    loiBadge.textContent = `${h3.signedCount}/5 LOIs ${h3.isValidated ? '(GO!)' : ''}`;
+  }
+
+  // 2. Renderiza Aba 1: Agenda com Slots Ociosos Destacados
+  const dateStr = AppState.selectedDate || getTodayDateStr();
+  const activeRules = getSalonPromoRules(salon, dateStr);
+  const occupiedSlots = getOccupiedSlots(salon, dateStr);
+  const sampleTimes = ['09:00', '10:00', '11:00', '13:00', '13:30', '14:00', '14:30', '15:00', '16:00', '16:30', '17:30', '18:00'];
+
+  let idleCount = 0;
+  let promoCount = 0;
+  let busyCount = 0;
+
+  const agendaGrid = document.getElementById('b2b-agenda-slots-grid');
+  if (agendaGrid) {
+    agendaGrid.innerHTML = '';
+    sampleTimes.forEach(t => {
+      const rule = activeRules.find(r => r.time === t);
+      const isBusy = occupiedSlots.includes(t);
+      const card = document.createElement('div');
+
+      if (isBusy) {
+        busyCount++;
+        card.className = 'b2b-slot-card slot-busy';
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong style="font-size:13px;">${t}</strong>
+            <span style="font-size:9px; font-weight:700; background:#E2E8F0; color:#475569; padding:2px 6px; border-radius:99px;">Ocupado</span>
+          </div>
+          <span style="font-size:10px; color:var(--neutral-muted);">Cadeira reservada</span>
+        `;
+      } else if (rule) {
+        promoCount++;
+        card.className = 'b2b-slot-card slot-promo-active';
+        card.onclick = () => switchB2BTab('rules');
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong style="font-size:13px; color:#0F766E;">${t}</strong>
+            <span style="font-size:9.5px; font-weight:800; background:#CCFBF1; color:#0F766E; padding:2px 6px; border-radius:99px;">-${rule.discountPct}% OFF</span>
+          </div>
+          <span style="font-size:10px; color:#0F766E; font-weight:600;">${rule.type === 'urgent' ? 'Última Hora Ativo' : 'Horário Econômico Ativo'}</span>
+        `;
+      } else {
+        idleCount++;
+        card.className = 'b2b-slot-card slot-idle-opportunity';
+        card.onclick = () => quickActivateIdleSlotB2B(t);
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong style="font-size:13px; color:#B45309;">${t}</strong>
+            <span style="font-size:9px; font-weight:800; background:#FEF3C7; color:#B45309; padding:2px 6px; border-radius:99px;">Janela Ociosa</span>
+          </div>
+          <span style="font-size:10px; color:#92400E; font-weight:700;">+ Ativar -25% OFF</span>
+        `;
+      }
+      agendaGrid.appendChild(card);
+    });
+  }
+
+  const kpiStrip = document.getElementById('b2b-agenda-kpis');
+  if (kpiStrip) {
+    const occupancyRate = Math.round(((busyCount + promoCount) / sampleTimes.length) * 100);
+    kpiStrip.innerHTML = `
+      <div class="b2b-kpi-box">
+        <div class="b2b-kpi-val">${occupancyRate}%</div>
+        <div class="b2b-kpi-label">Ocupação Projetada</div>
+      </div>
+      <div class="b2b-kpi-box">
+        <div class="b2b-kpi-val" style="color:#D97706;">${idleCount}</div>
+        <div class="b2b-kpi-label">Slots Ociosos</div>
+      </div>
+      <div class="b2b-kpi-box">
+        <div class="b2b-kpi-val" style="color:#0D9488;">${promoCount}</div>
+        <div class="b2b-kpi-label">Regras Ativas</div>
+      </div>
+    `;
+  }
+
+  // 3. Renderiza Aba 2: Simulador e Lista de Regras Ativas
+  updateB2BRuleSimulator();
+  const rulesListEl = document.getElementById('b2b-active-rules-list');
+  if (rulesListEl) {
+    const editableRules = getEffectiveEditableB2BRules(salon);
+    if (editableRules.length === 0) {
+      rulesListEl.innerHTML = `<div style="font-size:11px; color:var(--neutral-muted);">Nenhuma regra promocional ativa.</div>`;
+    } else {
+      rulesListEl.innerHTML = editableRules.map(r => `
+        <div class="b2b-rule-row">
+          <div>
+            <strong>${r.time}</strong> • <span style="color:#0F766E; font-weight:800;">-${r.discountPct}% OFF</span>
+            <span style="font-size:10px; color:var(--neutral-muted); margin-left:4px;">(${r.type === 'urgent' ? 'Última Hora' : 'Horário Econômico'})</span>
+          </div>
+          <button type="button" style="background:none; border:none; color:var(--error); font-size:11px; font-weight:700; cursor:pointer;" onclick="removeB2BDiscountRule('${r.time}')">
+            Remover
+          </button>
+        </div>
+      `).join('');
+    }
+  }
+
+  // 4. Renderiza Aba 3: Reservas Recebidas + Cartas de Intenção Assinadas (H3)
+  const bookingsListEl = document.getElementById('b2b-received-bookings-list');
+  if (bookingsListEl) {
+    const list = AppState.appointmentsList.slice(0, 5);
+    bookingsListEl.innerHTML = list.map(appt => {
+      const isConfirmed = appt.status === 'CONFIRMED';
+      const isCompleted = appt.status === 'COMPLETED';
+      const isHomecare = appt.fulfillmentMode === 'homecare';
+      return `
+        <div class="b2b-booking-row">
+          <div style="flex:1;">
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span style="font-weight:800; color:var(--neutral-text);">${appt.id} • ${appt.service?.name || 'Procedimento'}</span>
+              <span style="font-size:9px; font-weight:800; padding:1px 5px; border-radius:99px; background:${isHomecare ? '#FEF3C7' : '#CCFBF1'}; color:${isHomecare ? '#B45309' : '#0F766E'};">${isHomecare ? 'A Domicílio' : 'No Salão'}</span>
+            </div>
+            <div style="font-size:10.5px; color:var(--neutral-muted); margin-top:2px;">
+              ${appt.salon?.name || salon.name} • ${appt.time} • <strong>R$ ${(appt.pricing?.finalPrice || 84).toFixed(2)}</strong>
+            </div>
+            ${appt.customerNotes ? `<div style="font-size:9.5px; color:#475569; margin-top:3px; background:#F1F5F9; padding:2px 6px; border-radius:4px;"><strong>Obs:</strong> "${appt.customerNotes}"</div>` : ''}
+          </div>
+          ${isConfirmed ? `
+            <button type="button" class="btn-checkin-voucher" style="background:var(--primary); color:#FFF; border:none; border-radius:8px; padding:6px 10px; font-size:10.5px; font-weight:700; cursor:pointer;" onclick="checkinBookingByIdB2B('${appt.id}')">
+              Check-in QR
+            </button>
+          ` : `
+            <span style="font-size:10px; font-weight:800; color:${isCompleted ? '#0F766E' : '#94A3B8'};">
+              ${isCompleted ? 'CONCLUÍDO' : appt.status}
+            </span>
+          `}
+        </div>
+      `;
+    }).join('');
+  }
+
+  const loisListEl = document.getElementById('h3-signed-lois-list');
+  if (loisListEl) {
+    const records = JSON.parse(localStorage.getItem('bp_h3_loi_records') || '[]');
+    if (records.length === 0) {
+      loisListEl.innerHTML = `<div style="font-size:11px; color:var(--neutral-muted); text-align:center;">Nenhuma Carta de Intenção registrada ainda (Meta GO: &ge; 3 de 5 salões).</div>`;
+    } else {
+      loisListEl.innerHTML = `
+        <div style="font-size:11px; font-weight:800; color:var(--primary); margin-bottom:6px;">
+          Cartas de Intenção Coletadas (${h3.signedCount}/5 Assinadas):
+        </div>
+        ${records.map(r => `
+          <div class="b2b-rule-row" style="margin-bottom:6px;">
+            <div>
+              <strong>${r.salonName}</strong> (${r.ownerName})<br>
+              <span style="font-size:10px; color:var(--neutral-muted);">Aceita até -${r.maxDiscount}% OFF • Comissão ${r.acceptableCommission}%</span>
+            </div>
+            <span style="font-size:10px; font-weight:800; padding:2px 7px; border-radius:99px; background:${r.signed ? '#CCFBF1' : '#FEE2E2'}; color:${r.signed ? '#0F766E' : '#B91C1C'};">
+              ${r.signed ? 'LOI Assinada' : 'Recusou'}
+            </span>
+          </div>
+        `).join('')}
+      `;
+    }
   }
 }
 

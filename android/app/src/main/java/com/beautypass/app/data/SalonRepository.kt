@@ -41,6 +41,13 @@ object SalonRepository {
     private val _latestSusEvaluation = MutableStateFlow<SUSEvaluation?>(null)
     val latestSusEvaluation: StateFlow<SUSEvaluation?> = _latestSusEvaluation.asStateFlow()
 
+    // B2B & H3 StateFlows reativos em memória rápida
+    private val _b2bCustomRules = MutableStateFlow<Map<String, List<B2BDiscountRule>>>(emptyMap())
+    val b2bCustomRules: StateFlow<Map<String, List<B2BDiscountRule>>> = _b2bCustomRules.asStateFlow()
+
+    private val _h3LoiRecords = MutableStateFlow<List<H3LoiRecord>>(emptyList())
+    val h3LoiRecords: StateFlow<List<H3LoiRecord>> = _h3LoiRecords.asStateFlow()
+
     /**
      * Inicializa a camada de persistência com o banco Room SQLite.
      * Conecta os DAOs reativos diretamente aos StateFlows do repositório.
@@ -1551,5 +1558,100 @@ object SalonRepository {
                 db.susEvaluationDao().deleteAllEvaluations()
             }
         }
+    }
+
+    // =========================================================================
+    // MÉTODOS B2B & HIPÓTESE H3 (GERENCIAMENTO DE REGRAS E CARTAS DE INTENÇÃO)
+    // =========================================================================
+
+    fun getB2BRulesForSalon(salonId: String): List<B2BDiscountRule> {
+        val custom = _b2bCustomRules.value[salonId]
+        if (!custom.isNullOrEmpty()) return custom
+
+        val salon = getSalonById(salonId) ?: salons.first()
+        return if (salon.discountSlots.isNotEmpty()) {
+            salon.discountSlots.map { slot ->
+                B2BDiscountRule(time = slot.time, discountPct = slot.discountPct, type = slot.type)
+            }
+        } else {
+            listOf(
+                B2BDiscountRule("10:00", 25, "economy"),
+                B2BDiscountRule("14:00", 30, "economy")
+            )
+        }
+    }
+
+    fun saveB2BRule(salonId: String, rule: B2BDiscountRule) {
+        val currentRules = getB2BRulesForSalon(salonId).toMutableList()
+        val existingIndex = currentRules.indexOfFirst { it.time == rule.time }
+        if (existingIndex >= 0) {
+            currentRules[existingIndex] = rule
+        } else {
+            currentRules.add(rule)
+            currentRules.sortBy { it.time }
+        }
+        val currentMap = _b2bCustomRules.value.toMutableMap()
+        currentMap[salonId] = currentRules
+        _b2bCustomRules.value = currentMap
+    }
+
+    fun removeB2BRule(salonId: String, time: String) {
+        val currentRules = getB2BRulesForSalon(salonId).filterNot { it.time == time }
+        val currentMap = _b2bCustomRules.value.toMutableMap()
+        currentMap[salonId] = currentRules
+        _b2bCustomRules.value = currentMap
+    }
+
+    fun submitH3Loi(record: H3LoiRecord) {
+        val currentList = _h3LoiRecords.value.toMutableList()
+        val existingIndex = currentList.indexOfFirst { it.salonId == record.salonId }
+        if (existingIndex >= 0) {
+            currentList[existingIndex] = record
+        } else {
+            currentList.add(record)
+        }
+        _h3LoiRecords.value = currentList
+    }
+
+    fun calculateH3Report(): H3Report {
+        val records = _h3LoiRecords.value
+        val signedList = records.filter { it.signed }
+        val signedCount = signedList.size
+        val avgDiscount = if (signedCount > 0) {
+            signedList.map { it.maxDiscount }.average().toInt()
+        } else 30
+        val avgCommission = if (signedCount > 0) {
+            signedList.map { it.acceptableCommission }.average().toInt()
+        } else 12
+
+        return H3Report(
+            totalInterviews = records.size,
+            signedCount = signedCount,
+            targetCount = 5,
+            avgDiscount = avgDiscount,
+            avgCommission = avgCommission,
+            isValidated = signedCount >= 3
+        )
+    }
+
+    fun checkinVoucher(voucherCode: String): Boolean {
+        val code = voucherCode.trim().uppercase()
+        val appt = _appointments.value.find { it.id.uppercase() == code || it.voucherQrCode.uppercase() == code } ?: return false
+        if (appt.status == AppointmentStatus.COMPLETED) return true
+
+        val updated = appt.copy(status = AppointmentStatus.COMPLETED)
+        val currentList = _appointments.value.toMutableList()
+        val index = currentList.indexOfFirst { it.id == appt.id }
+        if (index >= 0) {
+            currentList[index] = updated
+            _appointments.value = currentList
+        }
+
+        database?.let { db ->
+            repositoryScope.launch {
+                db.appointmentDao().updateAppointment(AppointmentEntity.fromDomain(updated))
+            }
+        }
+        return true
     }
 }

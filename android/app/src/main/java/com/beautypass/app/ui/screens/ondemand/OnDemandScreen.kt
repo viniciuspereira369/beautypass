@@ -48,19 +48,19 @@ enum class OnDemandMatchType(
     val iconColor: Color
 ) {
     IDEAL(
-        title = "★ MATCH IDEAL",
+        title = "MATCH IDEAL",
         subtitle = "Melhor custo-benefício e reputação estelar",
         badgeColor = MintSurface,
         iconColor = SereneTeal
     ),
     CLOSEST(
-        title = "⚡ MAIS PRÓXIMO",
+        title = "MAIS PRÓXIMO",
         subtitle = "Menor tempo de caminhada a pé",
         badgeColor = Color(0xFFFEF3C7),
         iconColor = Color(0xFFD97706)
     ),
     ECONOMIC(
-        title = "💰 MAIS ECONÔMICO",
+        title = "MAIS ECONÔMICO",
         subtitle = "Maior desconto de ociosidade imediata",
         badgeColor = EconomyGreenBg,
         iconColor = EconomyGreen
@@ -465,7 +465,7 @@ fun OnDemandScreen(
                                     color = OceanicCharcoal
                                 )
                                 Text(
-                                    text = "${opt.salon.neighborhood} • ★ ${opt.salon.rating}",
+                                    text = "${opt.salon.neighborhood} • Nota ${opt.salon.rating}",
                                     fontSize = 11.sp,
                                     color = NeutralMuted
                                 )

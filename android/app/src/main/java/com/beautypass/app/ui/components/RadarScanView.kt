@@ -87,7 +87,7 @@ fun RadarScanView(
         modifier = modifier
             .fillMaxWidth()
             .padding(16.dp),
-        horizontalAlignment = Alignment.CenterVertically
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Círculo Central do Radar
         Box(

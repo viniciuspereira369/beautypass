@@ -11,9 +11,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -44,9 +47,20 @@ object SalonRepository {
     // B2B & H3 StateFlows reativos em memória rápida
     private val _b2bCustomRules = MutableStateFlow<Map<String, List<B2BDiscountRule>>>(emptyMap())
     val b2bCustomRules: StateFlow<Map<String, List<B2BDiscountRule>>> = _b2bCustomRules.asStateFlow()
+    val b2bRules: StateFlow<List<B2BDiscountRule>> = _b2bCustomRules.map { map ->
+        map.values.flatten()
+    }.stateIn(repositoryScope, SharingStarted.Eagerly, emptyList())
 
-    private val _h3LoiRecords = MutableStateFlow<List<H3LoiRecord>>(emptyList())
+    private val _h3LoiRecords = MutableStateFlow<List<H3LoiRecord>>(
+        listOf(
+            H3LoiRecord(id = "loi_s1", salonId = "s1", salonName = "Studio Jardins", ownerName = "Juliana", signed = true),
+            H3LoiRecord(id = "loi_s2", salonId = "s2", salonName = "L'Élégance Bela Vista", ownerName = "Marcos", signed = true),
+            H3LoiRecord(id = "loi_s3", salonId = "s3", salonName = "Espaço Zen Pinheiros", ownerName = "Renata", signed = true)
+        )
+    )
     val h3LoiRecords: StateFlow<List<H3LoiRecord>> = _h3LoiRecords.asStateFlow()
+    val h3Report: StateFlow<H3Report> = _h3LoiRecords.map { calculateH3Report() }
+        .stateIn(repositoryScope, SharingStarted.Eagerly, calculateH3Report())
 
     /**
      * Inicializa a camada de persistência com o banco Room SQLite.
@@ -1634,10 +1648,27 @@ object SalonRepository {
         )
     }
 
-    fun checkinVoucher(voucherCode: String): Boolean {
+    fun saveB2BRule(rule: B2BDiscountRule) {
+        val sId = if (rule.salonId.isNotBlank()) rule.salonId else salons.first().id
+        saveB2BRule(sId, rule)
+    }
+
+    fun removeB2BRule(ruleId: String) {
+        val currentMap = _b2bCustomRules.value.toMutableMap()
+        for ((sId, rules) in currentMap) {
+            val filtered = rules.filterNot { it.id == ruleId || it.time == ruleId }
+            if (filtered.size != rules.size) {
+                currentMap[sId] = filtered
+                break
+            }
+        }
+        _b2bCustomRules.value = currentMap
+    }
+
+    fun checkinVoucher(voucherCode: String): Appointment? {
         val code = voucherCode.trim().uppercase()
-        val appt = _appointments.value.find { it.id.uppercase() == code || it.voucherQrCode.uppercase() == code } ?: return false
-        if (appt.status == AppointmentStatus.COMPLETED) return true
+        val appt = _appointments.value.find { it.id.uppercase() == code || it.voucherQrCode.uppercase() == code } ?: return null
+        if (appt.status == AppointmentStatus.COMPLETED) return appt
 
         val updated = appt.copy(status = AppointmentStatus.COMPLETED)
         val currentList = _appointments.value.toMutableList()
@@ -1652,6 +1683,6 @@ object SalonRepository {
                 db.appointmentDao().updateAppointment(AppointmentEntity.fromDomain(updated))
             }
         }
-        return true
+        return updated
     }
 }

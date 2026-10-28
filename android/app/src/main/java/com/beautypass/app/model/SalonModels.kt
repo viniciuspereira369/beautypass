@@ -133,31 +133,49 @@ data class Appointment(
 )
 
 data class B2BDiscountRule(
-    val time: String,
-    val discountPct: Int,
-    val type: String = "economy" // "economy" ou "urgent"
+    val time: String = "",
+    val discountPct: Int = 0,
+    val type: String = "economy", // "economy" ou "urgent"
+    val id: String = time,
+    val salonId: String = "",
+    val dayOfWeek: String = "Hoje",
+    val startTime: String = time,
+    val endTime: String = "",
+    val discountPercent: Int = discountPct,
+    val serviceCategory: String = "Todos os Serviços",
+    val isActive: Boolean = true
 )
 
 data class H3LoiRecord(
-    val id: String,
+    val id: String = java.util.UUID.randomUUID().toString(),
     val salonId: String,
     val salonName: String,
-    val ownerName: String,
-    val maxDiscount: Int,
-    val acceptableCommission: Int,
-    val objections: String,
-    val signed: Boolean,
-    val recordedAtIso: String
+    val ownerName: String = "",
+    val managerName: String = ownerName,
+    val cnpj: String = "",
+    val isAgreed: Boolean = true,
+    val discountRangeAgreed: String = "15% - 35%",
+    val signedAtIso: String = "",
+    val maxDiscount: Int = 30,
+    val acceptableCommission: Int = 15,
+    val objections: String = "Nenhuma",
+    val signed: Boolean = isAgreed,
+    val recordedAtIso: String = signedAtIso
 )
 
 data class H3Report(
     val totalInterviews: Int,
     val signedCount: Int,
     val targetCount: Int = 5,
-    val avgDiscount: Int,
-    val avgCommission: Int,
-    val isValidated: Boolean
-)
+    val avgDiscount: Int = 28,
+    val avgCommission: Int = 14,
+    val isValidated: Boolean = false
+) {
+    val adhesionRate: Double
+        get() = if (targetCount > 0) signedCount.toDouble() / targetCount.toDouble() else 0.0
+    val isHypothesisValidated: Boolean
+        get() = isValidated
+}
 
 data class BookingValidationResult(
     val isValid: Boolean,

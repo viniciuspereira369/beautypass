@@ -28,6 +28,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
@@ -222,7 +223,7 @@ fun CheckoutScreen(
                                     fulfillmentMode = fulfillmentMode,
                                     customerNotes = customerNotes.trim().ifEmpty { null },
                                     clientAddress = if (fulfillmentMode == "homecare") clientAddress.trim().ifEmpty { null } else null,
-                                    displacementFee = if (fulfillmentMode == "homecare") displacementFee else null
+                                    displacementFee = if (fulfillmentMode == "homecare") displacementFee else 0.0
                                 )
 
                                 SalonRepository.addAppointment(appointment)

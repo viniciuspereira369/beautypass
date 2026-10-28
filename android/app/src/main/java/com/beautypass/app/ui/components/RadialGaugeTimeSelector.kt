@@ -98,7 +98,7 @@ fun RadialGaugeTimeSelector(
             .background(SurfaceWhite, RoundedCornerShape(18.dp))
             .border(1.dp, OutlineVariant, RoundedCornerShape(18.dp))
             .padding(16.dp),
-        horizontalAlignment = Alignment.CenterVertically
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Cabeçalho do Seletor com Botão de Informação
         Row(
@@ -195,7 +195,7 @@ fun RadialGaugeTimeSelector(
 
             // Mostrador Digital Grande Central & Cápsula AM/PM
             Column(
-                horizontalAlignment = Alignment.CenterVertically,
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(bottom = 6.dp)
             ) {
                 Text(

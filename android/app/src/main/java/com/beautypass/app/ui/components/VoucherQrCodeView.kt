@@ -40,7 +40,7 @@ fun VoucherQrCodeView(
             .background(BackgroundLight, RoundedCornerShape(18.dp))
             .border(1.dp, OutlineVariant, RoundedCornerShape(18.dp))
             .padding(18.dp),
-        horizontalAlignment = Alignment.CenterVertically
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Matriz Vetorial de QR Code no Canvas do Jetpack Compose
         Box(

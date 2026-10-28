@@ -77,23 +77,6 @@ object PricingEngine {
     }
 
     /**
-     * Sobrecarga conveniente que aceita o horário como primeiro parâmetro.
-     */
-    fun calculateSlotPricing(
-        time: String,
-        basePrice: Double,
-        discountPct: Int,
-        isUrgent: Boolean = false
-    ): SlotPricing {
-        return calculateSlotPricing(
-            basePrice = basePrice,
-            discountPct = discountPct,
-            isUrgent = isUrgent,
-            time = time
-        )
-    }
-
-    /**
      * Congela um snapshot imutável para checkout e prevenção de alteração de preço pós-reserva.
      */
     fun freezeSnapshot(

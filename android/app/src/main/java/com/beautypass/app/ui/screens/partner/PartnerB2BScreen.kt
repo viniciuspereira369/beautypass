@@ -522,8 +522,10 @@ fun PartnerDiscountRulesTab(
                             id = "rule_${System.currentTimeMillis()}",
                             salonId = salon.id,
                             dayOfWeek = selectedDay,
+                            time = startTime,
                             startTime = startTime,
                             endTime = endTime,
+                            discountPct = discountPct,
                             discountPercent = discountPct,
                             serviceCategory = selectedServiceCategory,
                             isActive = true

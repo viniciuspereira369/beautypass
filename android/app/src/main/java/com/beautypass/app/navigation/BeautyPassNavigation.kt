@@ -1,6 +1,12 @@
 package com.beautypass.app.navigation
 
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.CalendarMonth
@@ -9,15 +15,23 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.beautypass.app.R
 import com.beautypass.app.theme.*
 import com.beautypass.app.ui.screens.appointments.AppointmentsScreen
 import com.beautypass.app.ui.screens.checkout.CheckoutScreen
@@ -85,37 +99,140 @@ fun BeautyPassApp() {
     Scaffold(
         bottomBar = {
             if (showBottomBar) {
-                NavigationBar(
-                    containerColor = SurfaceWhite,
-                    tonalElevation = 8.dp
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
                 ) {
-                    bottomNavScreens.forEach { screen ->
-                        val isSelected = currentRoute == screen.route
-                        NavigationBarItem(
-                            icon = {
-                                Icon(
-                                    imageVector = screen.icon!!,
-                                    contentDescription = screen.title
-                                )
-                            },
-                            label = { Text(screen.title) },
-                            selected = isSelected,
-                            onClick = {
-                                if (currentRoute != screen.route) {
-                                    navController.navigate(screen.route) {
-                                        popUpTo(Screen.Home.route) { saveState = true }
-                                        launchSingleTop = true
-                                        restoreState = true
+                    // Barra de fundo com 4 abas
+                    Surface(
+                        color = SurfaceWhite,
+                        shadowElevation = 8.dp,
+                        border = BorderStroke(0.5.dp, OutlineVariant),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(64.dp)
+                            .align(Alignment.BottomCenter)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.SpaceAround,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            // Aba 1: Início
+                            BottomNavTabItem(
+                                icon = Icons.Default.Home,
+                                label = "Início",
+                                isSelected = currentRoute == Screen.Home.route,
+                                onClick = {
+                                    if (currentRoute != Screen.Home.route) {
+                                        navController.navigate(Screen.Home.route) {
+                                            popUpTo(Screen.Home.route) { saveState = true }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
                                     }
-                                }
-                            },
-                            colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = SereneTeal,
-                                selectedTextColor = SereneTeal,
-                                unselectedIconColor = NeutralMuted,
-                                unselectedTextColor = NeutralMuted,
-                                indicatorColor = MintSurface
+                                },
+                                modifier = Modifier.weight(1f)
                             )
+
+                            // Aba 2: Mapa
+                            BottomNavTabItem(
+                                icon = Icons.Default.LocationOn,
+                                label = "Mapa",
+                                isSelected = currentRoute == Screen.Map.route,
+                                onClick = {
+                                    if (currentRoute != Screen.Map.route) {
+                                        navController.navigate(Screen.Map.route) {
+                                            popUpTo(Screen.Home.route) { saveState = true }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
+                                    }
+                                },
+                                modifier = Modifier.weight(1f)
+                            )
+
+                            // Espaçador central para dar folga ao botão elevado
+                            Spacer(modifier = Modifier.weight(1.1f))
+
+                            // Aba 3: Reservas
+                            BottomNavTabItem(
+                                icon = Icons.Default.CalendarMonth,
+                                label = "Reservas",
+                                isSelected = currentRoute == Screen.Appointments.route,
+                                onClick = {
+                                    if (currentRoute != Screen.Appointments.route) {
+                                        navController.navigate(Screen.Appointments.route) {
+                                            popUpTo(Screen.Home.route) { saveState = true }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
+                                    }
+                                },
+                                modifier = Modifier.weight(1f)
+                            )
+
+                            // Aba 4: Perfil
+                            BottomNavTabItem(
+                                icon = Icons.Default.Person,
+                                label = "Perfil",
+                                isSelected = currentRoute == Screen.Profile.route,
+                                onClick = {
+                                    if (currentRoute != Screen.Profile.route) {
+                                        navController.navigate(Screen.Profile.route) {
+                                            popUpTo(Screen.Home.route) { saveState = true }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
+                                    }
+                                },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+
+                    // Botão Central Flutuante Elevado com Emblema da Marca BeautyPass
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .offset(y = (-16).dp)
+                            .clickable {
+                                navController.navigate(Screen.OnDemand.route) {
+                                    popUpTo(Screen.Home.route) { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(56.dp)
+                                .shadow(8.dp, CircleShape)
+                                .background(
+                                    brush = Brush.linearGradient(
+                                        colors = listOf(SereneTeal, MintPrimary)
+                                    ),
+                                    shape = CircleShape
+                                )
+                                .border(3.dp, SurfaceWhite, CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.logo_beautypass_emblem),
+                                contentDescription = "Pedir Agora (Encaixe Imediato)",
+                                modifier = Modifier
+                                    .size(34.dp)
+                                    .clip(CircleShape)
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = "Pedir Agora",
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = if (currentRoute == Screen.OnDemand.route) SereneTeal else OceanicCharcoal
                         )
                     }
                 }
@@ -274,5 +391,37 @@ fun BeautyPassApp() {
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun BottomNavTabItem(
+    icon: ImageVector,
+    label: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = modifier
+            .fillMaxHeight()
+            .clickable(onClick = onClick)
+            .padding(vertical = 4.dp)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = label,
+            tint = if (isSelected) SereneTeal else NeutralMuted,
+            modifier = Modifier.size(22.dp)
+        )
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(
+            text = label,
+            fontSize = 10.sp,
+            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+            color = if (isSelected) SereneTeal else NeutralMuted
+        )
     }
 }

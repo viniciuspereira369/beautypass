@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.DirectionsWalk
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Explore
@@ -67,11 +68,11 @@ fun SalonCard(
         border = androidx.compose.foundation.BorderStroke(1.dp, OutlineVariant)
     ) {
         Column {
-            // Imagem e Badges Sobrepostos nos 4 Quadrantes
+            // Imagem e Badges Sobrepostos nos 4 Quadrantes (Proporção Rígida 16/9)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(185.dp)
+                    .aspectRatio(16f / 9f)
             ) {
                 AsyncImage(
                     model = salon.imageUrl,
@@ -80,16 +81,16 @@ fun SalonCard(
                     modifier = Modifier.fillMaxSize()
                 )
 
-                // Canto Superior Esquerdo: Prova Social ("#Mariana agendou há 12 min") com blip pulsante
+                // Canto Superior Esquerdo: Prova Social ("Mariana agendou há 12 min") com ponto pulsante
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopStart)
-                        .padding(12.dp)
+                        .padding(10.dp)
                         .background(
                             color = Slate900.copy(alpha = 0.82f),
                             shape = CapsuleShape
                         )
-                        .padding(horizontal = 10.dp, vertical = 5.dp)
+                        .padding(horizontal = 9.dp, vertical = 4.dp)
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -101,7 +102,7 @@ fun SalonCard(
                                 .background(SuccessGreen.copy(alpha = blipAlpha), CircleShape)
                         )
                         Text(
-                            text = salon.socialProof,
+                            text = salon.socialProof.replace("^#".toRegex(), ""),
                             color = SurfaceWhite,
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Medium
@@ -109,44 +110,13 @@ fun SalonCard(
                     }
                 }
 
-                // Canto Superior Direito: Métrica de Distância ("0.8 km") - Totalmente Desobstruída
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(12.dp)
-                        .background(
-                            color = SurfaceWhite.copy(alpha = 0.94f),
-                            shape = CapsuleShape
-                        )
-                        .border(0.5.dp, OutlineVariant, CapsuleShape)
-                        .padding(horizontal = 9.dp, vertical = 4.dp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Explore,
-                            contentDescription = "Distância",
-                            tint = SereneTeal,
-                            modifier = Modifier.size(13.dp)
-                        )
-                        Text(
-                            text = "${salon.distanceKm} km",
-                            color = OceanicCharcoal,
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-
-                // Canto Inferior Direito: Botão de Favoritar Ergonômico (Touch Friendly)
+                // Canto Superior Direito: Botão de Favoritar Ergonômico (Touch Friendly)
                 IconButton(
                     onClick = onFavoriteClick,
                     modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(12.dp)
-                        .size(38.dp)
+                        .align(Alignment.TopEnd)
+                        .padding(10.dp)
+                        .size(36.dp)
                         .background(
                             color = if (isFavorite) SurfaceWhite.copy(alpha = 0.95f) else Slate900.copy(alpha = 0.65f),
                             shape = CircleShape
@@ -156,8 +126,57 @@ fun SalonCard(
                         imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                         contentDescription = "Favoritar",
                         tint = if (isFavorite) CoralPromo else SurfaceWhite,
-                        modifier = Modifier.size(19.dp)
+                        modifier = Modifier.size(18.dp)
                     )
+                }
+
+                // Canto Inferior Esquerdo: Badge de Caminhada a Pé ("10 min a pé • 0.8 km")
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(10.dp)
+                        .background(
+                            color = Slate900.copy(alpha = 0.82f),
+                            shape = CapsuleShape
+                        )
+                        .padding(horizontal = 9.dp, vertical = 4.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.DirectionsWalk,
+                            contentDescription = null,
+                            tint = MintLight,
+                            modifier = Modifier.size(13.dp)
+                        )
+                        Text(
+                            text = "${salon.walkTimeMinutes} min a pé • ${salon.distanceKm} km",
+                            color = SurfaceWhite,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
+
+                // Canto Inferior Direito: Destaque de Desconto (-XX% OFF)
+                val topDiscount = salon.discountSlots.maxOfOrNull { it.discountPct } ?: 0
+                if (topDiscount > 0) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(10.dp)
+                            .background(CoralPromo, CapsuleShape)
+                            .padding(horizontal = 8.dp, vertical = 3.dp)
+                    ) {
+                        Text(
+                            text = "-${topDiscount}% OFF",
+                            color = SurfaceWhite,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
             }
 

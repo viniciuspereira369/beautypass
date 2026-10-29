@@ -47,6 +47,12 @@ enum class QuickFilter(val id: String, val label: String, val icon: ImageVector)
 
 data class CategoryItem(val id: String, val label: String)
 
+data class StoryCategory(
+    val id: String,
+    val label: String,
+    val imageUrl: String
+)
+
 /**
  * Tela 2: Home Feed & Hub Social BeautyPass.
  *
@@ -69,23 +75,30 @@ fun HomeScreen(
     // Favoritos persistidos de forma reativa no Room Database (SQLite via FavoriteDao)
     val favoriteIds by SalonRepository.favoriteIds.collectAsState()
 
-    val categories = remember {
+    val storyCategories = remember {
         listOf(
-            CategoryItem("all", "Todos"),
-            CategoryItem("hair", "Cabelo"),
-            CategoryItem("nails", "Unhas"),
-            CategoryItem("barber", "Barbearia"),
-            CategoryItem("massage", "Massagem"),
-            CategoryItem("facial", "Estética")
+            StoryCategory("all", "Todos", "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=200&auto=format&fit=crop&q=80"),
+            StoryCategory("hair", "Cabelo", "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=200&auto=format&fit=crop&q=80"),
+            StoryCategory("barber", "Barba", "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=200&auto=format&fit=crop&q=80"),
+            StoryCategory("nails", "Unhas", "https://images.unsplash.com/photo-1604654894610-df63bc536371?w=200&auto=format&fit=crop&q=80"),
+            StoryCategory("massage", "Massagem", "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=200&auto=format&fit=crop&q=80"),
+            StoryCategory("esthetic", "Estética", "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=200&auto=format&fit=crop&q=80")
         )
     }
 
     val displayedSalons = remember(selectedCategory, selectedFilter, searchQuery, favoriteIds) {
         var list = SalonRepository.salons
 
-        // 1. Filtro por Categoria
+        // 1. Filtro por Categoria (compatibilidade estrita com os dados de SP)
         if (selectedCategory != "all") {
-            list = list.filter { it.category == selectedCategory }
+            list = list.filter { s ->
+                s.category.equals(selectedCategory, ignoreCase = true) ||
+                (selectedCategory == "barber" && s.category.equals("barbearia", ignoreCase = true)) ||
+                (selectedCategory == "barbearia" && s.category.equals("barber", ignoreCase = true)) ||
+                (selectedCategory == "esthetic" && (s.category.equals("facial", ignoreCase = true) || s.category.equals("estetica", ignoreCase = true))) ||
+                (selectedCategory == "facial" && (s.category.equals("esthetic", ignoreCase = true) || s.category.equals("estetica", ignoreCase = true))) ||
+                s.services.any { srv -> srv.category.equals(selectedCategory, ignoreCase = true) }
+            }
         }
 
         // 2. Busca por Nome ou Bairro
@@ -259,40 +272,81 @@ fun HomeScreen(
                 }
             }
 
-            // Seção 3: Carrossel de Categorias
+            // Seção 3: Carrossel de Story Bubbles com Anéis Gradientes Luminosos (Inspiração Social)
             item {
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        text = "Categorias",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = OceanicCharcoal,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-                    )
-
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Categorias Populares",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = OceanicCharcoal
+                        )
+                        Text(
+                            text = "Ver no mapa",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = SereneTeal
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(6.dp))
                     LazyRow(
                         contentPadding = PaddingValues(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(14.dp)
                     ) {
-                        items(categories) { cat ->
+                        items(storyCategories) { cat ->
                             val isSelected = selectedCategory == cat.id
-                            FilterChip(
-                                selected = isSelected,
-                                onClick = { selectedCategory = cat.id },
-                                label = { Text(cat.label, fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium) },
-                                colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = SereneTeal,
-                                    selectedLabelColor = SurfaceWhite,
-                                    containerColor = SurfaceWhite,
-                                    labelColor = OceanicCharcoal
-                                ),
-                                border = FilterChipDefaults.filterChipBorder(
-                                    enabled = true,
-                                    selected = isSelected,
-                                    borderColor = if (isSelected) SereneTeal else OutlineVariant
-                                ),
-                                shape = CapsuleShape
-                            )
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .clickable { selectedCategory = cat.id }
+                                    .padding(vertical = 2.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(68.dp)
+                                        .background(
+                                            brush = if (isSelected) {
+                                                Brush.linearGradient(listOf(SereneTeal, MintPrimary))
+                                            } else {
+                                                Brush.linearGradient(listOf(OutlineVariant, OutlineVariant))
+                                            },
+                                            shape = CircleShape
+                                        )
+                                        .padding(2.5.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .background(SurfaceWhite, CircleShape)
+                                            .padding(2.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        AsyncImage(
+                                            model = cat.imageUrl,
+                                            contentDescription = cat.label,
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .clip(CircleShape)
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(5.dp))
+                                Text(
+                                    text = cat.label,
+                                    fontSize = 11.sp,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                    color = if (isSelected) SereneTeal else OceanicCharcoal
+                                )
+                            }
                         }
                     }
                 }

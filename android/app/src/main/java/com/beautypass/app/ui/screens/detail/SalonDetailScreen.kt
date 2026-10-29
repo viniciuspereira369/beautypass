@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
@@ -34,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.beautypass.app.data.BookingEngine
+import com.beautypass.app.data.PricingEngine
 import com.beautypass.app.data.SalonRepository
 import com.beautypass.app.model.Salon
 import com.beautypass.app.model.Service
@@ -81,7 +83,17 @@ fun SalonDetailScreen(
 
     var selectedHeroImage by remember { mutableStateOf(salon.imageUrl) }
     var fulfillmentMode by remember { mutableStateOf("salon") } // "salon" ou "homecare"
-    var selectedService by remember { mutableStateOf(salon.services.first()) }
+    var selectedServiceIds by remember { mutableStateOf(setOf(salon.services.first().id)) }
+    val selectedServices = remember(selectedServiceIds, salon) {
+        val list = salon.services.filter { selectedServiceIds.contains(it.id) }
+        if (list.isNotEmpty()) list else listOf(salon.services.first())
+    }
+    val totalBasePrice = remember(selectedServices) {
+        selectedServices.sumOf { it.basePrice }
+    }
+    val totalDurationMinutes = remember(selectedServices) {
+        selectedServices.sumOf { it.durationMinutes }
+    }
     var selectedStaffId by remember { mutableStateOf("any") } // "any" ou id do staff
     var selectedSlotTime by remember {
         mutableStateOf(salon.discountSlots.firstOrNull()?.time ?: "14:00")
@@ -107,9 +119,19 @@ fun SalonDetailScreen(
 
     var selectedDateIndex by remember { mutableStateOf(0) }
 
-    // Cálculo da Precificação Dinâmica
-    val pricing = remember(selectedSlotTime, selectedService, salon) {
-        SalonRepository.calculatePricing(salon, selectedSlotTime, selectedService)
+    // Cálculo da Precificação Dinâmica Multi-Serviço
+    val slotPromo = remember(selectedSlotTime, salon) {
+        salon.discountSlots.find { it.time == selectedSlotTime }
+    }
+    val discountPct = slotPromo?.discountPct ?: 0
+    val isUrgent = slotPromo?.type == "urgent"
+    val pricing = remember(totalBasePrice, discountPct, isUrgent, selectedSlotTime) {
+        PricingEngine.calculateSlotPricing(
+            basePrice = totalBasePrice,
+            discountPct = discountPct,
+            isUrgent = isUrgent,
+            time = selectedSlotTime
+        )
     }
 
     val scrollState = rememberScrollState()
@@ -158,7 +180,7 @@ fun SalonDetailScreen(
                 ) {
                     Column {
                         Text(
-                            text = "Total Simulado • ${selectedSlotTime}",
+                            text = "${selectedServices.size} serviço(s) • ${totalDurationMinutes} min • ${selectedSlotTime}",
                             fontSize = 11.sp,
                             color = NeutralMuted
                         )
@@ -185,7 +207,12 @@ fun SalonDetailScreen(
 
                     Button(
                         onClick = {
-                            onProceedToCheckout(salon.id, selectedService.id, selectedSlotTime, fulfillmentMode)
+                            onProceedToCheckout(
+                                salon.id,
+                                selectedServices.joinToString(",") { it.id },
+                                selectedSlotTime,
+                                fulfillmentMode
+                            )
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = SereneTeal),
                         shape = RoundedCornerShape(12.dp),
@@ -209,11 +236,11 @@ fun SalonDetailScreen(
                 .background(BackgroundLight)
                 .verticalScroll(scrollState)
         ) {
-            // Seção 1: Hero Image Principal Interativa
+            // Seção 1: Hero Image Principal Interativa (Proporção Rígida 16/9)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(230.dp)
+                    .aspectRatio(16f / 9f)
             ) {
                 AsyncImage(
                     model = selectedHeroImage,
@@ -491,12 +518,18 @@ fun SalonDetailScreen(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 salon.services.forEach { srv ->
-                    val isSelected = selectedService.id == srv.id
+                    val isSelected = selectedServiceIds.contains(srv.id)
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 4.dp)
-                            .clickable { selectedService = srv },
+                            .clickable {
+                                selectedServiceIds = if (isSelected) {
+                                    if (selectedServiceIds.size > 1) selectedServiceIds - srv.id else selectedServiceIds
+                                } else {
+                                    selectedServiceIds + srv.id
+                                }
+                            },
                         shape = RoundedCornerShape(12.dp),
                         colors = CardDefaults.cardColors(
                             containerColor = if (isSelected) MintSurface else CanvasBase
@@ -513,18 +546,47 @@ fun SalonDetailScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = srv.name,
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = OceanicCharcoal
-                                )
-                                Text(
-                                    text = "${srv.durationMinutes} min • ${srv.description}",
-                                    fontSize = 11.sp,
-                                    color = NeutralMuted
-                                )
+                            Row(
+                                modifier = Modifier.weight(1f),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(20.dp)
+                                        .background(
+                                            if (isSelected) SereneTeal else SurfaceWhite,
+                                            RoundedCornerShape(5.dp)
+                                        )
+                                        .border(
+                                            1.5.dp,
+                                            if (isSelected) SereneTeal else OutlineVariant,
+                                            RoundedCornerShape(5.dp)
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (isSelected) {
+                                        Icon(
+                                            imageVector = Icons.Default.Check,
+                                            contentDescription = null,
+                                            tint = SurfaceWhite,
+                                            modifier = Modifier.size(14.dp)
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Column {
+                                    Text(
+                                        text = srv.name,
+                                        fontSize = 13.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = OceanicCharcoal
+                                    )
+                                    Text(
+                                        text = "${srv.durationMinutes} min • ${srv.description}",
+                                        fontSize = 11.sp,
+                                        color = NeutralMuted
+                                    )
+                                }
                             }
                             Text(
                                 text = "R$ ${String.format("%.2f", srv.basePrice)}",
@@ -694,7 +756,7 @@ fun SalonDetailScreen(
             Box(modifier = Modifier.padding(horizontal = 16.dp)) {
                 RadialGaugeTimeSelector(
                     selectedTime = selectedSlotTime,
-                    basePrice = selectedService.basePrice,
+                    basePrice = totalBasePrice,
                     discountSlots = salon.discountSlots,
                     onTimeSelected = { selectedSlotTime = it }
                 )

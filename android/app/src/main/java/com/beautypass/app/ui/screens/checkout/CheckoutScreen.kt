@@ -70,8 +70,23 @@ fun CheckoutScreen(
     val salon = remember(salonId) {
         SalonRepository.getSalonById(salonId) ?: SalonRepository.salons.first()
     }
-    val service = remember(serviceId) {
-        salon.services.find { it.id == serviceId } ?: salon.services.first()
+    val service = remember(serviceId, salon) {
+        val ids = serviceId.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+        val foundServices = salon.services.filter { it.id in ids }
+        if (foundServices.isEmpty()) {
+            salon.services.find { it.id == serviceId } ?: salon.services.first()
+        } else if (foundServices.size == 1) {
+            foundServices.first()
+        } else {
+            com.beautypass.app.model.Service(
+                id = foundServices.joinToString(",") { it.id },
+                name = foundServices.joinToString(" + ") { it.name },
+                durationMinutes = foundServices.sumOf { it.durationMinutes },
+                basePrice = foundServices.sumOf { it.basePrice },
+                category = foundServices.first().category,
+                description = foundServices.joinToString(" • ") { it.name }
+            )
+        }
     }
 
     // Congela imutavelmente o snapshot de preço no momento de abertura do checkout

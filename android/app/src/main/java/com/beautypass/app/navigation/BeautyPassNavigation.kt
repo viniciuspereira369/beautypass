@@ -1,5 +1,8 @@
 package com.beautypass.app.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -7,6 +10,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.CalendarMonth
@@ -20,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -33,6 +38,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.beautypass.app.R
 import com.beautypass.app.theme.*
+import com.beautypass.app.ui.components.bounceClick
 import com.beautypass.app.ui.screens.appointments.AppointmentsScreen
 import com.beautypass.app.ui.screens.checkout.CheckoutScreen
 import com.beautypass.app.ui.screens.confirm.ConfirmScreen
@@ -49,8 +55,8 @@ sealed class Screen(val route: String, val title: String, val icon: ImageVector?
     object Home : Screen("home", "Início", Icons.Default.Home)
     object Map : Screen("map", "Mapa", Icons.Default.LocationOn)
     object OnDemand : Screen("on_demand", "Pedir Agora", Icons.Default.Bolt)
-    object Appointments : Screen("appointments", "Reservas", Icons.Default.CalendarMonth)
-    object Profile : Screen("profile", "Perfil", Icons.Default.Person)
+    object Appointments : Screen("appointments", "Agenda", Icons.Default.CalendarMonth)
+    object Profile : Screen("profile", "Ajustes", Icons.Default.Person)
 
     object Detail : Screen("detail/{salonId}", "Detalhes") {
         fun createRoute(salonId: String) = "detail/$salonId"
@@ -69,7 +75,8 @@ sealed class Screen(val route: String, val title: String, val icon: ImageVector?
 }
 
 /**
- * BeautyPassApp: Orquestrador Geral de Navegação Nativa em Jetpack Compose (MVI / UDF).
+ * BeautyPassApp: Orquestrador Geral de Navegação Nativa em Jetpack Compose (MVI / UDF)
+ * com Bottom Navigation Bar espelhada 1:1 com a versão web (beautypass_app.html).
  */
 @Composable
 fun BeautyPassApp() {
@@ -78,15 +85,7 @@ fun BeautyPassApp() {
     val currentRoute = navBackStackEntry?.destination?.route
 
     var participantCode by remember { mutableStateOf("P01") }
-    var participantName by remember { mutableStateOf("Participante do Teste") }
-
-    val bottomNavScreens = listOf(
-        Screen.Home,
-        Screen.Map,
-        Screen.OnDemand,
-        Screen.Appointments,
-        Screen.Profile
-    )
+    var participantName by remember { mutableStateOf("") }
 
     val showBottomBar = currentRoute in listOf(
         Screen.Home.route,
@@ -104,14 +103,15 @@ fun BeautyPassApp() {
                         .fillMaxWidth()
                         .wrapContentHeight()
                 ) {
-                    // Barra de fundo com 4 abas
+                    // Barra de navegação com cantos superiores arredondados (24.dp) igual ao .bottom-nav da Web
                     Surface(
-                        color = SurfaceWhite,
-                        shadowElevation = 8.dp,
-                        border = BorderStroke(0.5.dp, OutlineVariant),
+                        color = WarmWhite.copy(alpha = 0.96f),
+                        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+                        shadowElevation = 14.dp,
+                        border = BorderStroke(1.dp, Color(0xFFF0EFEA)),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(64.dp)
+                            .height(68.dp)
                             .align(Alignment.BottomCenter)
                     ) {
                         Row(
@@ -153,13 +153,13 @@ fun BeautyPassApp() {
                                 modifier = Modifier.weight(1f)
                             )
 
-                            // Espaçador central para dar folga ao botão elevado
-                            Spacer(modifier = Modifier.weight(1.1f))
+                            // Espaçador central para dar folga ao botão elevado "Pedir Agora"
+                            Spacer(modifier = Modifier.weight(1.15f))
 
-                            // Aba 3: Reservas
+                            // Aba 3: Agenda
                             BottomNavTabItem(
                                 icon = Icons.Default.CalendarMonth,
-                                label = "Reservas",
+                                label = "Agenda",
                                 isSelected = currentRoute == Screen.Appointments.route,
                                 onClick = {
                                     if (currentRoute != Screen.Appointments.route) {
@@ -173,10 +173,10 @@ fun BeautyPassApp() {
                                 modifier = Modifier.weight(1f)
                             )
 
-                            // Aba 4: Perfil
+                            // Aba 4: Ajustes (espelhado 1:1 com a Web)
                             BottomNavTabItem(
                                 icon = Icons.Default.Person,
-                                label = "Perfil",
+                                label = "Ajustes",
                                 isSelected = currentRoute == Screen.Profile.route,
                                 onClick = {
                                     if (currentRoute != Screen.Profile.route) {
@@ -192,13 +192,13 @@ fun BeautyPassApp() {
                         }
                     }
 
-                    // Botão Central Flutuante Elevado com Emblema da Marca BeautyPass
+                    // Botão Central Flutuante Elevado com Silhueta Feminina Branca sobre Gradiente #00685F -> #0D9488 -> #14B8A6
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
                             .align(Alignment.TopCenter)
                             .offset(y = (-16).dp)
-                            .clickable {
+                            .bounceClick(scaleDown = 0.92f) {
                                 navController.navigate(Screen.OnDemand.route) {
                                     popUpTo(Screen.Home.route) { saveState = true }
                                     launchSingleTop = true
@@ -208,22 +208,31 @@ fun BeautyPassApp() {
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(56.dp)
-                                .shadow(8.dp, CircleShape)
+                                .size(54.dp)
+                                .shadow(
+                                    elevation = 10.dp,
+                                    shape = CircleShape,
+                                    ambientColor = DeepTeal.copy(alpha = 0.4f),
+                                    spotColor = DeepTeal.copy(alpha = 0.4f)
+                                )
                                 .background(
                                     brush = Brush.linearGradient(
-                                        colors = listOf(SereneTeal, MintPrimary)
+                                        colors = listOf(
+                                            Color(0xFF00685F),
+                                            Color(0xFF0D9488),
+                                            Color(0xFF14B8A6)
+                                        )
                                     ),
                                     shape = CircleShape
                                 )
-                                .border(3.dp, SurfaceWhite, CircleShape),
+                                .border(2.5.dp, WarmWhite, CircleShape),
                             contentAlignment = Alignment.Center
                         ) {
                             Image(
-                                painter = painterResource(id = R.drawable.logo_beautypass_emblem),
+                                painter = painterResource(id = R.drawable.logo_beautypass_emblem_white),
                                 contentDescription = "Pedir Agora (Encaixe Imediato)",
                                 modifier = Modifier
-                                    .size(34.dp)
+                                    .size(38.dp)
                                     .clip(CircleShape)
                             )
                         }
@@ -231,8 +240,8 @@ fun BeautyPassApp() {
                         Text(
                             text = "Pedir Agora",
                             fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = if (currentRoute == Screen.OnDemand.route) SereneTeal else OceanicCharcoal
+                            fontWeight = FontWeight.ExtraBold,
+                            color = DeepTeal
                         )
                     }
                 }
@@ -242,7 +251,11 @@ fun BeautyPassApp() {
         NavHost(
             navController = navController,
             startDestination = Screen.Onboarding.route,
-            modifier = Modifier.padding(padding)
+            modifier = Modifier.padding(padding),
+            enterTransition = { fadeIn(animationSpec = tween(140)) },
+            exitTransition = { fadeOut(animationSpec = tween(110)) },
+            popEnterTransition = { fadeIn(animationSpec = tween(140)) },
+            popExitTransition = { fadeOut(animationSpec = tween(110)) }
         ) {
             // Tela 1: Onboarding & Auth
             composable(Screen.Onboarding.route) {
@@ -266,7 +279,11 @@ fun BeautyPassApp() {
                     },
                     onNavigateToOnDemand = {
                         navController.navigate(Screen.OnDemand.route)
-                    }
+                    },
+                    onNavigateToMap = {
+                        navController.navigate(Screen.Map.route)
+                    },
+                    participantName = participantName
                 )
             }
 
@@ -284,12 +301,12 @@ fun BeautyPassApp() {
                 OnDemandScreen(
                     onBackClick = { navController.popBackStack() },
                     onProceedToCheckout = { sId, servId, time ->
-                        navController.navigate(Screen.Checkout.createRoute(sId, servId, time, "homecare"))
+                        navController.navigate(Screen.Checkout.createRoute(sId, servId, time, "salon"))
                     }
                 )
             }
 
-            // Tela 6A: Meus Agendamentos
+            // Tela 6A: Meus Agendamentos (Agenda)
             composable(Screen.Appointments.route) {
                 AppointmentsScreen(
                     onOpenVoucher = { appointmentId ->
@@ -301,11 +318,11 @@ fun BeautyPassApp() {
                 )
             }
 
-            // Tela 6B: Perfil & Avaliação SUS
+            // Tela 6B: Ajustes / Perfil & Avaliação SUS
             composable(Screen.Profile.route) {
                 ProfileScreen(
                     participantCode = participantCode,
-                    participantName = participantName,
+                    participantName = participantName.ifBlank { "Carolina Almeida" },
                     onResetToOnboarding = {
                         navController.navigate(Screen.Onboarding.route) {
                             popUpTo(0) { inclusive = true }
@@ -407,21 +424,21 @@ private fun BottomNavTabItem(
         verticalArrangement = Arrangement.Center,
         modifier = modifier
             .fillMaxHeight()
-            .clickable(onClick = onClick)
+            .bounceClick(scaleDown = 0.93f, onClick = onClick)
             .padding(vertical = 4.dp)
     ) {
         Icon(
             imageVector = icon,
             contentDescription = label,
-            tint = if (isSelected) SereneTeal else NeutralMuted,
+            tint = if (isSelected) DeepTeal else SlateGray,
             modifier = Modifier.size(22.dp)
         )
         Spacer(modifier = Modifier.height(2.dp))
         Text(
             text = label,
             fontSize = 10.sp,
-            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-            color = if (isSelected) SereneTeal else NeutralMuted
+            fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.SemiBold,
+            color = if (isSelected) DeepTeal else SlateGray
         )
     }
 }

@@ -40,7 +40,10 @@ data class DiscountSlot(
     val time: String,
     val discountPct: Int,
     val type: String // "economy", "urgent", "standard"
-)
+) {
+    val discountPercent: Int
+        get() = discountPct
+}
 
 data class Review(
     val author: String,
@@ -71,8 +74,14 @@ data class Salon(
     val discountSlots: List<DiscountSlot> = emptyList(),
     val galleryImages: List<String> = emptyList()
 ) {
+    val reviewCount: Int
+        get() = reviewsCount
+
     val walkTimeMinutes: Int
         get() = (distanceKm * 12).toInt().coerceAtLeast(1)
+
+    val walkMinutes: Int
+        get() = walkTimeMinutes
 
     val walkDistanceMeters: Int
         get() = (distanceKm * 1000).toInt()
@@ -88,7 +97,13 @@ data class SlotPricing(
     val badgeLabel: String,
     val isUrgent: Boolean = false,
     val snapshotFrozenAt: Long? = null
-)
+) {
+    val savingsAmount: Double
+        get() = (basePrice - finalPrice).coerceAtLeast(0.0)
+
+    val effectiveDiscountPercent: Int
+        get() = discountPct
+}
 
 data class PricingSnapshot(
     val salonId: String,
@@ -130,7 +145,10 @@ data class Appointment(
     val customerNotes: String? = null,
     val clientAddress: String? = null,
     val displacementFee: Double = 0.0
-)
+) {
+    val discountPercent: Int
+        get() = pricingSnapshot?.discountPct ?: 25
+}
 
 data class B2BDiscountRule(
     val time: String = "",
@@ -173,6 +191,10 @@ data class H3Report(
 ) {
     val adhesionRate: Double
         get() = if (targetCount > 0) signedCount.toDouble() / targetCount.toDouble() else 0.0
+    val conversionRatePct: Double
+        get() = adhesionRate * 100.0
+    val interviewedCount: Int
+        get() = targetCount
     val isHypothesisValidated: Boolean
         get() = isValidated
 }
@@ -187,7 +209,10 @@ data class SUSQuestion(
     val id: Int,
     val questionText: String,
     val isPositive: Boolean
-)
+) {
+    val text: String
+        get() = questionText
+}
 
 data class SUSEvaluation(
     val participantCode: String,
@@ -195,4 +220,7 @@ data class SUSEvaluation(
     val susScore: Double,
     val retentionYes: Boolean,
     val evaluatedAtIso: String
-)
+) {
+    val intentionScore: Int
+        get() = if (retentionYes) 5 else 3
+}

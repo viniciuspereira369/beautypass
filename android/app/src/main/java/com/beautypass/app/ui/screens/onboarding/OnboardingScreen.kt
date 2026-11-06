@@ -1,41 +1,42 @@
 package com.beautypass.app.ui.screens.onboarding
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Security
-import androidx.compose.material.icons.filled.Spa
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.beautypass.app.R
+import com.beautypass.app.data.SalonRepository
 import com.beautypass.app.theme.*
+import com.beautypass.app.ui.components.bounceClick
 
 /**
- * Tela 1: Onboarding & Autenticação Reativa de Participante (LGPD).
- *
- * Implementado conforme especificações de:
- * - ORIGINAL_REQUEST.md (R1.1)
- * - documenta_o_t_cnica_prot_tipo_de_valida_o.md (Seção 4 - Termos LGPD e Autenticação)
- * - Validação estrita: Nome >= 2 chars, Telefone >= 8 chars, Código participante, Código 0000 e aceite LGPD.
+ * Tela 0: Onboarding & Termos de Teste LGPD — Espelhada 1:1 com #screen-onboarding (beautypass_app.html):
+ * - Hero com o novo ícone HD full-bleed (silhueta feminina branca sobre gradiente #00685F -> #0D9488 -> #14B8A6)
+ * - Card de Termo de Teste e Privacidade (LGPD) no topo com checkbox de aceite
+ * - Formulário na ordem exata: Nome Completo, Telefone Celular, Código do Participante, Código de Acesso (0000)
+ * - Botão "Iniciar Sessão de Teste".
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,65 +67,122 @@ fun OnboardingScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(scrollState)
-                .padding(24.dp),
+                .padding(horizontal = 20.dp, vertical = 22.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-            // Ícone Hero de Marca Serene Mint
+            // 1. Onboarding Hero (.onboarding-hero) com Ícone HD Full-Bleed
             Box(
                 modifier = Modifier
-                    .size(72.dp)
-                    .background(MintSurface, CircleShape)
-                    .border(1.5.dp, MintLight, CircleShape),
-                contentAlignment = Alignment.Center
+                    .size(68.dp)
+                    .shadow(6.dp, RoundedCornerShape(18.dp))
+                    .clip(RoundedCornerShape(18.dp))
+                    .border(2.dp, SurfaceWhite, RoundedCornerShape(18.dp))
             ) {
-                Icon(
-                    imageVector = Icons.Default.Spa,
-                    contentDescription = "BeautyPass Logo",
-                    tint = SereneTeal,
-                    modifier = Modifier.size(38.dp)
+                Image(
+                    painter = painterResource(id = R.drawable.logo_beautypass_hd_icon),
+                    contentDescription = "BeautyPass",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
                 )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                text = "BeautyPass",
+                fontSize = 23.sp,
+                color = OceanicCharcoal,
+                fontWeight = FontWeight.ExtraBold,
+                letterSpacing = (-0.4).sp
+            )
+
+            Spacer(modifier = Modifier.height(3.dp))
+
+            Text(
+                text = "Protótipo de Validação de Serviços de Beleza",
+                fontSize = 13.sp,
+                color = NeutralMuted,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(18.dp))
+
+            // 2. Card de Termos LGPD da Seção 13 (.lgpd-card)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(MintSurface)
+                    .border(1.dp, MintPrimary.copy(alpha = 0.35f), RoundedCornerShape(16.dp))
+                    .padding(14.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Security,
+                        contentDescription = null,
+                        tint = SereneTeal,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Text(
+                        text = "Termo de Teste e Privacidade (LGPD)",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = SereneTeal
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "\"Este é um protótipo em teste. Coletamos seu nome, telefone e registros de uso das telas apenas para avaliar o aplicativo, sem qualquer finalidade comercial. Os dados serão apagados até 90 dias após o teste. Você pode solicitar a exclusão imediata a qualquer momento.\"",
+                    fontSize = 11.5.sp,
+                    lineHeight = 16.5.sp,
+                    color = OceanicCharcoal
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(SurfaceWhite)
+                        .border(1.dp, OutlineVariant, RoundedCornerShape(10.dp))
+                        .clickable { termsAccepted = !termsAccepted }
+                        .padding(horizontal = 10.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Checkbox(
+                        checked = termsAccepted,
+                        onCheckedChange = { termsAccepted = it },
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = SereneTeal,
+                            uncheckedColor = NeutralMuted
+                        ),
+                        modifier = Modifier.size(22.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Li e concordo em participar do teste do protótipo com registro de métricas de navegação.",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        lineHeight = 15.sp,
+                        color = OceanicCharcoal
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(
-                text = "BeautyPass",
-                style = MaterialTheme.typography.headlineLarge,
-                color = OceanicCharcoal,
-                fontWeight = FontWeight.ExtraBold
-            )
-
-            Text(
-                text = "Beleza sob demanda com precificação inteligente",
-                fontSize = 13.sp,
-                color = NeutralMuted
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Badge de Protótipo Científico de Validação
-            Box(
-                modifier = Modifier
-                    .background(MintSurface, CapsuleShape)
-                    .border(1.dp, OutlineVariant, CapsuleShape)
-                    .padding(horizontal = 12.dp, vertical = 4.dp)
-            ) {
-                Text(
-                    text = "Sessão de Teste de Usabilidade",
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = SereneTeal
-                )
-            }
-
-            Spacer(modifier = Modifier.height(28.dp))
-
-            // Card do Formulário
+            // 3. Formulário de Login Simulado (.onboarding-form)
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
+                shape = RoundedCornerShape(18.dp),
                 colors = CardDefaults.cardColors(containerColor = SurfaceWhite),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                 border = androidx.compose.foundation.BorderStroke(1.dp, OutlineVariant)
@@ -132,162 +190,196 @@ fun OnboardingScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text(
-                        text = "Identificação do Participante",
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = OceanicCharcoal
-                    )
+                    // Nome Completo
+                    Column {
+                        Text(
+                            text = "Nome Completo",
+                            fontSize = 11.5.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = OceanicCharcoal,
+                            modifier = Modifier.padding(bottom = 4.dp)
+                        )
+                        OutlinedTextField(
+                            value = name,
+                            onValueChange = { name = it },
+                            placeholder = { Text("Digite seu nome", fontSize = 13.sp, color = NeutralMuted) },
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = SereneTeal,
+                                unfocusedBorderColor = OutlineVariant,
+                                focusedContainerColor = CanvasBase,
+                                unfocusedContainerColor = CanvasBase
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                    }
 
-                    // Campo Código do Participante
-                    OutlinedTextField(
-                        value = participantCode,
-                        onValueChange = { participantCode = it },
-                        label = { Text("Código do Participante") },
-                        leadingIcon = {
-                            Icon(Icons.Default.Security, contentDescription = null, tint = SereneTeal)
-                        },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = SereneTeal,
-                            unfocusedBorderColor = OutlineVariant
-                        ),
-                        shape = RoundedCornerShape(12.dp)
-                    )
+                    // Telefone Celular
+                    Column {
+                        Text(
+                            text = "Telefone Celular",
+                            fontSize = 11.5.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = OceanicCharcoal,
+                            modifier = Modifier.padding(bottom = 4.dp)
+                        )
+                        OutlinedTextField(
+                            value = phone,
+                            onValueChange = { phone = it },
+                            placeholder = { Text("(11) 90000-0000", fontSize = 13.sp, color = NeutralMuted) },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = SereneTeal,
+                                unfocusedBorderColor = OutlineVariant,
+                                focusedContainerColor = CanvasBase,
+                                unfocusedContainerColor = CanvasBase
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                    }
 
-                    // Campo Nome
-                    OutlinedTextField(
-                        value = name,
-                        onValueChange = { name = it },
-                        label = { Text("Seu Nome Completo") },
-                        leadingIcon = {
-                            Icon(Icons.Default.Person, contentDescription = null, tint = SereneTeal)
-                        },
-                        supportingText = {
-                            if (name.isNotEmpty() && !isNameValid) {
-                                Text("Mínimo de 2 caracteres", color = ErrorRed, fontSize = 11.sp)
-                            }
-                        },
-                        isError = name.isNotEmpty() && !isNameValid,
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = SereneTeal,
-                            unfocusedBorderColor = OutlineVariant
-                        ),
-                        shape = RoundedCornerShape(12.dp)
-                    )
+                    // Código do Participante
+                    Column {
+                        Text(
+                            text = "Código do Participante",
+                            fontSize = 11.5.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = OceanicCharcoal,
+                            modifier = Modifier.padding(bottom = 4.dp)
+                        )
+                        OutlinedTextField(
+                            value = participantCode,
+                            onValueChange = { participantCode = it.uppercase().take(8) },
+                            placeholder = { Text("Ex.: P01", fontSize = 13.sp, color = NeutralMuted) },
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = SereneTeal,
+                                unfocusedBorderColor = OutlineVariant,
+                                focusedContainerColor = CanvasBase,
+                                unfocusedContainerColor = CanvasBase
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            modifier = Modifier.padding(top = 4.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Info,
+                                contentDescription = null,
+                                tint = SereneTeal,
+                                modifier = Modifier.size(12.dp)
+                            )
+                            Text(
+                                text = "Informado pelo moderador da sessão",
+                                fontSize = 10.5.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = NeutralMuted
+                            )
+                        }
+                    }
 
-                    // Campo Telefone / WhatsApp
-                    OutlinedTextField(
-                        value = phone,
-                        onValueChange = { phone = it },
-                        label = { Text("Telefone / WhatsApp") },
-                        leadingIcon = {
-                            Icon(Icons.Default.Phone, contentDescription = null, tint = SereneTeal)
-                        },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                        supportingText = {
-                            if (phone.isNotEmpty() && !isPhoneValid) {
-                                Text("Informe pelo menos 8 dígitos", color = ErrorRed, fontSize = 11.sp)
-                            }
-                        },
-                        isError = phone.isNotEmpty() && !isPhoneValid,
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = SereneTeal,
-                            unfocusedBorderColor = OutlineVariant
-                        ),
-                        shape = RoundedCornerShape(12.dp)
-                    )
+                    // Código de Acesso do Teste (0000)
+                    Column {
+                        Text(
+                            text = "Código de Acesso do Teste",
+                            fontSize = 11.5.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = OceanicCharcoal,
+                            modifier = Modifier.padding(bottom = 4.dp)
+                        )
+                        OutlinedTextField(
+                            value = accessCode,
+                            onValueChange = { accessCode = it.take(4) },
+                            placeholder = { Text("0000", fontSize = 13.sp, color = NeutralMuted) },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = SereneTeal,
+                                unfocusedBorderColor = OutlineVariant,
+                                focusedContainerColor = CanvasBase,
+                                unfocusedContainerColor = CanvasBase
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            modifier = Modifier.padding(top = 4.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Info,
+                                contentDescription = null,
+                                tint = SereneTeal,
+                                modifier = Modifier.size(12.dp)
+                            )
+                            Text(
+                                text = "Código fixo de teste: 0000",
+                                fontSize = 10.5.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = NeutralMuted
+                            )
+                        }
+                    }
 
-                    // Campo Código de Acesso Fixo (0000)
-                    OutlinedTextField(
-                        value = accessCode,
-                        onValueChange = { accessCode = it },
-                        label = { Text("Código de Acesso do Teste (0000)") },
-                        leadingIcon = {
-                            Icon(Icons.Default.Lock, contentDescription = null, tint = SereneTeal)
-                        },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-                        supportingText = {
-                            if (accessCode.isNotEmpty() && !isAccessCodeValid) {
-                                Text("Código incorreto. Digite 0000.", color = ErrorRed, fontSize = 11.sp)
-                            } else {
-                                Text("Código do protocolo: 0000", color = NeutralMuted, fontSize = 11.sp)
-                            }
-                        },
-                        isError = accessCode.isNotEmpty() && !isAccessCodeValid,
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = SereneTeal,
-                            unfocusedBorderColor = OutlineVariant
-                        ),
-                        shape = RoundedCornerShape(12.dp)
-                    )
+                    Spacer(modifier = Modifier.height(4.dp))
 
-                    Divider(color = OutlineVariant, thickness = 0.8.dp)
-
-                    // Checkbox LGPD Obrigatório com Texto Verbatim
-                    Row(
+                    // Botão "Iniciar Sessão de Teste"
+                    Surface(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { termsAccepted = !termsAccepted },
-                        verticalAlignment = Alignment.Top
+                            .height(48.dp)
+                            .bounceClick(
+                                scaleDown = 0.96f,
+                                enabled = isFormValid,
+                                onClick = {
+                                    if (isFormValid) {
+                                        SalonRepository.saveUserProfile(
+                                            participantId = participantCode.trim(),
+                                            name = name.trim(),
+                                            phone = phone.trim(),
+                                            lgpdAccepted = true
+                                        )
+                                        onOnboardingComplete(name.trim(), phone.trim(), participantCode.trim())
+                                    }
+                                }
+                            ),
+                        shape = RoundedCornerShape(12.dp),
+                        color = if (isFormValid) SereneTeal else Slate400.copy(alpha = 0.45f)
                     ) {
-                        Checkbox(
-                            checked = termsAccepted,
-                            onCheckedChange = { termsAccepted = it },
-                            colors = CheckboxDefaults.colors(
-                                checkedColor = SereneTeal,
-                                uncheckedColor = NeutralMuted
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Iniciar Sessão de Teste",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = SurfaceWhite
                             )
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "Este é um protótipo em teste. Coletamos seu nome, telefone e registros de uso das telas apenas para avaliar o aplicativo, sem qualquer finalidade comercial. Os dados serão apagados até 90 dias após o teste. Você pode solicitar a exclusão imediata a qualquer momento.",
-                            fontSize = 11.sp,
-                            lineHeight = 16.sp,
-                            color = OceanicCharcoal
-                        )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                contentDescription = null,
+                                tint = SurfaceWhite,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Botão Avançar / Entrar no Aplicativo
-            Button(
-                onClick = {
-                    if (isFormValid) {
-                        onOnboardingComplete(name.trim(), phone.trim(), participantCode.trim())
-                    }
-                },
-                enabled = isFormValid,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
-                shape = RoundedCornerShape(14.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = SereneTeal,
-                    disabledContainerColor = Slate400.copy(alpha = 0.5f)
-                )
-            ) {
-                Text(
-                    text = "Avançar para o Aplicativo",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = SurfaceWhite
-                )
-            }
-
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

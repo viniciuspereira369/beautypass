@@ -42,6 +42,7 @@ fun RadialGaugeTimeSelector(
     selectedTime: String,
     basePrice: Double,
     discountSlots: List<DiscountSlot> = emptyList(),
+    occupiedTimes: Set<String> = emptySet(),
     onTimeSelected: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {

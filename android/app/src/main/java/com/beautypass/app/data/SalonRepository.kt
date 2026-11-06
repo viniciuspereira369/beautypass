@@ -1555,6 +1555,10 @@ object SalonRepository {
         }
     }
 
+    fun clearAllDataForLgpdReset() {
+        clearAllData()
+    }
+
     /**
      * Versão suspensa para exclusão atômica síncrona em rotinas de teste.
      */

@@ -56,3 +56,15 @@ val Slate600 = Color(0xFF475569)
 val Slate400 = Color(0xFF94A3B8)
 val Slate100 = Color(0xFFF1F5F9)
 val Slate50 = Color(0xFFF8FAFC)
+
+// Tokens de Paridade 1:1 com a Aplicação Web (beautypass_app.html / styles.css)
+val DeepTeal = SereneTeal
+val WarmWhite = SurfaceWhite
+val ObsidianCharcoal = OceanicCharcoal
+val SlateGray = NeutralMuted
+val AlabasterBg = BackgroundLight
+val BorderSubtle = OutlineVariant
+val CoralStatus = CoralPromo
+val EmeraldSuccess = SuccessGreen
+val AmberWarning = StarAmber
+val LuminousMint = MintLight

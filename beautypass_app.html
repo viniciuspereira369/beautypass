@@ -283,6 +283,7 @@
 
             <button class="card-action-btn" id="onboarding-submit-btn" style="height:48px; margin-top:12px;" onclick="submitOnboarding()" disabled>
               <span>Iniciar Sessão de Teste</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </button>
           </div>
         </div>
@@ -323,26 +324,7 @@
           </div>
         </div>
 
-        <!-- Gamification & Retention Banner (Mobilidade Urbana) -->
-        <div class="retention-banner">
-          <div class="banner-top">
-            <span class="banner-tag">Clube BeautyPass</span>
-            <span style="font-size: 11px; opacity: 0.9;">15% OFF</span>
-          </div>
-          <div class="banner-title">
-            Ganhe 15% de volta nos seus primeiros 3 agendamentos no app!
-          </div>
-          <div class="banner-progress-bar">
-            <div class="banner-progress-fill"></div>
-          </div>
-          <div class="banner-progress-label">
-            <span>Progresso da recompensa</span>
-            <span>1 de 3 concluídos</span>
-          </div>
-        </div>
-
-
-        <!-- Search Bar em Pílula (DESIGN.md Level 1) -->
+        <!-- Search Bar em Pílula no Topo (Acesso imediato no primeiro fold) -->
         <div class="search-wrapper">
           <div class="search-input-pill">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7.5"/><path d="M21 21l-4.5-4.5"/></svg>
@@ -350,6 +332,20 @@
             <button class="search-map-btn" title="Explorar no Mapa" onclick="navigateTo('map')">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
             </button>
+          </div>
+        </div>
+
+        <!-- Compact Reward Strip (Clube BeautyPass) -->
+        <div class="retention-banner retention-banner-compact">
+          <div class="banner-top">
+            <span class="banner-tag">Clube BeautyPass</span>
+            <span style="font-size: 10.5px; font-weight: 800; color: #5EEAD4;">1/3 • 15% Cashback</span>
+          </div>
+          <div class="banner-title">
+            15% de volta nos 3 primeiros agendamentos
+          </div>
+          <div class="banner-progress-bar">
+            <div class="banner-progress-fill"></div>
           </div>
         </div>
 
@@ -688,8 +684,8 @@
             </div>
           </div>
 
-          <!-- Bottom CTA Button -->
-          <div style="padding: 0 18px;">
+          <!-- Sticky Bottom CTA Bar -->
+          <div class="detail-sticky-bottom-bar">
             <button class="card-action-btn" style="height:48px;" onclick="proceedToCheckout()">
               <span>Avançar para Pagamento</span>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>

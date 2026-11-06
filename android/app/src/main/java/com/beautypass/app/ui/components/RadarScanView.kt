@@ -6,6 +6,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -31,6 +33,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun RadarScanView(
     isScanning: Boolean = true,
+    categoryName: String = "",
     onScanFinished: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
@@ -74,11 +77,11 @@ fun RadarScanView(
     LaunchedEffect(isScanning) {
         if (isScanning) {
             currentStepText = "Mapeando cadeiras e profissionais..."
-            delay(600L)
+            delay(180L)
             currentStepText = "Calculando ociosidade em tempo real..."
-            delay(600L)
-            currentStepText = "Calibrando Tarifa Justa e ranqueando 3 melhores opções..."
-            delay(600L)
+            delay(180L)
+            currentStepText = "Calibrando Tarifa Justa e 3 melhores opções..."
+            delay(180L)
             onScanFinished?.invoke()
         }
     }
@@ -233,5 +236,22 @@ fun RadarScanView(
             fontSize = 12.sp,
             color = NeutralMuted
         )
+
+        if (onScanFinished != null) {
+            Spacer(modifier = Modifier.height(14.dp))
+            Surface(
+                modifier = Modifier.bounceClick(scaleDown = 0.94f) { onScanFinished() },
+                color = SereneTeal.copy(alpha = 0.14f),
+                shape = RoundedCornerShape(999.dp)
+            ) {
+                Text(
+                    text = "Ver resultados agora",
+                    fontSize = 11.5.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = SereneTeal,
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp)
+                )
+            }
+        }
     }
 }

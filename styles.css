@@ -6377,6 +6377,108 @@ a:focus-visible,
   margin-top: 2px;
 }
 
+/* ===================================================================
+   NATIVE FLUIDITY, TACTILE MICRO-INTERACTIONS & FIRST-FOLD DENSITY
+   =================================================================== */
+
+/* 1. Instant Spring-Scale Tactile Response on Buttons, Cards & Chips */
+.card-action-btn,
+.filter-chip,
+.category-chip,
+.social-salon-card,
+.nav-item,
+.nav-center-elevated-btn,
+.back-circle-btn,
+.slot-pill-btn,
+.fulfillment-toggle-btn,
+.demand-service-card {
+  transition: transform 0.12s cubic-bezier(0.2, 0.9, 0.3, 1.1), box-shadow 0.15s ease, background-color 0.15s ease !important;
+  will-change: transform;
+}
+
+.card-action-btn:active,
+.filter-chip:active,
+.category-chip:active,
+.nav-item:active,
+.back-circle-btn:active,
+.slot-pill-btn:active,
+.fulfillment-toggle-btn:active {
+  transform: scale(0.95) !important;
+}
+
+.nav-center-elevated-btn:active {
+  transform: translateX(-50%) scale(0.92) !important;
+}
+
+.social-salon-card:active,
+.demand-service-card:active {
+  transform: scale(0.98) !important;
+}
+
+/* 2. Fast 140ms Screen Transitions */
+.screen.active {
+  animation: bpFastScreenFadeIn 0.14s cubic-bezier(0.2, 0.8, 0.2, 1) forwards !important;
+}
+
+@keyframes bpFastScreenFadeIn {
+  from {
+    opacity: 0.4;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 3. Compact Retention Strip & First-Fold Density on Home */
+.retention-banner.retention-banner-compact {
+  margin: 6px 18px 10px !important;
+  padding: 10px 14px !important;
+  border-radius: 14px !important;
+}
+
+.retention-banner.retention-banner-compact .banner-title {
+  font-size: 12px !important;
+  margin: 3px 0 6px !important;
+  line-height: 1.25 !important;
+}
+
+.retention-banner.retention-banner-compact .banner-progress-bar {
+  height: 5px !important;
+  margin-bottom: 0 !important;
+}
+
+/* 4. Compact SalonCard Cover & Unified Credibility Strip */
+.social-salon-card .card-cover-wrap {
+  height: 156px !important;
+}
+
+.social-salon-card .owner-identity-seal {
+  padding: 6px 10px !important;
+  margin-top: 6px !important;
+}
+
+.social-salon-card .mutual-friends-proof {
+  padding: 5px 10px !important;
+  margin-top: 4px !important;
+}
+
+/* 5. Sticky Bottom Booking Bar in SalonDetailScreen (#screen-detail) */
+.detail-sticky-bottom-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 35;
+  padding: 12px 18px calc(12px + var(--sab, 0px));
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--outline-variant);
+  box-shadow: 0 -6px 20px rgba(0, 104, 95, 0.08);
+  margin-top: 12px;
+}
+
+
 
 
 

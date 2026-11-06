@@ -204,7 +204,7 @@ object BeautyPassNotificationHelper {
         val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
         val notification = NotificationCompat.Builder(context, payload.channelId)
-            .setSmallIcon(R.drawable.ic_launcher)
+            .setSmallIcon(R.drawable.logo_beautypass_emblem)
             .setContentTitle(payload.title)
             .setContentText(payload.message)
             .setStyle(NotificationCompat.BigTextStyle().bigText(payload.message))

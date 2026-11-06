@@ -25,7 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
+import com.beautypass.app.ui.components.BeautyPassImage
 import com.beautypass.app.data.BookingEngine
 import com.beautypass.app.data.PricingEngine
 import com.beautypass.app.data.SalonRepository
@@ -189,7 +189,7 @@ fun AppointmentsScreen(
                                     modifier = Modifier.fillMaxWidth(),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    AsyncImage(
+                                    BeautyPassImage(
                                         model = appt.salon.imageUrl,
                                         contentDescription = appt.salon.name,
                                         modifier = Modifier

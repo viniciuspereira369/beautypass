@@ -199,4 +199,29 @@ object PricingEngine {
             )
         }
     }
+
+    /**
+     * Calcula a cotação completa de tarifa dinâmica (paridade 1:1 com a Web).
+     */
+    fun calculateQuote(
+        basePrice: Double,
+        discountPercent: Int,
+        occupancyRatio: Double = 0.5,
+        minutesUntilSlot: Int = 180,
+        isPeakHour: Boolean = false,
+        staffRatingDelta: Double = 0.0,
+        isLoyaltySubscriber: Boolean = false
+    ): SlotPricing {
+        val isUrgent = minutesUntilSlot in 1..120 && discountPercent > 0
+        val effectiveDiscount = if (isPeakHour && discountPercent == 0) 0 else discountPercent
+        val slotPricing = calculateSlotPricing(
+            basePrice = basePrice,
+            discountPct = effectiveDiscount,
+            isUrgent = isUrgent
+        )
+        val specialistMultiplier = if (staffRatingDelta >= 0.3 && effectiveDiscount == 0) 1.05 else 1.0
+        val adjustedFinal = (round(slotPricing.finalPrice * specialistMultiplier * 100.0) / 100.0)
+            .coerceAtMost(basePrice)
+        return slotPricing.copy(finalPrice = adjustedFinal)
+    }
 }

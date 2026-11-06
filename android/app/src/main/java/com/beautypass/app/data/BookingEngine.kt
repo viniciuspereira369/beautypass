@@ -160,5 +160,23 @@ object BookingEngine {
         if (!isUnder24Hours) return 0.0
         return kotlin.math.round(finalPrice * 0.30 * 100.0) / 100.0
     }
+
+    /**
+     * Retorna o conjunto de horários ocupados em um salão para uma data específica.
+     */
+    fun getBookedSlotsForSalon(
+        appointments: List<Appointment>,
+        salonId: String,
+        dateDisplay: String
+    ): Set<String> {
+        return appointments
+            .filter { appt ->
+                appt.salon.id == salonId &&
+                    appt.dateDisplay == dateDisplay &&
+                    (appt.status == AppointmentStatus.CONFIRMED || appt.status == AppointmentStatus.IN_PROGRESS)
+            }
+            .map { it.timeSlot }
+            .toSet()
+    }
 }
 
